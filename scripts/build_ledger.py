@@ -8,9 +8,11 @@ Sources (each defaults to its committed call table; pass the fresh-parse option 
   mainnet-docs                --docs-table evidence/docs_1002.json    | --docs-cache .cache/docs
 
 Writes `<out>` as canonical JSON (sorted keys, no whitespace, UTF-8) and `<out>.blake2-256` with its
-blake2-256 hash; the SQLite ledger goes to `--db` (default .cache/ledger.db, rebuilt from scratch).
+blake2-256 hash; the SQLite ledger goes to `--db` (default .cache/ledger.db, rebuilt from scratch and
+replaced only on success). The runtime is stamped CACHED: it is measured from a stored blob.
 Refuses, writing nothing: an unrecorded blob, a stand-in (interim-sdk) blob, a runtime record that is
-not for this blob, a guide table or clone that is not the pinned commit, an incomplete docs parse.
+not for this blob, a guide table or clone that is not the pinned commit or has unaccounted references,
+an incomplete docs parse or a call documented twice.
 """
 
 import argparse
@@ -21,6 +23,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from plumbline import docs, guide, metadata as md, plumb, verdicts as v  # noqa: E402
+
+BASELINE_NOTE = ("mainnet-1002 is the read-only baseline: verdicts of the V3 guide's entries (v3-guide, v3-demo, "
+                 "v3-faq) on it say what those calls look like on mainnet spec 1002, not on V3")
 
 
 def fail(msg: str) -> int:
@@ -56,22 +61,25 @@ def main() -> int:
     if record.get("profile") != origin:
         return fail(f"{args.runtime_record} is for profile {record.get('profile')}, the blob was recorded from {origin}")
     try:
-        runtime = plumb.runtime_from_record(record, blob, md.PROFILES[origin].label)
+        runtime = plumb.runtime_from_record(record, blob, md.PROFILES[origin].label, report_state=v.CACHED)
     except plumb.LedgerError as exc:
         return fail(str(exc))
-    decoded = md.decode_metadata(blob, prof.preset)
-    surface = plumb.Surface(calls=md.call_surface(decoded), pallets=md.pallet_names(decoded))
+    surface = plumb.surface_from_blob(blob, prof.preset)
 
     if args.guide_dir:
         head, dirty = guide.clone_state(args.guide_dir.expanduser())
         if head != guide.GUIDE_COMMIT or dirty:
             return fail(f"{args.guide_dir} is at {head} (dirty: {dirty}), not a clean {guide.GUIDE_COMMIT}")
         parsed = guide.parse_guide(args.guide_dir.expanduser())
+        if parsed.unaccounted:
+            return fail(f"guide references no site accounts for: {', '.join(parsed.unaccounted)}")
         sites, files = parsed.sites, parsed.files
     else:
         table = json.loads(args.guide_table.read_text())
         if table["commit"] != guide.GUIDE_COMMIT:
             return fail(f"{args.guide_table} is for guide commit {table['commit']}, not {guide.GUIDE_COMMIT}")
+        if table.get("unaccounted"):
+            return fail(f"{args.guide_table} records unaccounted references: {table['unaccounted']}")
         sites, files = [guide.site_from_dict(s) for s in table["sites"]], table["files"]
 
     if args.docs_cache:
@@ -85,22 +93,28 @@ def main() -> int:
         if docs_record["pages_complete"] != docs_record["pages"]:
             return fail(f"{args.docs_table} records an incomplete parse")
         rows, pages = docs_record["rows"], docs_record["per_page"]
+        doubled = sorted({r["doc_call"] for r in rows if sum(x["doc_call"] == r["doc_call"] for x in rows) > 1})
+        if doubled:
+            return fail(f"{args.docs_table} documents these calls twice: {doubled}")
 
     entries = plumb.entries_from_guide(sites) + plumb.entries_from_mainnet_docs(rows)
     inputs = {
         "guide": {"repo": guide.GUIDE_REPO, "commit": guide.GUIDE_COMMIT, "files": files,
                   "sites": {s: sum(1 for x in sites if x.source == s) for s in (v.V3_GUIDE, v.V3_DEMO, v.V3_FAQ)}},
         "mainnet-docs": {"base": docs.DOCS_BASE, "pages": len(pages), "documented_calls": len(rows)},
-        "metadata": {"file": prof.stored_file, "sha256": runtime.metadata_hash},
+        "metadata": {"file": Path(prof.stored_file).name, "sha256": runtime.metadata_hash},
+        "note": BASELINE_NOTE if runtime.profile == "mainnet-1002" else "",
     }
-    if args.db.exists():
-        args.db.unlink()  # rebuilt from its inputs, never patched in place
     args.db.parent.mkdir(parents=True, exist_ok=True)
+    tmp_db = args.db.with_name(args.db.name + ".tmp")
+    tmp_db.unlink(missing_ok=True)
     try:
-        data, conn = plumb.build(entries, [(runtime, surface)], inputs, db=args.db)
+        data, conn = plumb.build(entries, [(runtime, surface)], inputs, db=tmp_db)
+        conn.close()
     except plumb.LedgerError as exc:
+        tmp_db.unlink(missing_ok=True)
         return fail(str(exc))
-    conn.close()
+    tmp_db.replace(args.db)  # the ledger is rebuilt from its inputs, never patched in place
     args.out.write_bytes(data)
     digest = plumb.blake2_256(data)
     Path(f"{args.out}.blake2-256").write_text(f"{digest}  {args.out.name}\n")
