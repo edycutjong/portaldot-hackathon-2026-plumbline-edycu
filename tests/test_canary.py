@@ -89,10 +89,12 @@ def test_committed_record_is_labelled_and_read_back_on_every_row():
         "Balances.transfer_keep_alive", "System.remark_with_event", "Revive.map_account"]
     for r in record["receipts"]:
         assert r["label"] == canary.LABEL
+        assert (r["profile"], r["spec_version"]) == ("interim-sdk", record["spec_version"])
         assert r["readback_ok"] == 1 and r["readback_call"] == f"{r['pallet']}.{r['call']}"
         assert len(r["tx_hash"]) == 66 and len(r["block_hash"]) == 66
         assert r["extrinsic_id"] == f"{r['block_number']}-{r['extrinsic_id'].split('-')[1]}"
-    assert md.KNOWN_BLOBS.get(record["metadata_sha256"]) in (None, "interim-sdk")
+    assert len(record["metadata_sha256"]) == 64 and int(record["metadata_sha256"], 16) >= 0
+    assert "not Portaldot V3" in record["note"]
 
 
 def test_proof_md_is_generated_from_the_record_and_labels_every_row():
@@ -107,12 +109,55 @@ def test_proof_md_is_generated_from_the_record_and_labels_every_row():
 
 def test_interim_receipts_never_become_ledger_verdicts():
     record = json.loads(EVIDENCE.read_text())
+    # on the baseline runtime: refused, because each receipt names the chain it was sent to
+    mainnet = plumb.runtime_from_record(json.loads((ROOT / "evidence" / "metadata_1002.json").read_text()),
+                                        (ROOT / "fixtures" / "metadata_1002.scale").read_bytes(), "1002")
+    surface_1002 = plumb.surface_from_blob((ROOT / "fixtures" / "metadata_1002.scale").read_bytes(), "legacy")
+    with pytest.raises(plumb.LedgerError, match="receipt .* is from interim-sdk"):
+        plumb.plumb(plumb.open_ledger(), mainnet, surface_1002, receipts=record["receipts"])
+    # on the stand-in itself: refused as a runtime
     standin = plumb.Runtime(profile="interim-sdk", label="stand-in, not V3", endpoint=None, spec_name="node",
                             spec_version=268, tx_version=2, metadata_version=14, metadata_hash="ef" * 32,
                             code_hash=None, block_hash=None, fetched_at="2026-10-16T00:00:00+00:00")
     surface = plumb.Surface({}, [], standin.metadata_hash)
     with pytest.raises(plumb.LedgerError, match="stand-in, not V3"):
         plumb.plumb(plumb.open_ledger(), standin, surface, receipts=record["receipts"])
+
+
+def test_dev_keys_go_only_to_a_loopback_endpoint(monkeypatch):
+    monkeypatch.setattr(md, "connect", lambda *a, **k: pytest.fail("must refuse before connecting"))
+    with pytest.raises(canary.CanaryError, match="not a loopback address"):
+        canary.run("interim-sdk", url="wss://testnet.example.org:39944")
+
+
+def test_cli_canary_will_not_overwrite_a_record_without_replace(tmp_path, monkeypatch):
+    from typer.testing import CliRunner
+
+    from plumbline.cli import app
+
+    out = tmp_path / "c.json"
+    out.write_text("{}")
+    monkeypatch.setattr(canary, "run", lambda *a, **k: pytest.fail("must refuse before sending"))
+    result = CliRunner().invoke(app, ["canary", "--profile", "interim-sdk", "--out", str(out)])
+    assert result.exit_code == 2 and "--replace" in result.output and out.read_text() == "{}"
+
+
+def test_cli_canary_keeps_the_receipts_of_a_run_that_stopped_part_way(tmp_path, monkeypatch):
+    from typer.testing import CliRunner
+
+    from plumbline.cli import app
+
+    partial = {"receipts": [{"tx_hash": H}], "label": canary.LABEL}
+
+    def stop(*a, **k):
+        raise canary.CanaryError("System.remark_with_event was not included: boom", partial=partial)
+
+    monkeypatch.setattr(canary, "run", stop)
+    out = tmp_path / "c.json"
+    result = CliRunner().invoke(app, ["canary", "--profile", "interim-sdk", "--out", str(out)])
+    kept = json.loads((tmp_path / "c.partial.json").read_text())
+    assert result.exit_code == 1 and not out.exists()
+    assert kept["receipts"] == partial["receipts"] and "boom" in kept["incomplete"]
 
 
 @pytest.mark.live
