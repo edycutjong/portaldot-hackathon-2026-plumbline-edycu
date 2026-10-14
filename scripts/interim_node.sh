@@ -4,12 +4,19 @@
 #
 #   scripts/interim_node.sh start | stop | status
 #
-# Ports (this project only): WS+HTTP RPC 39944, p2p 30339. Only the PID this script started is ever stopped.
+# Ports (this project only): WS+HTTP RPC 39944, p2p 30339 (bound via --listen-addr; --port cannot be combined with it). Only the PID this script started is ever stopped.
+# Isolation: every `--dev` chain of this binary shares one genesis, so mDNS is off, p2p binds to localhost only,
+# and start fails unless system_health reports 0 peers.
 # Env: PLUMBLINE_INTERIM_BIN (node binary), PLUMBLINE_INTERIM_DIR (state dir, default ~/.cache/plumbline-interim).
+# Binary default: $STATE_DIR/substrate-node-aarch64-apple-darwin, else an existing read-only copy in
+# ~/.cache/airlock-interim/polkadot-stable2606-3/ (same release, same sha256; executed, never written to).
 set -euo pipefail
 
 STATE_DIR="${PLUMBLINE_INTERIM_DIR:-$HOME/.cache/plumbline-interim}"
-BIN="${PLUMBLINE_INTERIM_BIN:-$STATE_DIR/substrate-node-aarch64-apple-darwin}"
+BIN_NAME="substrate-node-aarch64-apple-darwin"
+if [[ -n "${PLUMBLINE_INTERIM_BIN:-}" ]]; then BIN="$PLUMBLINE_INTERIM_BIN"
+elif [[ -x "$STATE_DIR/$BIN_NAME" ]]; then BIN="$STATE_DIR/$BIN_NAME"
+else BIN="$HOME/.cache/airlock-interim/polkadot-stable2606-3/$BIN_NAME"; fi
 # polkadot-sdk release polkadot-stable2606-3, asset substrate-node-aarch64-apple-darwin
 BIN_SHA256="e687db4993973bd83922cfa9f01e29bb549af16560511b1fd51ff883b996207f"
 RPC_PORT=39944
@@ -19,6 +26,18 @@ LOG_FILE="$STATE_DIR/node.log"
 DATA_DIR="$STATE_DIR/chain-sdk"
 
 listener() { lsof -nP -iTCP:"$1" -sTCP:LISTEN -t 2>/dev/null | head -1 || true; }
+
+# true only if $1 is a live process running our binary with our RPC port (guards against PID reuse)
+is_our_node() {
+  local cmd; cmd="$(ps -p "$1" -o command= 2>/dev/null || true)"
+  [[ "$cmd" == *"$BIN_NAME"* && "$cmd" == *"--rpc-port $RPC_PORT"* && "$cmd" == *"/tcp/$P2P_PORT"* ]]
+}
+
+peers() {
+  curl -s -H 'Content-Type: application/json' \
+    -d '{"jsonrpc":"2.0","id":1,"method":"system_health","params":[]}' "http://127.0.0.1:$RPC_PORT" |
+    sed -n 's/.*"peers":\([0-9]*\).*/\1/p'
+}
 
 start() {
   mkdir -p "$STATE_DIR"
@@ -30,23 +49,33 @@ start() {
     if [[ -n "$holder" ]]; then echo "port $port already held by PID $holder — not starting, not killing it" >&2; exit 1; fi
   done
   nohup "$BIN" --dev --base-path "$DATA_DIR" --state-pruning archive --blocks-pruning archive \
-    --rpc-port "$RPC_PORT" --port "$P2P_PORT" --no-prometheus --no-telemetry >"$LOG_FILE" 2>&1 &
+    --rpc-port "$RPC_PORT" --listen-addr "/ip4/127.0.0.1/tcp/$P2P_PORT" --no-mdns \
+    --no-prometheus --no-telemetry >"$LOG_FILE" 2>&1 &
   echo $! >"$PID_FILE"
   for _ in $(seq 1 60); do
     if [[ "$(listener "$RPC_PORT")" == "$(cat "$PID_FILE")" ]]; then
-      echo "interim-sdk up: PID $(cat "$PID_FILE") ws://127.0.0.1:$RPC_PORT (stand-in, not V3)"; return 0
+      local n; n="$(peers)"
+      if [[ "$n" != "0" ]]; then echo "isolation check failed: system_health peers=${n:-?}; stopping" >&2; stop; exit 1; fi
+      echo "interim-sdk up: PID $(cat "$PID_FILE") ws://127.0.0.1:$RPC_PORT peers 0 (stand-in, not V3)"; return 0
     fi
     sleep 1
   done
-  echo "node did not open port $RPC_PORT within 60 s; see $LOG_FILE" >&2; exit 1
+  echo "node did not open port $RPC_PORT within 60 s; see $LOG_FILE" >&2
+  stop || true
+  exit 1
 }
 
 stop() {
   [[ -f "$PID_FILE" ]] || { echo "no PID file; nothing to stop"; return 0; }
   local pid; pid="$(cat "$PID_FILE")"
+  if ! is_our_node "$pid"; then
+    rm -f "$PID_FILE"
+    echo "PID $pid is not our interim node (exited or reused); removed stale PID file, killed nothing"; return 0
+  fi
+  kill "$pid"
+  for _ in $(seq 1 30); do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
   if kill -0 "$pid" 2>/dev/null; then
-    kill "$pid"
-    for _ in $(seq 1 30); do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
+    echo "PID $pid still running 30 s after SIGTERM; PID file kept" >&2; return 1
   fi
   rm -f "$PID_FILE"
   echo "interim-sdk stopped (PID $pid); archive data kept in $DATA_DIR"
@@ -54,7 +83,7 @@ stop() {
 
 status() {
   local pid=""; [[ -f "$PID_FILE" ]] && pid="$(cat "$PID_FILE")"
-  echo "pid file: ${pid:-none}  rpc $RPC_PORT: $(listener "$RPC_PORT")  p2p $P2P_PORT: $(listener "$P2P_PORT")"
+  echo "pid file: ${pid:-none}  rpc $RPC_PORT: $(listener "$RPC_PORT")  p2p $P2P_PORT: $(listener "$P2P_PORT")  peers: $(peers)"
 }
 
 case "${1:-}" in
