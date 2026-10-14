@@ -315,8 +315,10 @@ def canary_cmd(profile: str = typer.Option(..., "--profile", "-p", help="interim
                replace: bool = typer.Option(False, "--replace", help="overwrite an existing receipts record")) -> None:
     """Send the canary calls (Balances.transfer_keep_alive, System.remark_with_event, Revive.map_account),
     keep each receipt, read each back from its block. v0: interim-sdk only, labelled not V3."""
-    if out.exists() and not replace:
-        typer.echo(f"error: {out} exists; pass --replace to overwrite it with a new run", err=True)
+    existing = [p for p in (out, proof) if p.exists()]
+    if existing and not replace:  # the proof table is guarded too: --out elsewhere must not overwrite PROOF.md
+        typer.echo(f"error: {', '.join(map(str, existing))} exists; pass --replace to overwrite with a new run",
+                   err=True)
         raise typer.Exit(2)
     try:
         record = canary_mod.run(profile, url)

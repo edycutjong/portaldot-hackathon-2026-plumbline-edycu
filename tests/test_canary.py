@@ -138,7 +138,8 @@ def test_cli_canary_will_not_overwrite_a_record_without_replace(tmp_path, monkey
     out = tmp_path / "c.json"
     out.write_text("{}")
     monkeypatch.setattr(canary, "run", lambda *a, **k: pytest.fail("must refuse before sending"))
-    result = CliRunner().invoke(app, ["canary", "--profile", "interim-sdk", "--out", str(out)])
+    result = CliRunner().invoke(app, ["canary", "--profile", "interim-sdk", "--out", str(out),
+                                      "--proof", str(tmp_path / "PROOF.md")])
     assert result.exit_code == 2 and "--replace" in result.output and out.read_text() == "{}"
 
 
@@ -154,7 +155,8 @@ def test_cli_canary_keeps_the_receipts_of_a_run_that_stopped_part_way(tmp_path, 
 
     monkeypatch.setattr(canary, "run", stop)
     out = tmp_path / "c.json"
-    result = CliRunner().invoke(app, ["canary", "--profile", "interim-sdk", "--out", str(out)])
+    result = CliRunner().invoke(app, ["canary", "--profile", "interim-sdk", "--out", str(out),
+                                      "--proof", str(tmp_path / "PROOF.md")])
     kept = json.loads((tmp_path / "c.r1.partial.json").read_text())  # one file per run: never overwritten
     assert result.exit_code == 1 and not out.exists()
     assert kept["receipts"] == partial["receipts"] and "boom" in kept["incomplete"]
@@ -189,3 +191,25 @@ def test_a_receipt_never_read_back_is_rendered_and_verified_without_crashing(mon
     FakeChain.close = lambda self: None
     (row,) = canary.verify(record)
     assert row["match"] is False and row["extrinsic_id"] is None
+
+
+def test_cli_canary_will_not_overwrite_the_proof_table_without_replace(tmp_path, monkeypatch):
+    from typer.testing import CliRunner
+
+    from plumbline.cli import app
+
+    proof = tmp_path / "PROOF.md"
+    proof.write_text("kept")
+    monkeypatch.setattr(canary, "run", lambda *a, **k: pytest.fail("must refuse before sending"))
+    result = CliRunner().invoke(app, ["canary", "--profile", "interim-sdk", "--out", str(tmp_path / "new.json"),
+                                      "--proof", str(proof)])
+    assert result.exit_code == 2 and "--replace" in result.output and proof.read_text() == "kept"
+    assert not (tmp_path / "new.json").exists()
+
+
+def test_proof_row_of_a_receipt_never_read_back_names_the_error_not_none():
+    record = json.loads((Path(__file__).resolve().parents[1] / "evidence" / "canary_interim.json").read_text())
+    record["receipts"][0].update(extrinsic_id=None, success=None, readback_ok=0, readback_call=None,
+                                 readback_error="ConnectionError: boom")
+    row = [line for line in canary.proof_markdown(record).splitlines() if "transfer_keep_alive" in line][0]
+    assert "None" not in row and "FAILED (ConnectionError: boom)" in row

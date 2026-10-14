@@ -227,8 +227,10 @@ def proof_markdown(record: dict) -> str:
         events = ", ".join(f"{e['pallet']}.{e['event']}" for e in json.loads(r["events_json"]))
         result = ("success" if r["success"] else "outcome not read back" if r["success"] is None
                   else f"failed: {r['dispatch_error']}")
+        readback = (f"`{r['readback_call']}`" if r["readback_call"]
+                    else r.get("readback_error") or "not read back")
         lines.append(f"| {LABEL} | `{r['pallet']}.{r['call']}` | `{r['extrinsic_id'] or '-'}` | `{r['tx_hash']}` | "
                      f"`{r['block_hash']}` | {result} | {events} | "
-                     f"{'ok' if r['readback_ok'] else 'FAILED'} (`{r['readback_call']}`) |")
+                     f"{'ok' if r['readback_ok'] else 'FAILED'} ({readback}) |")
     lines += ["", "No row here is a Portaldot V3 transaction. V3 canaries need V3 back online and tPOTv3 funds.", ""]
     return "\n".join(lines)
