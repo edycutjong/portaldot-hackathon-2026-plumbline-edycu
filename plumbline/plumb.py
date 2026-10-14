@@ -15,7 +15,8 @@ Rules (verdict names and meanings: `plumbline.verdicts`):
     PROVEN with a receipt, else UNPROVEN.
   - Arguments: the mainnet docs are positional, so names are compared in order; the demo code passes
     keyword `call_params`, so names are compared as a set. A source with no arguments is ARGS-UNCHECKED.
-  - PROVEN needs a receipt for this runtime with a tx hash, a block hash, success, and a read-back whose
+  - PROVEN needs a receipt for this runtime (its `profile` and `spec_version` must be the runtime's, else
+    plumb refuses it) with a tx hash, a block hash, success, and a read-back whose
     decoded call is the same pallet.call (I1). Without one a present call is UNPROVEN / ARGS-UNCHECKED.
   - A ledger holds at most one runtime per profile; every verdict row is stored against it and exported
     with its profile, spec version and metadata hash (I2, I5). Re-measuring means rebuilding.
@@ -331,6 +332,10 @@ def plumb(conn: sqlite3.Connection, rt: Runtime, surface: Surface, renames: tupl
     if conn.execute("SELECT 1 FROM runtime WHERE profile = ?", (rt.profile,)).fetchone():
         raise LedgerError(f"the ledger already holds a {rt.profile} runtime; rebuild it to re-measure")
     rows = check_renames(renames, rt.profile, surface)
+    for receipt in receipts:  # a receipt proves a call only on the runtime it was sent to
+        if receipt.get("profile") != rt.profile or receipt.get("spec_version") != rt.spec_version:
+            raise LedgerError(f"receipt {receipt.get('tx_hash')} is from {receipt.get('profile')}/"
+                              f"{receipt.get('spec_version')}, not {rt.profile}/{rt.spec_version}")
     cur = conn.execute("INSERT INTO runtime (profile, label, endpoint, spec_name, spec_version, tx_version, "
                        "metadata_version, metadata_hash, code_hash, block_hash, fetched_at, report_state) "
                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",

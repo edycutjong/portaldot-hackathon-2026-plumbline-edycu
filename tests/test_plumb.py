@@ -207,7 +207,8 @@ def test_committed_renames_hold_on_the_1002_blob_and_their_arguments_match_the_d
 
 def receipt(call, **over):
     return {"side": "substrate", "pallet": "Tokens", "call": call, "tx_hash": "0x" + "1" * 64, "block_hash": "0x" + "2" * 64,
-            "block_number": 7, "success": 1, "readback_ok": 1, "readback_call": f"Tokens.{call}"} | over
+            "block_number": 7, "success": 1, "readback_ok": 1, "readback_call": f"Tokens.{call}",
+            "profile": RT.profile, "spec_version": RT.spec_version} | over
 
 
 def statuses(receipts):
@@ -233,6 +234,12 @@ def test_a_read_back_receipt_proves_the_call_and_is_linked():
 ])
 def test_a_failed_or_unverified_receipt_proves_nothing(bad):
     assert ("issue", v.UNPROVEN) in statuses([receipt("issue", **bad)])
+
+
+@pytest.mark.parametrize("other", [{"profile": "interim-sdk"}, {"spec_version": 2}, {"profile": None}])
+def test_a_receipt_from_another_runtime_is_refused(other):
+    with pytest.raises(plumb.LedgerError, match="receipt .* is from"):
+        statuses([receipt("issue", **other)])
 
 
 def test_receipt_ids_do_not_depend_on_the_order_they_were_given():
