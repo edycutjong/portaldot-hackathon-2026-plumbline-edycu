@@ -30,6 +30,7 @@ import sqlite3
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from . import diff as diff_mod
 from . import docs as docs_mod
 from . import guide as guide_mod
 from . import metadata as md
@@ -73,7 +74,7 @@ CREATE TABLE verdict   (runtime_id INT NOT NULL REFERENCES runtime(id),
                         PRIMARY KEY (runtime_id, source, kind, pallet, call));
 CREATE TABLE diff_row  (from_runtime INT REFERENCES runtime(id), to_runtime INT REFERENCES runtime(id),
                         pallet TEXT, item TEXT,
-                        kind TEXT CHECK (kind IN ('added','removed','renamed','arg-changed','const-changed','event-changed')),
+                        kind TEXT CHECK (kind IN {_in(diff_mod.DIFF_KINDS)}),
                         before_json TEXT, after_json TEXT, receipt_id INT REFERENCES receipt(id),
                         PRIMARY KEY (from_runtime, to_runtime, pallet, item, kind));
 CREATE TABLE compat_cell (artifact_sha256 TEXT, source TEXT, toolchain TEXT, profile TEXT,
