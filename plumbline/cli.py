@@ -302,7 +302,7 @@ def check_cmd(path: Path = typer.Argument(..., help="the dApp directory to scan"
             out["warning"] = STANDIN_BANNER
         typer.echo(json.dumps(out, sort_keys=True, separators=(",", ":")))
     else:
-        text = check_mod.render(findings, rt, mode, files=stats["files"])
+        text = check_mod.render(findings, rt, mode, files=stats["files"], skipped=stats["skipped"])
         typer.echo((f"{STANDIN_BANNER}\n{text}{STANDIN_BANNER}" if standin else text).rstrip("\n"))
     raise typer.Exit(check_mod.exit_code(findings))
 
@@ -322,7 +322,7 @@ def canary_cmd(profile: str = typer.Option(..., "--profile", "-p", help="interim
         record = canary_mod.run(profile, url)
     except canary_mod.CanaryError as exc:
         if exc.partial and exc.partial["receipts"]:  # receipts already on chain are kept, never dropped
-            partial = out.with_name(out.stem + ".partial.json")
+            partial = out.with_name(f"{out.stem}.{exc.partial['run_id']}.partial.json")
             partial.write_text(json.dumps(exc.partial | {"incomplete": str(exc)}, indent=2, sort_keys=True) + "\n")
             typer.echo(f"error: {exc} ({len(exc.partial['receipts'])} receipts kept in {partial})", err=True)
             raise typer.Exit(1)
@@ -340,7 +340,7 @@ def canary_cmd(profile: str = typer.Option(..., "--profile", "-p", help="interim
                    f"{'success' if r['success'] else 'failed ' + str(r['dispatch_error'])}  "
                    f"read-back {'ok' if r['readback_ok'] else 'FAILED'}")
     typer.echo(f"{record['label']}: {len(record['receipts'])} receipts -> {out}, {proof}")
-    if not all(r["readback_ok"] for r in record["receipts"]):
+    if not all(r["readback_ok"] for r in record["receipts"]):  # a receipt is kept either way
         raise typer.Exit(1)
 
 
@@ -349,10 +349,10 @@ def readback_cmd(record_file: Path = typer.Argument(..., help="a receipts record
                  url: str = typer.Option(None, help="override the record's endpoint")) -> None:
     """Re-read every receipt of a canary record from the chain: block by hash, extrinsic by index, its hash,
     decoded call and dispatch outcome. Exit 1 on any mismatch."""
-    record = json.loads(record_file.read_text())
     try:
+        record = json.loads(record_file.read_text())
         rows = canary_mod.verify(record, url)
-    except (md.ProfileError, md.UnknownChainError, md.ChainUnreachableError) as exc:
+    except (OSError, ValueError, KeyError, TypeError, md.UnknownChainError, md.ChainUnreachableError) as exc:
         typer.echo(f"error: {exc}", err=True)
         raise typer.Exit(2)
     for row in rows:

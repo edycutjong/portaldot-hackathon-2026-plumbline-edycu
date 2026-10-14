@@ -147,15 +147,15 @@ def test_cli_canary_keeps_the_receipts_of_a_run_that_stopped_part_way(tmp_path, 
 
     from plumbline.cli import app
 
-    partial = {"receipts": [{"tx_hash": H}], "label": canary.LABEL}
+    partial = {"receipts": [{"tx_hash": H}], "label": canary.LABEL, "run_id": "r1"}
 
     def stop(*a, **k):
-        raise canary.CanaryError("System.remark_with_event was not included: boom", partial=partial)
+        raise canary.CanaryError("System.remark_with_event failed: boom", partial=partial)
 
     monkeypatch.setattr(canary, "run", stop)
     out = tmp_path / "c.json"
     result = CliRunner().invoke(app, ["canary", "--profile", "interim-sdk", "--out", str(out)])
-    kept = json.loads((tmp_path / "c.partial.json").read_text())
+    kept = json.loads((tmp_path / "c.r1.partial.json").read_text())  # one file per run: never overwritten
     assert result.exit_code == 1 and not out.exists()
     assert kept["receipts"] == partial["receipts"] and "boom" in kept["incomplete"]
 
@@ -165,3 +165,14 @@ def test_live_canary_on_the_interim_chain_reads_back(tmp_path):
     record = canary.run("interim-sdk")  # a fresh per-run account each time
     assert all(r["readback_ok"] and r["success"] for r in record["receipts"])
     assert all(row["match"] for row in canary.verify(record))
+
+
+def test_cli_readback_of_a_bad_file_is_a_usage_error(tmp_path):
+    from typer.testing import CliRunner
+
+    from plumbline.cli import app
+
+    (tmp_path / "bad.json").write_text("{not json")
+    for target in (tmp_path / "bad.json", tmp_path / "missing.json"):
+        result = CliRunner().invoke(app, ["readback", str(target)])
+        assert result.exit_code == 2 and result.output.startswith("error:"), result.output

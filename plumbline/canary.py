@@ -112,11 +112,18 @@ def send(substrate, keypair, pallet: str, call: str, params: dict, stamp: dict) 
     xt = substrate.create_signed_extrinsic(call=composed, keypair=keypair)
     receipt = substrate.submit_extrinsic(xt, wait_for_inclusion=True)
     block_hash = receipt.block_hash
-    block_number = substrate.get_block_number(block_hash)
-    index = receipt.extrinsic_idx
     tx_hash = receipt.extrinsic_hash if receipt.extrinsic_hash.startswith("0x") else "0x" + receipt.extrinsic_hash
-    same_hash, decoded = readback(substrate, block_hash, index, tx_hash)
-    success = bool(receipt.is_success)
+    try:
+        block_number = substrate.get_block_number(block_hash)
+        index = receipt.extrinsic_idx
+        same_hash, decoded = readback(substrate, block_hash, index, tx_hash)
+        success = bool(receipt.is_success)
+    except Exception as exc:  # included on chain, but reading it back failed: keep what is known
+        return {"side": "substrate", "pallet": pallet, "call": call, "signer": keypair.ss58_address,
+                "tx_hash": tx_hash, "block_hash": block_hash, "block_number": None, "extrinsic_id": None,
+                "success": None, "dispatch_error": None, "events_json": "[]", "weight_json": "null", "fee": None,
+                "readback_ok": 0, "readback_call": None, "readback_error": f"{type(exc).__name__}: {exc}",
+                "label": LABEL, **stamp}
     return {
         "side": "substrate", "pallet": pallet, "call": call, "signer": keypair.ss58_address,
         "tx_hash": tx_hash, "block_hash": block_hash, "block_number": block_number,
@@ -164,7 +171,8 @@ def run(profile_name: str, url: str | None = None, run_id: str | None = None) ->
             try:
                 record["receipts"].append(send(substrate, keypair, pallet, call, params, stamp))
             except Exception as exc:  # keep what was already sent: those receipts are real
-                raise CanaryError(f"{pallet}.{call} was not included: {exc}", partial=record) from exc
+                raise CanaryError(f"{pallet}.{call} failed before inclusion was confirmed: {exc}",
+                                  partial=record) from exc
     finally:
         substrate.close()
     return record
@@ -203,6 +211,8 @@ def proof_markdown(record: dict) -> str:
         f"- Run `{record['run_id']}` on `{record['profile']}` ({record['spec_name']}/{record['spec_version']}, "
         f"metadata sha256 `{record['metadata_sha256'][:16]}…`), endpoint `{record['endpoint']}`",
         "- Source: `evidence/canary_interim.json` (full receipts: events, weight, fee)",
+        "- Metadata hash: read at the run's first block; it differs from the genesis-pinned stand-in fixture",
+        "  because one Revive storage default on this runtime changes from block to block (see the record's note).",
         "- Read-back: the block is fetched by hash, the extrinsic at the receipt's index must have the tx hash",
         "  and decode to the same `Pallet.call` (`plumbline readback evidence/canary_interim.json` repeats it).",
         "",

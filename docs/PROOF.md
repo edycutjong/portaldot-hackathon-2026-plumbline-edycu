@@ -7,6 +7,8 @@ read-back), not anything about V3.
 
 - Run `20261014T124406Z` on `interim-sdk` (node/268, metadata sha256 `aa6ff724170ef209…`), endpoint `ws://127.0.0.1:39944`
 - Source: `evidence/canary_interim.json` (full receipts: events, weight, fee)
+- Metadata hash: read at the run's first block; it differs from the genesis-pinned stand-in fixture
+  because one Revive storage default on this runtime changes from block to block (see the record's note).
 - Read-back: the block is fetched by hash, the extrinsic at the receipt's index must have the tx hash
   and decode to the same `Pallet.call` (`plumbline readback evidence/canary_interim.json` repeats it).
 
