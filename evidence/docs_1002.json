@@ -1,0 +1,4951 @@
+{
+ "counts": {
+  "absent": 64,
+  "arg-mismatch": 15,
+  "call-absent": 64,
+  "documented": 196,
+  "live_calls": 155,
+  "match": 117,
+  "pallet-absent": 0,
+  "undocumented": 23,
+  "undocumented_in_documented_pallets": 14
+ },
+ "interfaces": 196,
+ "layouts": {
+  "assets": [
+   "plain"
+  ],
+  "babe": [
+   "plain"
+  ],
+  "balances": [
+   "plain"
+  ],
+  "bounties": [
+   "plain"
+  ],
+  "contracts": [
+   "plain"
+  ],
+  "electionProviderMultiPhase": [
+   "plain"
+  ],
+  "grandpa": [
+   "plain"
+  ],
+  "identity": [
+   "plain"
+  ],
+  "imOnline": [
+   "api-tx"
+  ],
+  "indices": [
+   "plain"
+  ],
+  "lottery": [
+   "plain"
+  ],
+  "multisig": [
+   "api-tx"
+  ],
+  "proxy": [
+   "plain"
+  ],
+  "scheduler": [
+   "plain"
+  ],
+  "session": [
+   "plain"
+  ],
+  "staking": [
+   "plain"
+  ],
+  "system": [
+   "plain"
+  ],
+  "timestamp": [
+   "plain"
+  ],
+  "transactionStorage": [
+   "plain"
+  ],
+  "treasury": [
+   "plain"
+  ],
+  "utility": [
+   "dash"
+  ],
+  "vesting": [
+   "dash"
+  ]
+ },
+ "metadata_file": "fixtures/metadata_1002.scale",
+ "metadata_sha256": "b87080f9349f936e859748df90ca7837d1e2d15cb02abba347499b8639869053",
+ "metadata_version": 13,
+ "pages": 22,
+ "pages_parsed": 22,
+ "pallets_without_docs_page": [
+  "Authorship",
+  "Gilt",
+  "Sudo"
+ ],
+ "per_page": {
+  "assets": 33,
+  "babe": 3,
+  "balances": 3,
+  "bounties": 10,
+  "contracts": 10,
+  "electionProviderMultiPhase": 5,
+  "grandpa": 3,
+  "identity": 24,
+  "imOnline": 1,
+  "indices": 6,
+  "lottery": 4,
+  "multisig": 5,
+  "proxy": 11,
+  "scheduler": 10,
+  "session": 2,
+  "staking": 31,
+  "system": 11,
+  "timestamp": 1,
+  "transactionStorage": 3,
+  "treasury": 6,
+  "utility": 8,
+  "vesting": 6
+ },
+ "profile": "mainnet-1002",
+ "rows": [
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "delegate",
+     "MultiAddress"
+    ],
+    [
+     "amount",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "assets.approveTransfer",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "delegate",
+     "LookupSource"
+    ],
+    [
+     "amount",
+     "Compact<Balance>"
+    ]
+   ],
+   "live_call": "Assets.approve_transfer",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 1)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "who",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "assets.block",
+   "live_args": null,
+   "live_call": null,
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 2)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "who",
+     "MultiAddress"
+    ],
+    [
+     "amount",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "assets.burn",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "who",
+     "LookupSource"
+    ],
+    [
+     "amount",
+     "Compact<Balance>"
+    ]
+   ],
+   "live_call": "Assets.burn",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 3)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "delegate",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "assets.cancelApproval",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "delegate",
+     "LookupSource"
+    ]
+   ],
+   "live_call": "Assets.cancel_approval",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 4)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "assets.clearMetadata",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ]
+   ],
+   "live_call": "Assets.clear_metadata",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 5)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "admin",
+     "MultiAddress"
+    ],
+    [
+     "min_balance",
+     "u128"
+    ]
+   ],
+   "doc_call": "assets.create",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "admin",
+     "LookupSource"
+    ],
+    [
+     "min_balance",
+     "Balance"
+    ]
+   ],
+   "live_call": "Assets.create",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 6)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "assets.destroyAccounts",
+   "live_args": null,
+   "live_call": null,
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 7)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "assets.destroyApprovals",
+   "live_args": null,
+   "live_call": null,
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 8)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "assets.finishDestroy",
+   "live_args": null,
+   "live_call": null,
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 9)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "owner",
+     "MultiAddress"
+    ],
+    [
+     "issuer",
+     "MultiAddress"
+    ],
+    [
+     "admin",
+     "MultiAddress"
+    ],
+    [
+     "freezer",
+     "MultiAddress"
+    ],
+    [
+     "min_balance",
+     "Compact<u128>"
+    ],
+    [
+     "is_sufficient",
+     "bool"
+    ],
+    [
+     "is_frozen",
+     "bool"
+    ]
+   ],
+   "doc_call": "assets.forceAssetStatus",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "owner",
+     "LookupSource"
+    ],
+    [
+     "issuer",
+     "LookupSource"
+    ],
+    [
+     "admin",
+     "LookupSource"
+    ],
+    [
+     "freezer",
+     "LookupSource"
+    ],
+    [
+     "min_balance",
+     "Compact<Balance>"
+    ],
+    [
+     "is_sufficient",
+     "bool"
+    ],
+    [
+     "is_frozen",
+     "bool"
+    ]
+   ],
+   "live_call": "Assets.force_asset_status",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 10)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "owner",
+     "MultiAddress"
+    ],
+    [
+     "delegate",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "assets.forceCancelApproval",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "owner",
+     "LookupSource"
+    ],
+    [
+     "delegate",
+     "LookupSource"
+    ]
+   ],
+   "live_call": "Assets.force_cancel_approval",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 11)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "assets.forceClearMetadata",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ]
+   ],
+   "live_call": "Assets.force_clear_metadata",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 12)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "owner",
+     "MultiAddress"
+    ],
+    [
+     "is_sufficient",
+     "bool"
+    ],
+    [
+     "min_balance",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "assets.forceCreate",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "owner",
+     "LookupSource"
+    ],
+    [
+     "is_sufficient",
+     "bool"
+    ],
+    [
+     "min_balance",
+     "Compact<Balance>"
+    ]
+   ],
+   "live_call": "Assets.force_create",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 13)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "name",
+     "Bytes"
+    ],
+    [
+     "symbol",
+     "Bytes"
+    ],
+    [
+     "decimals",
+     "u8"
+    ],
+    [
+     "is_frozen",
+     "bool"
+    ]
+   ],
+   "doc_call": "assets.forceSetMetadata",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "name",
+     "Bytes"
+    ],
+    [
+     "symbol",
+     "Bytes"
+    ],
+    [
+     "decimals",
+     "u8"
+    ],
+    [
+     "is_frozen",
+     "bool"
+    ]
+   ],
+   "live_call": "Assets.force_set_metadata",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 14)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "source",
+     "MultiAddress"
+    ],
+    [
+     "dest",
+     "MultiAddress"
+    ],
+    [
+     "amount",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "assets.forceTransfer",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "source",
+     "LookupSource"
+    ],
+    [
+     "dest",
+     "LookupSource"
+    ],
+    [
+     "amount",
+     "Compact<Balance>"
+    ]
+   ],
+   "live_call": "Assets.force_transfer",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 15)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "who",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "assets.freeze",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "who",
+     "LookupSource"
+    ]
+   ],
+   "live_call": "Assets.freeze",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 16)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "assets.freezeAsset",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ]
+   ],
+   "live_call": "Assets.freeze_asset",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 17)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "beneficiary",
+     "MultiAddress"
+    ],
+    [
+     "amount",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "assets.mint",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "beneficiary",
+     "LookupSource"
+    ],
+    [
+     "amount",
+     "Compact<Balance>"
+    ]
+   ],
+   "live_call": "Assets.mint",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 18)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "allow_burn",
+     "bool"
+    ]
+   ],
+   "doc_call": "assets.refund",
+   "live_args": null,
+   "live_call": null,
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 19)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "who",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "assets.refundOther",
+   "live_args": null,
+   "live_call": null,
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 20)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "name",
+     "Bytes"
+    ],
+    [
+     "symbol",
+     "Bytes"
+    ],
+    [
+     "decimals",
+     "u8"
+    ]
+   ],
+   "doc_call": "assets.setMetadata",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "name",
+     "Bytes"
+    ],
+    [
+     "symbol",
+     "Bytes"
+    ],
+    [
+     "decimals",
+     "u8"
+    ]
+   ],
+   "live_call": "Assets.set_metadata",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 21)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "min_balance",
+     "u128"
+    ]
+   ],
+   "doc_call": "assets.setMinBalance",
+   "live_args": null,
+   "live_call": null,
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 22)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "issuer",
+     "MultiAddress"
+    ],
+    [
+     "admin",
+     "MultiAddress"
+    ],
+    [
+     "freezer",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "assets.setTeam",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "issuer",
+     "LookupSource"
+    ],
+    [
+     "admin",
+     "LookupSource"
+    ],
+    [
+     "freezer",
+     "LookupSource"
+    ]
+   ],
+   "live_call": "Assets.set_team",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 23)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "assets.startDestroy",
+   "live_args": null,
+   "live_call": null,
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 24)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "who",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "assets.thaw",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "who",
+     "LookupSource"
+    ]
+   ],
+   "live_call": "Assets.thaw",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 25)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "assets.thawAsset",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ]
+   ],
+   "live_call": "Assets.thaw_asset",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 26)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "assets.touch",
+   "live_args": null,
+   "live_call": null,
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 27)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "who",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "assets.touchOther",
+   "live_args": null,
+   "live_call": null,
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 28)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "target",
+     "MultiAddress"
+    ],
+    [
+     "amount",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "assets.transfer",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "target",
+     "LookupSource"
+    ],
+    [
+     "amount",
+     "Compact<Balance>"
+    ]
+   ],
+   "live_call": "Assets.transfer",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 29)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "dest",
+     "MultiAddress"
+    ],
+    [
+     "keep_alive",
+     "bool"
+    ]
+   ],
+   "doc_call": "assets.transferAll",
+   "live_args": null,
+   "live_call": null,
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 30)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "owner",
+     "MultiAddress"
+    ],
+    [
+     "destination",
+     "MultiAddress"
+    ],
+    [
+     "amount",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "assets.transferApproved",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "owner",
+     "LookupSource"
+    ],
+    [
+     "destination",
+     "LookupSource"
+    ],
+    [
+     "amount",
+     "Compact<Balance>"
+    ]
+   ],
+   "live_call": "Assets.transfer_approved",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 31)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "target",
+     "MultiAddress"
+    ],
+    [
+     "amount",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "assets.transferKeepAlive",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "target",
+     "LookupSource"
+    ],
+    [
+     "amount",
+     "Compact<Balance>"
+    ]
+   ],
+   "live_call": "Assets.transfer_keep_alive",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 32)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "Compact<u32>"
+    ],
+    [
+     "owner",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "assets.transferOwnership",
+   "live_args": [
+    [
+     "id",
+     "Compact<AssetId>"
+    ],
+    [
+     "owner",
+     "LookupSource"
+    ]
+   ],
+   "live_call": "Assets.transfer_ownership",
+   "page": "assets",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html (interface 33)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "config",
+     "SpConsensusBabeDigestsNextConfigDescriptor"
+    ]
+   ],
+   "doc_call": "babe.planConfigChange",
+   "live_args": [
+    [
+     "config",
+     "NextConfigDescriptor"
+    ]
+   ],
+   "live_call": "Babe.plan_config_change",
+   "page": "babe",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/babe.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "equivocation_proof",
+     "SpConsensusSlotsEquivocationProof"
+    ],
+    [
+     "key_owner_proof",
+     "SpSessionMembershipProof"
+    ]
+   ],
+   "doc_call": "babe.reportEquivocation",
+   "live_args": [
+    [
+     "equivocation_proof",
+     "EquivocationProof<Header>"
+    ],
+    [
+     "key_owner_proof",
+     "KeyOwnerProof"
+    ]
+   ],
+   "live_call": "Babe.report_equivocation",
+   "page": "babe",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/babe.html (interface 2)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "equivocation_proof",
+     "SpConsensusSlotsEquivocationProof"
+    ],
+    [
+     "key_owner_proof",
+     "SpSessionMembershipProof"
+    ]
+   ],
+   "doc_call": "babe.reportEquivocationUnsigned",
+   "live_args": [
+    [
+     "equivocation_proof",
+     "EquivocationProof<Header>"
+    ],
+    [
+     "key_owner_proof",
+     "KeyOwnerProof"
+    ]
+   ],
+   "live_call": "Babe.report_equivocation_unsigned",
+   "page": "babe",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/babe.html (interface 3)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "source",
+     "MultiAddress"
+    ],
+    [
+     "dest",
+     "MultiAddress"
+    ],
+    [
+     "value",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "balances.Transfer",
+   "live_args": [
+    [
+     "dest",
+     "LookupSource"
+    ],
+    [
+     "value",
+     "Compact<Balance>"
+    ]
+   ],
+   "live_call": "Balances.transfer",
+   "page": "balances",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/balances.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "dest",
+     "MultiAddress"
+    ],
+    [
+     "keep_alive",
+     "bool"
+    ]
+   ],
+   "doc_call": "balances.transferAll",
+   "live_args": [
+    [
+     "dest",
+     "LookupSource"
+    ],
+    [
+     "keep_alive",
+     "bool"
+    ]
+   ],
+   "live_call": "Balances.transfer_all",
+   "page": "balances",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/balances.html (interface 2)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "dest",
+     "MultiAddress"
+    ],
+    [
+     "value",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "balances.transferKeepAlive",
+   "live_args": [
+    [
+     "dest",
+     "LookupSource"
+    ],
+    [
+     "value",
+     "Compact<Balance>"
+    ]
+   ],
+   "live_call": "Balances.transfer_keep_alive",
+   "page": "balances",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/balances.html (interface 3)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "bounty_id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "bounties.acceptCurator",
+   "live_args": [
+    [
+     "bounty_id",
+     "Compact<BountyIndex>"
+    ]
+   ],
+   "live_call": "Bounties.accept_curator",
+   "page": "bounties",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "bounty_id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "bounties.approveBounty",
+   "live_args": [
+    [
+     "bounty_id",
+     "Compact<BountyIndex>"
+    ]
+   ],
+   "live_call": "Bounties.approve_bounty",
+   "page": "bounties",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html (interface 2)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "bounty_id",
+     "Compact<u32>"
+    ],
+    [
+     "curator",
+     "MultiAddress"
+    ],
+    [
+     "fee",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "bounties.approveBountyWithCurator",
+   "live_args": null,
+   "live_call": null,
+   "page": "bounties",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html (interface 3)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "bounty_id",
+     "Compact<u32>"
+    ],
+    [
+     "beneficiary",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "bounties.awardBounty",
+   "live_args": [
+    [
+     "bounty_id",
+     "Compact<BountyIndex>"
+    ],
+    [
+     "beneficiary",
+     "LookupSource"
+    ]
+   ],
+   "live_call": "Bounties.award_bounty",
+   "page": "bounties",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html (interface 4)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "bounty_id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "bounties.claimBounty",
+   "live_args": [
+    [
+     "bounty_id",
+     "Compact<BountyIndex>"
+    ]
+   ],
+   "live_call": "Bounties.claim_bounty",
+   "page": "bounties",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html (interface 5)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "bounty_id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "bounties.closeBounty",
+   "live_args": [
+    [
+     "bounty_id",
+     "Compact<BountyIndex>"
+    ]
+   ],
+   "live_call": "Bounties.close_bounty",
+   "page": "bounties",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html (interface 6)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "bounty_id",
+     "Compact<u32>"
+    ],
+    [
+     "remark",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "bounties.extendBountyExpiry",
+   "live_args": [
+    [
+     "bounty_id",
+     "Compact<BountyIndex>"
+    ],
+    [
+     "_remark",
+     "Bytes"
+    ]
+   ],
+   "live_call": "Bounties.extend_bounty_expiry",
+   "page": "bounties",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html (interface 7)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "value",
+     "Compact<u128>"
+    ],
+    [
+     "description",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "bounties.proposeBounty",
+   "live_args": [
+    [
+     "value",
+     "Compact<BalanceOf>"
+    ],
+    [
+     "description",
+     "Bytes"
+    ]
+   ],
+   "live_call": "Bounties.propose_bounty",
+   "page": "bounties",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html (interface 8)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "bounty_id",
+     "Compact<u32>"
+    ],
+    [
+     "curator",
+     "MultiAddress"
+    ],
+    [
+     "fee",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "bounties.proposeCurator",
+   "live_args": [
+    [
+     "bounty_id",
+     "Compact<BountyIndex>"
+    ],
+    [
+     "curator",
+     "LookupSource"
+    ],
+    [
+     "fee",
+     "Compact<BalanceOf>"
+    ]
+   ],
+   "live_call": "Bounties.propose_curator",
+   "page": "bounties",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html (interface 9)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "bounty_id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "bounties.unassignCurator",
+   "live_args": [
+    [
+     "bounty_id",
+     "Compact<BountyIndex>"
+    ]
+   ],
+   "live_call": "Bounties.unassign_curator",
+   "page": "bounties",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html (interface 10)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "dest",
+     "MultiAddress"
+    ],
+    [
+     "value",
+     "Compact<u128>"
+    ],
+    [
+     "gas_limit",
+     "SpWeightsWeightV2Weight"
+    ],
+    [
+     "storage_deposit_limit",
+     "Option<Compact<u128>>"
+    ],
+    [
+     "data",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "contracts.call",
+   "live_args": [
+    [
+     "dest",
+     "LookupSource"
+    ],
+    [
+     "value",
+     "Compact<BalanceOf>"
+    ],
+    [
+     "gas_limit",
+     "Compact<Weight>"
+    ],
+    [
+     "data",
+     "Bytes"
+    ]
+   ],
+   "live_call": "Contracts.call",
+   "page": "contracts",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 1)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "dest",
+     "MultiAddress"
+    ],
+    [
+     "value",
+     "Compact<u128>"
+    ],
+    [
+     "gas_limit",
+     "Compact<u64>"
+    ],
+    [
+     "storage_deposit_limit",
+     "Option<Compact<u128>>"
+    ],
+    [
+     "data",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "contracts.callOldWeight",
+   "live_args": null,
+   "live_call": null,
+   "page": "contracts",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 2)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "value",
+     "Compact<u128>"
+    ],
+    [
+     "gas_limit",
+     "SpWeightsWeightV2Weight"
+    ],
+    [
+     "storage_deposit_limit",
+     "Option<Compact<u128>>"
+    ],
+    [
+     "code_hash",
+     "H256"
+    ],
+    [
+     "data",
+     "Bytes"
+    ],
+    [
+     "salt",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "contracts.instantiate",
+   "live_args": [
+    [
+     "endowment",
+     "Compact<BalanceOf>"
+    ],
+    [
+     "gas_limit",
+     "Compact<Weight>"
+    ],
+    [
+     "code_hash",
+     "CodeHash"
+    ],
+    [
+     "data",
+     "Bytes"
+    ],
+    [
+     "salt",
+     "Bytes"
+    ]
+   ],
+   "live_call": "Contracts.instantiate",
+   "page": "contracts",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 3)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "value",
+     "Compact<u128>"
+    ],
+    [
+     "gas_limit",
+     "Compact<u64>"
+    ],
+    [
+     "storage_deposit_limit",
+     "Option<Compact<u128>>"
+    ],
+    [
+     "code_hash",
+     "H256"
+    ],
+    [
+     "data",
+     "Bytes"
+    ],
+    [
+     "salt",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "contracts.instantiateOldWeight",
+   "live_args": null,
+   "live_call": null,
+   "page": "contracts",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 4)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "value",
+     "Compact<u128>"
+    ],
+    [
+     "gas_limit",
+     "SpWeightsWeightV2Weight"
+    ],
+    [
+     "storage_deposit_limit",
+     "Option<Compact<u128>>"
+    ],
+    [
+     "code",
+     "Bytes"
+    ],
+    [
+     "data",
+     "Bytes"
+    ],
+    [
+     "salt",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "contracts.instantiateWithCode",
+   "live_args": [
+    [
+     "endowment",
+     "Compact<BalanceOf>"
+    ],
+    [
+     "gas_limit",
+     "Compact<Weight>"
+    ],
+    [
+     "code",
+     "Bytes"
+    ],
+    [
+     "data",
+     "Bytes"
+    ],
+    [
+     "salt",
+     "Bytes"
+    ]
+   ],
+   "live_call": "Contracts.instantiate_with_code",
+   "page": "contracts",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 5)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "value",
+     "Compact<u128>"
+    ],
+    [
+     "gas_limit",
+     "Compact<u64>"
+    ],
+    [
+     "storage_deposit_limit",
+     "Option<Compact<u128>>"
+    ],
+    [
+     "code",
+     "Bytes"
+    ],
+    [
+     "data",
+     "Bytes"
+    ],
+    [
+     "salt",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "contracts.instantiateWithCodeOldWeight",
+   "live_args": null,
+   "live_call": null,
+   "page": "contracts",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 6)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "weight_limit",
+     "SpWeightsWeightV2Weight"
+    ]
+   ],
+   "doc_call": "contracts.migrate",
+   "live_args": null,
+   "live_call": null,
+   "page": "contracts",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 7)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "code_hash",
+     "H256"
+    ]
+   ],
+   "doc_call": "contracts.removeCode",
+   "live_args": null,
+   "live_call": null,
+   "page": "contracts",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 8)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "dest",
+     "MultiAddress"
+    ],
+    [
+     "code_hash",
+     "H256"
+    ]
+   ],
+   "doc_call": "contracts.setCode",
+   "live_args": null,
+   "live_call": null,
+   "page": "contracts",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 9)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "code",
+     "Bytes"
+    ],
+    [
+     "storage_deposit_limit",
+     "Option<Compact<u128>>"
+    ],
+    [
+     "determinism",
+     "PalletContractsWasmDeterminism"
+    ]
+   ],
+   "doc_call": "contracts.uploadCode",
+   "live_args": null,
+   "live_call": null,
+   "page": "contracts",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 10)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "maybe_max_voters",
+     "Option<u32>"
+    ],
+    [
+     "maybe_max_targets",
+     "Option<u32>"
+    ]
+   ],
+   "doc_call": "electionProviderMultiPhase.governanceFallback",
+   "live_args": null,
+   "live_call": null,
+   "page": "electionProviderMultiPhase",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/electionProviderMultiPhase.html (interface 1)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "supports",
+     "Vec<(AccountId32,SpNposElectionsSupport)>"
+    ]
+   ],
+   "doc_call": "electionProviderMultiPhase.setEmergencyElectionResult",
+   "live_args": [
+    [
+     "solution",
+     "ReadySolution<AccountId>"
+    ]
+   ],
+   "live_call": "ElectionProviderMultiPhase.set_emergency_election_result",
+   "page": "electionProviderMultiPhase",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/electionProviderMultiPhase.html (interface 2)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "maybe_next_score",
+     "Option<SpNposElectionsElectionScore>"
+    ]
+   ],
+   "doc_call": "electionProviderMultiPhase.setMinimumUntrustedScore",
+   "live_args": [
+    [
+     "maybe_next_score",
+     "Option<ElectionScore>"
+    ]
+   ],
+   "live_call": "ElectionProviderMultiPhase.set_minimum_untrusted_score",
+   "page": "electionProviderMultiPhase",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/electionProviderMultiPhase.html (interface 3)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "raw_solution",
+     "PalletElectionProviderMultiPhaseRawSolution"
+    ]
+   ],
+   "doc_call": "electionProviderMultiPhase.submit",
+   "live_args": null,
+   "live_call": null,
+   "page": "electionProviderMultiPhase",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/electionProviderMultiPhase.html (interface 4)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "raw_solution",
+     "PalletElectionProviderMultiPhaseRawSolution"
+    ],
+    [
+     "witness",
+     "PalletElectionProviderMultiPhaseSolutionOrSnapshotSize"
+    ]
+   ],
+   "doc_call": "electionProviderMultiPhase.submitUnsigned",
+   "live_args": [
+    [
+     "solution",
+     "RawSolution<CompactOf>"
+    ],
+    [
+     "witness",
+     "SolutionOrSnapshotSize"
+    ]
+   ],
+   "live_call": "ElectionProviderMultiPhase.submit_unsigned",
+   "page": "electionProviderMultiPhase",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/electionProviderMultiPhase.html (interface 5)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "delay",
+     "u32"
+    ],
+    [
+     "best_finalized_block_number",
+     "u32"
+    ]
+   ],
+   "doc_call": "grandpa.noteStalled",
+   "live_args": [
+    [
+     "delay",
+     "BlockNumber"
+    ],
+    [
+     "best_finalized_block_number",
+     "BlockNumber"
+    ]
+   ],
+   "live_call": "Grandpa.note_stalled",
+   "page": "grandpa",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/grandpa.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "equivocation_proof",
+     "SpConsensusGrandpaEquivocationProof"
+    ],
+    [
+     "key_owner_proof",
+     "SpSessionMembershipProof"
+    ]
+   ],
+   "doc_call": "grandpa.reportEquivocation",
+   "live_args": [
+    [
+     "equivocation_proof",
+     "EquivocationProof<Hash, BlockNumber>"
+    ],
+    [
+     "key_owner_proof",
+     "KeyOwnerProof"
+    ]
+   ],
+   "live_call": "Grandpa.report_equivocation",
+   "page": "grandpa",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/grandpa.html (interface 2)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "equivocation_proof",
+     "SpConsensusGrandpaEquivocationProof"
+    ],
+    [
+     "key_owner_proof",
+     "SpSessionMembershipProof"
+    ]
+   ],
+   "doc_call": "grandpa.reportEquivocationUnsigned",
+   "live_args": [
+    [
+     "equivocation_proof",
+     "EquivocationProof<Hash, BlockNumber>"
+    ],
+    [
+     "key_owner_proof",
+     "KeyOwnerProof"
+    ]
+   ],
+   "live_call": "Grandpa.report_equivocation_unsigned",
+   "page": "grandpa",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/grandpa.html (interface 3)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "username",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "identity.acceptUsername",
+   "live_args": null,
+   "live_call": null,
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "account",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "identity.addRegistrar",
+   "live_args": [
+    [
+     "account",
+     "AccountId"
+    ]
+   ],
+   "live_call": "Identity.add_registrar",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 2)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "sub",
+     "MultiAddress"
+    ],
+    [
+     "data",
+     "Data"
+    ]
+   ],
+   "doc_call": "identity.addSub",
+   "live_args": [
+    [
+     "sub",
+     "LookupSource"
+    ],
+    [
+     "data",
+     "Data"
+    ]
+   ],
+   "live_call": "Identity.add_sub",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 3)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "authority",
+     "MultiAddress"
+    ],
+    [
+     "suffix",
+     "Bytes"
+    ],
+    [
+     "allocation",
+     "u32"
+    ]
+   ],
+   "doc_call": "identity.addUsernameAuthority",
+   "live_args": null,
+   "live_call": null,
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 4)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "reg_index",
+     "u32"
+    ]
+   ],
+   "doc_call": "identity.cancelRequest",
+   "live_args": [
+    [
+     "reg_index",
+     "RegistrarIndex"
+    ]
+   ],
+   "live_call": "Identity.cancel_request",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 5)"
+  },
+  {
+   "class": "match",
+   "doc_args": [],
+   "doc_call": "identity.clearIdentity",
+   "live_args": [],
+   "live_call": "Identity.clear_identity",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 6)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "target",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "identity.killIdentity",
+   "live_args": [
+    [
+     "target",
+     "LookupSource"
+    ]
+   ],
+   "live_call": "Identity.kill_identity",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 7)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "username",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "identity.killUsername",
+   "live_args": null,
+   "live_call": null,
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 8)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "reg_index",
+     "Compact<u32>"
+    ],
+    [
+     "target",
+     "MultiAddress"
+    ],
+    [
+     "judgement",
+     "PalletIdentityJudgement"
+    ],
+    [
+     "identity",
+     "H256"
+    ]
+   ],
+   "doc_call": "identity.provideJudgement",
+   "live_args": [
+    [
+     "reg_index",
+     "Compact<RegistrarIndex>"
+    ],
+    [
+     "target",
+     "LookupSource"
+    ],
+    [
+     "judgement",
+     "Judgement<BalanceOf>"
+    ]
+   ],
+   "live_call": "Identity.provide_judgement",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 9)"
+  },
+  {
+   "class": "match",
+   "doc_args": [],
+   "doc_call": "identity.quitSub",
+   "live_args": [],
+   "live_call": "Identity.quit_sub",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 10)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "username",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "identity.removeExpiredApproval",
+   "live_args": null,
+   "live_call": null,
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 11)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "sub",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "identity.removeSub",
+   "live_args": [
+    [
+     "sub",
+     "LookupSource"
+    ]
+   ],
+   "live_call": "Identity.remove_sub",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 12)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "username",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "identity.removeUsername",
+   "live_args": null,
+   "live_call": null,
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 13)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "suffix",
+     "Bytes"
+    ],
+    [
+     "authority",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "identity.removeUsernameAuthority",
+   "live_args": null,
+   "live_call": null,
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 14)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "sub",
+     "MultiAddress"
+    ],
+    [
+     "data",
+     "Data"
+    ]
+   ],
+   "doc_call": "identity.renameSub",
+   "live_args": [
+    [
+     "sub",
+     "LookupSource"
+    ],
+    [
+     "data",
+     "Data"
+    ]
+   ],
+   "live_call": "Identity.rename_sub",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 15)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "reg_index",
+     "Compact<u32>"
+    ],
+    [
+     "max_fee",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "identity.requestJudgement",
+   "live_args": [
+    [
+     "reg_index",
+     "Compact<RegistrarIndex>"
+    ],
+    [
+     "max_fee",
+     "Compact<BalanceOf>"
+    ]
+   ],
+   "live_call": "Identity.request_judgement",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 16)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "index",
+     "Compact<u32>"
+    ],
+    [
+     "new",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "identity.setAccountId",
+   "live_args": [
+    [
+     "index",
+     "Compact<RegistrarIndex>"
+    ],
+    [
+     "new",
+     "AccountId"
+    ]
+   ],
+   "live_call": "Identity.set_account_id",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 17)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "index",
+     "Compact<u32>"
+    ],
+    [
+     "fee",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "identity.setFee",
+   "live_args": [
+    [
+     "index",
+     "Compact<RegistrarIndex>"
+    ],
+    [
+     "fee",
+     "Compact<BalanceOf>"
+    ]
+   ],
+   "live_call": "Identity.set_fee",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 18)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "index",
+     "Compact<u32>"
+    ],
+    [
+     "fields",
+     "u64"
+    ]
+   ],
+   "doc_call": "identity.setFields",
+   "live_args": [
+    [
+     "index",
+     "Compact<RegistrarIndex>"
+    ],
+    [
+     "fields",
+     "IdentityFields"
+    ]
+   ],
+   "live_call": "Identity.set_fields",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 19)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "info",
+     "PalletIdentityLegacyIdentityInfo"
+    ]
+   ],
+   "doc_call": "identity.setIdentity",
+   "live_args": [
+    [
+     "info",
+     "IdentityInfo"
+    ]
+   ],
+   "live_call": "Identity.set_identity",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 20)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "username",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "identity.setPrimaryUsername",
+   "live_args": null,
+   "live_call": null,
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 21)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "subs",
+     "Vec<(AccountId32,Data)>"
+    ]
+   ],
+   "doc_call": "identity.setSubs",
+   "live_args": [
+    [
+     "subs",
+     "Vec<(AccountId, Data)>"
+    ]
+   ],
+   "live_call": "Identity.set_subs",
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 22)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "who",
+     "MultiAddress"
+    ],
+    [
+     "username",
+     "Bytes"
+    ],
+    [
+     "signature",
+     "Option<SpRuntimeMultiSignature>"
+    ],
+    [
+     "use_allocation",
+     "bool"
+    ]
+   ],
+   "doc_call": "identity.setUsernameFor",
+   "live_args": null,
+   "live_call": null,
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 23)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "username",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "identity.unbindUsername",
+   "live_args": null,
+   "live_call": null,
+   "page": "identity",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 24)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "heartbeat",
+     "PalletImOnlineHeartbeat"
+    ],
+    [
+     "signature",
+     "PalletImOnlineSr25519AppSr25519Signature"
+    ]
+   ],
+   "doc_call": "imOnline.heartbeat",
+   "live_args": [
+    [
+     "heartbeat",
+     "Heartbeat<BlockNumber>"
+    ],
+    [
+     "_signature",
+     "<AuthorityId as RuntimeAppPublic>::Signature"
+    ]
+   ],
+   "live_call": "ImOnline.heartbeat",
+   "page": "imOnline",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/imOnline.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "index",
+     "u32"
+    ]
+   ],
+   "doc_call": "indices.claim",
+   "live_args": [
+    [
+     "index",
+     "AccountIndex"
+    ]
+   ],
+   "live_call": "Indices.claim",
+   "page": "indices",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/indices.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "new",
+     "MultiAddress"
+    ],
+    [
+     "index",
+     "u32"
+    ],
+    [
+     "freeze",
+     "bool"
+    ]
+   ],
+   "doc_call": "indices.forceTransfer",
+   "live_args": [
+    [
+     "new",
+     "AccountId"
+    ],
+    [
+     "index",
+     "AccountIndex"
+    ],
+    [
+     "freeze",
+     "bool"
+    ]
+   ],
+   "live_call": "Indices.force_transfer",
+   "page": "indices",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/indices.html (interface 2)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "index",
+     "u32"
+    ]
+   ],
+   "doc_call": "indices.free",
+   "live_args": [
+    [
+     "index",
+     "AccountIndex"
+    ]
+   ],
+   "live_call": "Indices.free",
+   "page": "indices",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/indices.html (interface 3)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "index",
+     "u32"
+    ]
+   ],
+   "doc_call": "indices.freeze",
+   "live_args": [
+    [
+     "index",
+     "AccountIndex"
+    ]
+   ],
+   "live_call": "Indices.freeze",
+   "page": "indices",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/indices.html (interface 4)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "index",
+     "u32"
+    ]
+   ],
+   "doc_call": "indices.pokeDeposit",
+   "live_args": null,
+   "live_call": null,
+   "page": "indices",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/indices.html (interface 5)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "new",
+     "MultiAddress"
+    ],
+    [
+     "index",
+     "u32"
+    ]
+   ],
+   "doc_call": "indices.transfer",
+   "live_args": [
+    [
+     "new",
+     "AccountId"
+    ],
+    [
+     "index",
+     "AccountIndex"
+    ]
+   ],
+   "live_call": "Indices.transfer",
+   "page": "indices",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/indices.html (interface 6)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "doc_call": "lottery.buyTicket",
+   "live_args": [
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "live_call": "Lottery.buy_ticket",
+   "page": "lottery",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/lottery.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "calls",
+     "Vec<Call>"
+    ]
+   ],
+   "doc_call": "lottery.setCalls",
+   "live_args": [
+    [
+     "calls",
+     "Vec<Call>"
+    ]
+   ],
+   "live_call": "Lottery.set_calls",
+   "page": "lottery",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/lottery.html (interface 2)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "price",
+     "u128"
+    ],
+    [
+     "length",
+     "u32"
+    ],
+    [
+     "delay",
+     "u32"
+    ],
+    [
+     "repeat",
+     "bool"
+    ]
+   ],
+   "doc_call": "lottery.startLottery",
+   "live_args": [
+    [
+     "price",
+     "BalanceOf"
+    ],
+    [
+     "length",
+     "BlockNumber"
+    ],
+    [
+     "delay",
+     "BlockNumber"
+    ],
+    [
+     "repeat",
+     "bool"
+    ]
+   ],
+   "live_call": "Lottery.start_lottery",
+   "page": "lottery",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/lottery.html (interface 3)"
+  },
+  {
+   "class": "match",
+   "doc_args": [],
+   "doc_call": "lottery.stopRepeat",
+   "live_args": [],
+   "live_call": "Lottery.stop_repeat",
+   "page": "lottery",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/lottery.html (interface 4)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "threshold",
+     "u16"
+    ],
+    [
+     "other_signatories",
+     "Vec<AccountId32>"
+    ],
+    [
+     "maybe_timepoint",
+     "Option<PalletMultisigTimepoint>"
+    ],
+    [
+     "call_hash",
+     "[u8;32]"
+    ],
+    [
+     "max_weight",
+     "SpWeightsWeightV2Weight"
+    ]
+   ],
+   "doc_call": "multisig.approveAsMulti",
+   "live_args": [
+    [
+     "threshold",
+     "u16"
+    ],
+    [
+     "other_signatories",
+     "Vec<AccountId>"
+    ],
+    [
+     "maybe_timepoint",
+     "Option<Timepoint<BlockNumber>>"
+    ],
+    [
+     "call_hash",
+     "[u8; 32]"
+    ],
+    [
+     "max_weight",
+     "Weight"
+    ]
+   ],
+   "live_call": "Multisig.approve_as_multi",
+   "page": "multisig",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/multisig.html (interface 1)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "threshold",
+     "u16"
+    ],
+    [
+     "other_signatories",
+     "Vec<AccountId32>"
+    ],
+    [
+     "maybe_timepoint",
+     "Option<PalletMultisigTimepoint>"
+    ],
+    [
+     "call",
+     "Call"
+    ],
+    [
+     "max_weight",
+     "SpWeightsWeightV2Weight"
+    ]
+   ],
+   "doc_call": "multisig.asMulti",
+   "live_args": [
+    [
+     "threshold",
+     "u16"
+    ],
+    [
+     "other_signatories",
+     "Vec<AccountId>"
+    ],
+    [
+     "maybe_timepoint",
+     "Option<Timepoint<BlockNumber>>"
+    ],
+    [
+     "call",
+     "OpaqueCall"
+    ],
+    [
+     "store_call",
+     "bool"
+    ],
+    [
+     "max_weight",
+     "Weight"
+    ]
+   ],
+   "live_call": "Multisig.as_multi",
+   "page": "multisig",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/multisig.html (interface 2)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "other_signatories",
+     "Vec<AccountId32>"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "doc_call": "multisig.asMultiThreshold1",
+   "live_args": [
+    [
+     "other_signatories",
+     "Vec<AccountId>"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "live_call": "Multisig.as_multi_threshold_1",
+   "page": "multisig",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/multisig.html (interface 3)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "threshold",
+     "u16"
+    ],
+    [
+     "other_signatories",
+     "Vec<AccountId32>"
+    ],
+    [
+     "timepoint",
+     "PalletMultisigTimepoint"
+    ],
+    [
+     "call_hash",
+     "[u8;32]"
+    ]
+   ],
+   "doc_call": "multisig.cancelAsMulti",
+   "live_args": [
+    [
+     "threshold",
+     "u16"
+    ],
+    [
+     "other_signatories",
+     "Vec<AccountId>"
+    ],
+    [
+     "timepoint",
+     "Timepoint<BlockNumber>"
+    ],
+    [
+     "call_hash",
+     "[u8; 32]"
+    ]
+   ],
+   "live_call": "Multisig.cancel_as_multi",
+   "page": "multisig",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/multisig.html (interface 4)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "threshold",
+     "u16"
+    ],
+    [
+     "other_signatories",
+     "Vec<AccountId32>"
+    ],
+    [
+     "call_hash",
+     "[u8;32]"
+    ]
+   ],
+   "doc_call": "multisig.pokeDeposit",
+   "live_args": null,
+   "live_call": null,
+   "page": "multisig",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/multisig.html (interface 5)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "delegate",
+     "MultiAddress"
+    ],
+    [
+     "proxy_type",
+     "KitchensinkRuntimeProxyType"
+    ],
+    [
+     "delay",
+     "u32"
+    ]
+   ],
+   "doc_call": "proxy.addProxy",
+   "live_args": [
+    [
+     "delegate",
+     "AccountId"
+    ],
+    [
+     "proxy_type",
+     "ProxyType"
+    ],
+    [
+     "delay",
+     "BlockNumber"
+    ]
+   ],
+   "live_call": "Proxy.add_proxy",
+   "page": "proxy",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/proxy.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "real",
+     "MultiAddress"
+    ],
+    [
+     "call_hash",
+     "H256"
+    ]
+   ],
+   "doc_call": "proxy.announce",
+   "live_args": [
+    [
+     "real",
+     "AccountId"
+    ],
+    [
+     "call_hash",
+     "CallHashOf"
+    ]
+   ],
+   "live_call": "Proxy.announce",
+   "page": "proxy",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/proxy.html (interface 2)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "proxy_type",
+     "KitchensinkRuntimeProxyType"
+    ],
+    [
+     "delay",
+     "u32"
+    ],
+    [
+     "index",
+     "u16"
+    ]
+   ],
+   "doc_call": "proxy.createPure",
+   "live_args": null,
+   "live_call": null,
+   "page": "proxy",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/proxy.html (interface 3)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "spawner",
+     "MultiAddress"
+    ],
+    [
+     "proxy_type",
+     "KitchensinkRuntimeProxyType"
+    ],
+    [
+     "index",
+     "u16"
+    ],
+    [
+     "height",
+     "Compact<u32>"
+    ],
+    [
+     "ext_index",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "proxy.killPure",
+   "live_args": null,
+   "live_call": null,
+   "page": "proxy",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/proxy.html (interface 4)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [],
+   "doc_call": "proxy.pokeDeposit",
+   "live_args": null,
+   "live_call": null,
+   "page": "proxy",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/proxy.html (interface 5)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "real",
+     "MultiAddress"
+    ],
+    [
+     "force_proxy_type",
+     "Option<KitchensinkRuntimeProxyType>"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "doc_call": "proxy.proxy",
+   "live_args": [
+    [
+     "real",
+     "AccountId"
+    ],
+    [
+     "force_proxy_type",
+     "Option<ProxyType>"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "live_call": "Proxy.proxy",
+   "page": "proxy",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/proxy.html (interface 6)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "delegate",
+     "MultiAddress"
+    ],
+    [
+     "real",
+     "MultiAddress"
+    ],
+    [
+     "force_proxy_type",
+     "Option<KitchensinkRuntimeProxyType>"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "doc_call": "proxy.proxyAnnounced",
+   "live_args": [
+    [
+     "delegate",
+     "AccountId"
+    ],
+    [
+     "real",
+     "AccountId"
+    ],
+    [
+     "force_proxy_type",
+     "Option<ProxyType>"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "live_call": "Proxy.proxy_announced",
+   "page": "proxy",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/proxy.html (interface 7)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "delegate",
+     "MultiAddress"
+    ],
+    [
+     "call_hash",
+     "H256"
+    ]
+   ],
+   "doc_call": "proxy.rejectAnnouncement",
+   "live_args": [
+    [
+     "delegate",
+     "AccountId"
+    ],
+    [
+     "call_hash",
+     "CallHashOf"
+    ]
+   ],
+   "live_call": "Proxy.reject_announcement",
+   "page": "proxy",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/proxy.html (interface 8)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "real",
+     "MultiAddress"
+    ],
+    [
+     "call_hash",
+     "H256"
+    ]
+   ],
+   "doc_call": "proxy.removeAnnouncement",
+   "live_args": [
+    [
+     "real",
+     "AccountId"
+    ],
+    [
+     "call_hash",
+     "CallHashOf"
+    ]
+   ],
+   "live_call": "Proxy.remove_announcement",
+   "page": "proxy",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/proxy.html (interface 9)"
+  },
+  {
+   "class": "match",
+   "doc_args": [],
+   "doc_call": "proxy.removeProxies",
+   "live_args": [],
+   "live_call": "Proxy.remove_proxies",
+   "page": "proxy",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/proxy.html (interface 10)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "delegate",
+     "MultiAddress"
+    ],
+    [
+     "proxy_type",
+     "KitchensinkRuntimeProxyType"
+    ],
+    [
+     "delay",
+     "u32"
+    ]
+   ],
+   "doc_call": "proxy.removeProxy",
+   "live_args": [
+    [
+     "delegate",
+     "AccountId"
+    ],
+    [
+     "proxy_type",
+     "ProxyType"
+    ],
+    [
+     "delay",
+     "BlockNumber"
+    ]
+   ],
+   "live_call": "Proxy.remove_proxy",
+   "page": "proxy",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/proxy.html (interface 11)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "when",
+     "u32"
+    ],
+    [
+     "index",
+     "u32"
+    ]
+   ],
+   "doc_call": "scheduler.cancel",
+   "live_args": [
+    [
+     "when",
+     "BlockNumber"
+    ],
+    [
+     "index",
+     "u32"
+    ]
+   ],
+   "live_call": "Scheduler.cancel",
+   "page": "scheduler",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/scheduler.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "[u8;32]"
+    ]
+   ],
+   "doc_call": "scheduler.cancelNamed",
+   "live_args": [
+    [
+     "id",
+     "Bytes"
+    ]
+   ],
+   "live_call": "Scheduler.cancel_named",
+   "page": "scheduler",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/scheduler.html (interface 2)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "task",
+     "(u32,u32)"
+    ]
+   ],
+   "doc_call": "scheduler.cancelRetry",
+   "live_args": null,
+   "live_call": null,
+   "page": "scheduler",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/scheduler.html (interface 3)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "id",
+     "[u8;32]"
+    ]
+   ],
+   "doc_call": "scheduler.cancelRetryNamed",
+   "live_args": null,
+   "live_call": null,
+   "page": "scheduler",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/scheduler.html (interface 4)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "when",
+     "u32"
+    ],
+    [
+     "maybe_periodic",
+     "Option<(u32,u32)>"
+    ],
+    [
+     "priority",
+     "u8"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "doc_call": "scheduler.schedule",
+   "live_args": [
+    [
+     "when",
+     "BlockNumber"
+    ],
+    [
+     "maybe_periodic",
+     "Option<schedule::Period<BlockNumber>>"
+    ],
+    [
+     "priority",
+     "schedule::Priority"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "live_call": "Scheduler.schedule",
+   "page": "scheduler",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/scheduler.html (interface 5)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "after",
+     "u32"
+    ],
+    [
+     "maybe_periodic",
+     "Option<(u32,u32)>"
+    ],
+    [
+     "priority",
+     "u8"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "doc_call": "scheduler.scheduleAfter",
+   "live_args": [
+    [
+     "after",
+     "BlockNumber"
+    ],
+    [
+     "maybe_periodic",
+     "Option<schedule::Period<BlockNumber>>"
+    ],
+    [
+     "priority",
+     "schedule::Priority"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "live_call": "Scheduler.schedule_after",
+   "page": "scheduler",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/scheduler.html (interface 6)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "[u8;32]"
+    ],
+    [
+     "when",
+     "u32"
+    ],
+    [
+     "maybe_periodic",
+     "Option<(u32,u32)>"
+    ],
+    [
+     "priority",
+     "u8"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "doc_call": "scheduler.scheduleNamed",
+   "live_args": [
+    [
+     "id",
+     "Bytes"
+    ],
+    [
+     "when",
+     "BlockNumber"
+    ],
+    [
+     "maybe_periodic",
+     "Option<schedule::Period<BlockNumber>>"
+    ],
+    [
+     "priority",
+     "schedule::Priority"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "live_call": "Scheduler.schedule_named",
+   "page": "scheduler",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/scheduler.html (interface 7)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "id",
+     "[u8;32]"
+    ],
+    [
+     "after",
+     "u32"
+    ],
+    [
+     "maybe_periodic",
+     "Option<(u32,u32)>"
+    ],
+    [
+     "priority",
+     "u8"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "doc_call": "scheduler.scheduleNamedAfter",
+   "live_args": [
+    [
+     "id",
+     "Bytes"
+    ],
+    [
+     "after",
+     "BlockNumber"
+    ],
+    [
+     "maybe_periodic",
+     "Option<schedule::Period<BlockNumber>>"
+    ],
+    [
+     "priority",
+     "schedule::Priority"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "live_call": "Scheduler.schedule_named_after",
+   "page": "scheduler",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/scheduler.html (interface 8)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "task",
+     "(u32,u32)"
+    ],
+    [
+     "retries",
+     "u8"
+    ],
+    [
+     "period",
+     "u32"
+    ]
+   ],
+   "doc_call": "scheduler.setRetry",
+   "live_args": null,
+   "live_call": null,
+   "page": "scheduler",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/scheduler.html (interface 9)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "id",
+     "[u8;32]"
+    ],
+    [
+     "retries",
+     "u8"
+    ],
+    [
+     "period",
+     "u32"
+    ]
+   ],
+   "doc_call": "scheduler.setRetryNamed",
+   "live_args": null,
+   "live_call": null,
+   "page": "scheduler",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/scheduler.html (interface 10)"
+  },
+  {
+   "class": "match",
+   "doc_args": [],
+   "doc_call": "session.purgeKeys",
+   "live_args": [],
+   "live_call": "Session.purge_keys",
+   "page": "session",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/session.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "keys",
+     "KitchensinkRuntimeSessionKeys"
+    ],
+    [
+     "proof",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "session.setKeys",
+   "live_args": [
+    [
+     "keys",
+     "Keys"
+    ],
+    [
+     "proof",
+     "Bytes"
+    ]
+   ],
+   "live_call": "Session.set_keys",
+   "page": "session",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/session.html (interface 2)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "value",
+     "Compact<u128>"
+    ],
+    [
+     "payee",
+     "PalletStakingRewardDestination"
+    ]
+   ],
+   "doc_call": "staking.bond",
+   "live_args": [
+    [
+     "controller",
+     "LookupSource"
+    ],
+    [
+     "value",
+     "Compact<BalanceOf>"
+    ],
+    [
+     "payee",
+     "RewardDestination<AccountId>"
+    ]
+   ],
+   "live_call": "Staking.bond",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "max_additional",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "staking.bondExtra",
+   "live_args": [
+    [
+     "max_additional",
+     "Compact<BalanceOf>"
+    ]
+   ],
+   "live_call": "Staking.bond_extra",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 2)"
+  },
+  {
+   "class": "match",
+   "doc_args": [],
+   "doc_call": "staking.chill",
+   "live_args": [],
+   "live_call": "Staking.chill",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 3)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "stash",
+     "AccountId32"
+    ]
+   ],
+   "doc_call": "staking.chillOther",
+   "live_args": [
+    [
+     "controller",
+     "AccountId"
+    ]
+   ],
+   "live_call": "Staking.chill_other",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 4)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "controllers",
+     "Vec<AccountId32>"
+    ]
+   ],
+   "doc_call": "staking.deprecateControllerBatch",
+   "live_args": null,
+   "live_call": null,
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 5)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "validator_stash",
+     "AccountId32"
+    ]
+   ],
+   "doc_call": "staking.forceApplyMinCommission",
+   "live_args": null,
+   "live_call": null,
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 6)"
+  },
+  {
+   "class": "match",
+   "doc_args": [],
+   "doc_call": "staking.forceNewEra",
+   "live_args": [],
+   "live_call": "Staking.force_new_era",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 7)"
+  },
+  {
+   "class": "match",
+   "doc_args": [],
+   "doc_call": "staking.forceNewEraAlways",
+   "live_args": [],
+   "live_call": "Staking.force_new_era_always",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 8)"
+  },
+  {
+   "class": "match",
+   "doc_args": [],
+   "doc_call": "staking.forceNoEras",
+   "live_args": [],
+   "live_call": "Staking.force_no_eras",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 9)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "stash",
+     "AccountId32"
+    ],
+    [
+     "num_slashing_spans",
+     "u32"
+    ]
+   ],
+   "doc_call": "staking.forceUnstake",
+   "live_args": [
+    [
+     "stash",
+     "AccountId"
+    ],
+    [
+     "num_slashing_spans",
+     "u32"
+    ]
+   ],
+   "live_call": "Staking.force_unstake",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 10)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "additional",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "staking.increaseValidatorCount",
+   "live_args": [
+    [
+     "additional",
+     "Compact<u32>"
+    ]
+   ],
+   "live_call": "Staking.increase_validator_count",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 11)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "who",
+     "Vec<MultiAddress>"
+    ]
+   ],
+   "doc_call": "staking.kick",
+   "live_args": [
+    [
+     "who",
+     "Vec<<Lookup as StaticLookup>::Source>"
+    ]
+   ],
+   "live_call": "Staking.kick",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 12)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "validator_stash",
+     "AccountId32"
+    ],
+    [
+     "era",
+     "u32"
+    ],
+    [
+     "slash_fraction",
+     "Perbill"
+    ]
+   ],
+   "doc_call": "staking.manualSlash",
+   "live_args": null,
+   "live_call": null,
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 13)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "stash",
+     "AccountId32"
+    ]
+   ],
+   "doc_call": "staking.migrateCurrency",
+   "live_args": null,
+   "live_call": null,
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 14)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "targets",
+     "Vec<MultiAddress>"
+    ]
+   ],
+   "doc_call": "staking.nominate",
+   "live_args": [
+    [
+     "targets",
+     "Vec<<Lookup as StaticLookup>::Source>"
+    ]
+   ],
+   "live_call": "Staking.nominate",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 15)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "validator_stash",
+     "AccountId32"
+    ],
+    [
+     "era",
+     "u32"
+    ]
+   ],
+   "doc_call": "staking.payoutStakers",
+   "live_args": [
+    [
+     "validator_stash",
+     "AccountId"
+    ],
+    [
+     "era",
+     "EraIndex"
+    ]
+   ],
+   "live_call": "Staking.payout_stakers",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 16)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "validator_stash",
+     "AccountId32"
+    ],
+    [
+     "era",
+     "u32"
+    ],
+    [
+     "page",
+     "u32"
+    ]
+   ],
+   "doc_call": "staking.payoutStakersByPage",
+   "live_args": null,
+   "live_call": null,
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 17)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "stash",
+     "AccountId32"
+    ],
+    [
+     "num_slashing_spans",
+     "u32"
+    ]
+   ],
+   "doc_call": "staking.reapStash",
+   "live_args": [
+    [
+     "stash",
+     "AccountId"
+    ],
+    [
+     "num_slashing_spans",
+     "u32"
+    ]
+   ],
+   "live_call": "Staking.reap_stash",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 18)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "value",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "staking.rebond",
+   "live_args": [
+    [
+     "value",
+     "Compact<BalanceOf>"
+    ]
+   ],
+   "live_call": "Staking.rebond",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 19)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "stash",
+     "AccountId32"
+    ],
+    [
+     "maybe_controller",
+     "Option<AccountId32>"
+    ],
+    [
+     "maybe_total",
+     "Option<u128>"
+    ],
+    [
+     "maybe_unlocking",
+     "Option<Vec<PalletStakingUnlockChunk>>"
+    ]
+   ],
+   "doc_call": "staking.restoreLedger",
+   "live_args": null,
+   "live_call": null,
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 20)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "factor",
+     "Percent"
+    ]
+   ],
+   "doc_call": "staking.scaleValidatorCount",
+   "live_args": [
+    [
+     "factor",
+     "Percent"
+    ]
+   ],
+   "live_call": "Staking.scale_validator_count",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 21)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [],
+   "doc_call": "staking.setController",
+   "live_args": [
+    [
+     "controller",
+     "LookupSource"
+    ]
+   ],
+   "live_call": "Staking.set_controller",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 22)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "invulnerables",
+     "Vec<AccountId32>"
+    ]
+   ],
+   "doc_call": "staking.setInvulnerables",
+   "live_args": [
+    [
+     "invulnerables",
+     "Vec<AccountId>"
+    ]
+   ],
+   "live_call": "Staking.set_invulnerables",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 23)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "new",
+     "Perbill"
+    ]
+   ],
+   "doc_call": "staking.setMinCommission",
+   "live_args": null,
+   "live_call": null,
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 24)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "payee",
+     "PalletStakingRewardDestination"
+    ]
+   ],
+   "doc_call": "staking.setPayee",
+   "live_args": [
+    [
+     "payee",
+     "RewardDestination<AccountId>"
+    ]
+   ],
+   "live_call": "Staking.set_payee",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 25)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "min_nominator_bond",
+     "PalletStakingPalletConfigOpU128"
+    ],
+    [
+     "min_validator_bond",
+     "PalletStakingPalletConfigOpU128"
+    ],
+    [
+     "max_nominator_count",
+     "PalletStakingPalletConfigOpU32"
+    ],
+    [
+     "max_validator_count",
+     "PalletStakingPalletConfigOpU32"
+    ],
+    [
+     "chill_threshold",
+     "PalletStakingPalletConfigOpPercent"
+    ],
+    [
+     "min_commission",
+     "PalletStakingPalletConfigOpPerbill"
+    ],
+    [
+     "max_staked_rewards",
+     "PalletStakingPalletConfigOpPercent"
+    ]
+   ],
+   "doc_call": "staking.setStakingConfigs",
+   "live_args": null,
+   "live_call": null,
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 26)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "new",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "staking.setValidatorCount",
+   "live_args": [
+    [
+     "new",
+     "Compact<u32>"
+    ]
+   ],
+   "live_call": "Staking.set_validator_count",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 27)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "value",
+     "Compact<u128>"
+    ]
+   ],
+   "doc_call": "staking.unbond",
+   "live_args": [
+    [
+     "value",
+     "Compact<BalanceOf>"
+    ]
+   ],
+   "live_call": "Staking.unbond",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 28)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "controller",
+     "AccountId32"
+    ]
+   ],
+   "doc_call": "staking.updatePayee",
+   "live_args": null,
+   "live_call": null,
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 29)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "prefs",
+     "PalletStakingValidatorPrefs"
+    ]
+   ],
+   "doc_call": "staking.validate",
+   "live_args": [
+    [
+     "prefs",
+     "ValidatorPrefs"
+    ]
+   ],
+   "live_call": "Staking.validate",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 30)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "num_slashing_spans",
+     "u32"
+    ]
+   ],
+   "doc_call": "staking.withdrawUnbonded",
+   "live_args": [
+    [
+     "num_slashing_spans",
+     "u32"
+    ]
+   ],
+   "live_call": "Staking.withdraw_unbonded",
+   "page": "staking",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 31)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "code",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "system.applyAuthorizedUpgrade",
+   "live_args": null,
+   "live_call": null,
+   "page": "system",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 1)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "code_hash",
+     "H256"
+    ]
+   ],
+   "doc_call": "system.authorizeUpgrade",
+   "live_args": null,
+   "live_call": null,
+   "page": "system",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 2)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "code_hash",
+     "H256"
+    ]
+   ],
+   "doc_call": "system.authorizeUpgradeWithoutChecks",
+   "live_args": null,
+   "live_call": null,
+   "page": "system",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 3)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "prefix",
+     "Bytes"
+    ],
+    [
+     "subkeys",
+     "u32"
+    ]
+   ],
+   "doc_call": "system.killPrefix",
+   "live_args": [
+    [
+     "prefix",
+     "Key"
+    ],
+    [
+     "_subkeys",
+     "u32"
+    ]
+   ],
+   "live_call": "System.kill_prefix",
+   "page": "system",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 4)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "keys",
+     "Vec<Bytes>"
+    ]
+   ],
+   "doc_call": "system.killStorage",
+   "live_args": [
+    [
+     "keys",
+     "Vec<Key>"
+    ]
+   ],
+   "live_call": "System.kill_storage",
+   "page": "system",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 5)"
+  },
+  {
+   "class": "arg-mismatch",
+   "doc_args": [
+    [
+     "remark",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "system.remark",
+   "live_args": [
+    [
+     "_remark",
+     "Bytes"
+    ]
+   ],
+   "live_call": "System.remark",
+   "page": "system",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 6)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "remark",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "system.remarkWithEvent",
+   "live_args": [
+    [
+     "remark",
+     "Bytes"
+    ]
+   ],
+   "live_call": "System.remark_with_event",
+   "page": "system",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 7)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "code",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "system.setCode",
+   "live_args": [
+    [
+     "code",
+     "Bytes"
+    ]
+   ],
+   "live_call": "System.set_code",
+   "page": "system",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 8)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "code",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "system.setCodeWithoutChecks",
+   "live_args": [
+    [
+     "code",
+     "Bytes"
+    ]
+   ],
+   "live_call": "System.set_code_without_checks",
+   "page": "system",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 9)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "pages",
+     "u64"
+    ]
+   ],
+   "doc_call": "system.setHeapPages",
+   "live_args": [
+    [
+     "pages",
+     "u64"
+    ]
+   ],
+   "live_call": "System.set_heap_pages",
+   "page": "system",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 10)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "items",
+     "Vec<(Bytes,Bytes)>"
+    ]
+   ],
+   "doc_call": "system.setStorage",
+   "live_args": [
+    [
+     "items",
+     "Vec<KeyValue>"
+    ]
+   ],
+   "live_call": "System.set_storage",
+   "page": "system",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 11)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "now",
+     "Compact<u64>"
+    ]
+   ],
+   "doc_call": "timestamp.set",
+   "live_args": [
+    [
+     "now",
+     "Compact<Moment>"
+    ]
+   ],
+   "live_call": "Timestamp.set",
+   "page": "timestamp",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/timestamp.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "proof",
+     "SpTransactionStorageProofTransactionStorageProof"
+    ]
+   ],
+   "doc_call": "transactionStorage.checkProof",
+   "live_args": [
+    [
+     "proof",
+     "TransactionStorageProof"
+    ]
+   ],
+   "live_call": "TransactionStorage.check_proof",
+   "page": "transactionStorage",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/transactionStorage.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "block",
+     "u32"
+    ],
+    [
+     "index",
+     "u32"
+    ]
+   ],
+   "doc_call": "transactionStorage.renew",
+   "live_args": [
+    [
+     "block",
+     "BlockNumber"
+    ],
+    [
+     "index",
+     "u32"
+    ]
+   ],
+   "live_call": "TransactionStorage.renew",
+   "page": "transactionStorage",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/transactionStorage.html (interface 2)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "data",
+     "Bytes"
+    ]
+   ],
+   "doc_call": "transactionStorage.store",
+   "live_args": [
+    [
+     "data",
+     "Bytes"
+    ]
+   ],
+   "live_call": "TransactionStorage.store",
+   "page": "transactionStorage",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/transactionStorage.html (interface 3)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "index",
+     "u32"
+    ]
+   ],
+   "doc_call": "treasury.checkStatus",
+   "live_args": null,
+   "live_call": null,
+   "page": "treasury",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/treasury.html (interface 1)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "index",
+     "u32"
+    ]
+   ],
+   "doc_call": "treasury.payout",
+   "live_args": null,
+   "live_call": null,
+   "page": "treasury",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/treasury.html (interface 2)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "proposal_id",
+     "Compact<u32>"
+    ]
+   ],
+   "doc_call": "treasury.removeApproval",
+   "live_args": null,
+   "live_call": null,
+   "page": "treasury",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/treasury.html (interface 3)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "asset_kind",
+     "FrameSupportTokensFungibleUnionOfNativeOrWithId"
+    ],
+    [
+     "amount",
+     "Compact<u128>"
+    ],
+    [
+     "beneficiary",
+     "MultiAddress"
+    ],
+    [
+     "valid_from",
+     "Option<u32>"
+    ]
+   ],
+   "doc_call": "treasury.spend",
+   "live_args": null,
+   "live_call": null,
+   "page": "treasury",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/treasury.html (interface 4)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "amount",
+     "Compact<u128>"
+    ],
+    [
+     "beneficiary",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "treasury.spendLocal",
+   "live_args": null,
+   "live_call": null,
+   "page": "treasury",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/treasury.html (interface 5)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "index",
+     "u32"
+    ]
+   ],
+   "doc_call": "treasury.voidSpend",
+   "live_args": null,
+   "live_call": null,
+   "page": "treasury",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/treasury.html (interface 6)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "index",
+     "u16"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "doc_call": "utility.asDerivative",
+   "live_args": [
+    [
+     "index",
+     "u16"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "live_call": "Utility.as_derivative",
+   "page": "utility",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/utility.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "calls",
+     "Vec<Call>"
+    ]
+   ],
+   "doc_call": "utility.batch",
+   "live_args": [
+    [
+     "calls",
+     "Vec<Call>"
+    ]
+   ],
+   "live_call": "Utility.batch",
+   "page": "utility",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/utility.html (interface 2)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "calls",
+     "Vec<Call>"
+    ]
+   ],
+   "doc_call": "utility.batchAll",
+   "live_args": [
+    [
+     "calls",
+     "Vec<Call>"
+    ]
+   ],
+   "live_call": "Utility.batch_all",
+   "page": "utility",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/utility.html (interface 3)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "as_origin",
+     "KitchensinkRuntimeOriginCaller"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "doc_call": "utility.dispatchAs",
+   "live_args": null,
+   "live_call": null,
+   "page": "utility",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/utility.html (interface 4)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "as_origin",
+     "KitchensinkRuntimeOriginCaller"
+    ],
+    [
+     "call",
+     "Call"
+    ]
+   ],
+   "doc_call": "utility.dispatchAsFallible",
+   "live_args": null,
+   "live_call": null,
+   "page": "utility",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/utility.html (interface 5)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "calls",
+     "Vec<Call>"
+    ]
+   ],
+   "doc_call": "utility.forceBatch",
+   "live_args": null,
+   "live_call": null,
+   "page": "utility",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/utility.html (interface 6)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "main",
+     "Call"
+    ],
+    [
+     "fallback",
+     "Call"
+    ]
+   ],
+   "doc_call": "utility.ifElse",
+   "live_args": null,
+   "live_call": null,
+   "page": "utility",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/utility.html (interface 7)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "call",
+     "Call"
+    ],
+    [
+     "weight",
+     "SpWeightsWeightV2Weight"
+    ]
+   ],
+   "doc_call": "utility.withWeight",
+   "live_args": null,
+   "live_call": null,
+   "page": "utility",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/utility.html (interface 8)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "target",
+     "MultiAddress"
+    ],
+    [
+     "schedule_index",
+     "u32"
+    ]
+   ],
+   "doc_call": "vesting.forceRemoveVestingSchedule",
+   "live_args": null,
+   "live_call": null,
+   "page": "vesting",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/vesting.html (interface 1)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "source",
+     "MultiAddress"
+    ],
+    [
+     "target",
+     "MultiAddress"
+    ],
+    [
+     "schedule",
+     "PalletVestingVestingInfo"
+    ]
+   ],
+   "doc_call": "vesting.forceVestedTransfer",
+   "live_args": [
+    [
+     "source",
+     "LookupSource"
+    ],
+    [
+     "target",
+     "LookupSource"
+    ],
+    [
+     "schedule",
+     "VestingInfo<BalanceOf, BlockNumber>"
+    ]
+   ],
+   "live_call": "Vesting.force_vested_transfer",
+   "page": "vesting",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/vesting.html (interface 2)"
+  },
+  {
+   "class": "call-absent",
+   "doc_args": [
+    [
+     "schedule1_index",
+     "u32"
+    ],
+    [
+     "schedule2_index",
+     "u32"
+    ]
+   ],
+   "doc_call": "vesting.mergeSchedules",
+   "live_args": null,
+   "live_call": null,
+   "page": "vesting",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/vesting.html (interface 3)"
+  },
+  {
+   "class": "match",
+   "doc_args": [],
+   "doc_call": "vesting.vest",
+   "live_args": [],
+   "live_call": "Vesting.vest",
+   "page": "vesting",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/vesting.html (interface 4)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "target",
+     "MultiAddress"
+    ]
+   ],
+   "doc_call": "vesting.vestOther",
+   "live_args": [
+    [
+     "target",
+     "LookupSource"
+    ]
+   ],
+   "live_call": "Vesting.vest_other",
+   "page": "vesting",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/vesting.html (interface 5)"
+  },
+  {
+   "class": "match",
+   "doc_args": [
+    [
+     "target",
+     "MultiAddress"
+    ],
+    [
+     "schedule",
+     "PalletVestingVestingInfo"
+    ]
+   ],
+   "doc_call": "vesting.vestedTransfer",
+   "live_args": [
+    [
+     "target",
+     "LookupSource"
+    ],
+    [
+     "schedule",
+     "VestingInfo<BalanceOf, BlockNumber>"
+    ]
+   ],
+   "live_call": "Vesting.vested_transfer",
+   "page": "vesting",
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/vesting.html (interface 6)"
+  }
+ ],
+ "sources": {
+  "assets": {
+   "bytes": 61202,
+   "fetched_at": "2026-10-14T09:20:08+00:00",
+   "sha256": "372e816ef136b96223f6bbba5987eeae856eda26dda52636bb48f482900a7941",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html"
+  },
+  "babe": {
+   "bytes": 10973,
+   "fetched_at": "2026-10-14T09:20:09+00:00",
+   "sha256": "e9bd76dad154d511a6d0448c0b2a85e20e184a547e0d664e65965c27ab028a80",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/babe.html"
+  },
+  "balances": {
+   "bytes": 11395,
+   "fetched_at": "2026-10-14T09:20:09+00:00",
+   "sha256": "54fefbe7d88f720096389a794b444bc653b94f375692705b379df89e4344d223",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/balances.html"
+  },
+  "bounties": {
+   "bytes": 17814,
+   "fetched_at": "2026-10-14T09:20:09+00:00",
+   "sha256": "35549fc6d33db5c2f956d6d4748b7c7c22206e670902788b0ec31d8acf36e069",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html"
+  },
+  "contracts": {
+   "bytes": 23797,
+   "fetched_at": "2026-10-14T09:20:09+00:00",
+   "sha256": "d31926b1ec7b4cb73aaae4a444b4a3148fae7b460674c12ed2651b1dada5096f",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html"
+  },
+  "electionProviderMultiPhase": {
+   "bytes": 13252,
+   "fetched_at": "2026-10-14T09:20:10+00:00",
+   "sha256": "f946c1caf4d6f8d3d18ba15b577fd14e993b4248d28a41b49c6e3693e96ed58f",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/electionProviderMultiPhase.html"
+  },
+  "grandpa": {
+   "bytes": 11898,
+   "fetched_at": "2026-10-14T09:20:10+00:00",
+   "sha256": "f6347843442ec2f9aadb6d69fb6672ead74287e31216662e077dbb0ba3689afe",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/grandpa.html"
+  },
+  "identity": {
+   "bytes": 29616,
+   "fetched_at": "2026-10-14T09:20:11+00:00",
+   "sha256": "e22e54dfee6450e72c2abdfced79610c970e9a559899159d908c377f739e2dd1",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html"
+  },
+  "imOnline": {
+   "bytes": 9472,
+   "fetched_at": "2026-10-14T09:20:11+00:00",
+   "sha256": "3579b9c19bf7da4c5c1b066193b66f5cf6cadde69557cf3ed445edefbefcc8ac",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/imOnline.html"
+  },
+  "index": {
+   "bytes": 10583,
+   "fetched_at": "2026-10-14T09:20:08+00:00",
+   "sha256": "06fd9f77e312278b3c3d8e37c8cc3befba8e18a9bcc727da34514b8b99b98b0a",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/index.html"
+  },
+  "indices": {
+   "bytes": 14581,
+   "fetched_at": "2026-10-14T09:20:11+00:00",
+   "sha256": "71d527fc2f317bd41d44cac2997267f1916e85353adb6ad874af023fcbb677c1",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/indices.html"
+  },
+  "lottery": {
+   "bytes": 12105,
+   "fetched_at": "2026-10-14T09:20:12+00:00",
+   "sha256": "3a8370488333ea3e81bf886e8fb2e070f85932a9fbdabd4bd738320595e2ff88",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/lottery.html"
+  },
+  "multisig": {
+   "bytes": 23603,
+   "fetched_at": "2026-10-14T09:20:12+00:00",
+   "sha256": "62d6465a1d1ba88709d46ed25f42a42fa0054ff353d8c7a45ebbdabf4c52da2f",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/multisig.html"
+  },
+  "proxy": {
+   "bytes": 23926,
+   "fetched_at": "2026-10-14T09:20:12+00:00",
+   "sha256": "253fe6c603e4322788432ef54167d49027d78a8033bf69b50716ee9f8d246d25",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/proxy.html"
+  },
+  "scheduler": {
+   "bytes": 15772,
+   "fetched_at": "2026-10-14T09:20:13+00:00",
+   "sha256": "65dfe574446533b0511391d0d0f918483574c5c79c22e2379f9f5b42c9431316",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/scheduler.html"
+  },
+  "session": {
+   "bytes": 10468,
+   "fetched_at": "2026-10-14T09:20:13+00:00",
+   "sha256": "123a585e787f85595e4e775630535840414df9af38299d58ae3e2f105e7046af",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/session.html"
+  },
+  "staking": {
+   "bytes": 44331,
+   "fetched_at": "2026-10-14T09:20:13+00:00",
+   "sha256": "b37adb13eacc3a73aeb8822b3a900860ca2b538cea66719d3468a723a920b399",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html"
+  },
+  "system": {
+   "bytes": 14366,
+   "fetched_at": "2026-10-14T09:20:14+00:00",
+   "sha256": "ebf19a60651f834eebeb03fde6f818f63a538c6391a22f810813f3db3d84f15b",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html"
+  },
+  "timestamp": {
+   "bytes": 10459,
+   "fetched_at": "2026-10-14T09:20:14+00:00",
+   "sha256": "826533b2d3846c03c92c279260b8dea447f4ec058b7ba22a32a7eb81c507452d",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/timestamp.html"
+  },
+  "transactionStorage": {
+   "bytes": 11388,
+   "fetched_at": "2026-10-14T09:20:14+00:00",
+   "sha256": "bad897e87647b0fcfbc423002d61a44f9e7c48c81c440afbb68e0dd0d8573b66",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/transactionStorage.html"
+  },
+  "treasury": {
+   "bytes": 18000,
+   "fetched_at": "2026-10-14T09:20:15+00:00",
+   "sha256": "03eac9012b856c2d2e4bff30fd3618655dd0ba3499b57f026b4147f0dcb2562d",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/treasury.html"
+  },
+  "utility": {
+   "bytes": 18536,
+   "fetched_at": "2026-10-14T09:20:15+00:00",
+   "sha256": "e811fe74632ef863f9525e4bc23c68f492e188eb311917210bde979ea48c517b",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/utility.html"
+  },
+  "vesting": {
+   "bytes": 16292,
+   "fetched_at": "2026-10-14T09:20:16+00:00",
+   "sha256": "c615e8e2ac3d773895effb597001c92d0db54d11a76beca222964ab7273c536f",
+   "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/vesting.html"
+  }
+ },
+ "undocumented": [
+  "Assets.destroy",
+  "Authorship.set_uncles",
+  "Balances.force_transfer",
+  "Balances.set_balance",
+  "Contracts.claim_surcharge",
+  "Gilt.place_bid",
+  "Gilt.retract_bid",
+  "Gilt.set_target",
+  "Gilt.thaw",
+  "Proxy.anonymous",
+  "Proxy.kill_anonymous",
+  "Staking.cancel_deferred_slash",
+  "Staking.set_history_depth",
+  "Staking.update_staking_limits",
+  "Sudo.set_key",
+  "Sudo.sudo",
+  "Sudo.sudo_as",
+  "Sudo.sudo_unchecked_weight",
+  "System.fill_block",
+  "System.set_changes_trie_config",
+  "Treasury.approve_proposal",
+  "Treasury.propose_spend",
+  "Treasury.reject_proposal"
+ ],
+ "unpaired": {}
+}
