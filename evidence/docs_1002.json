@@ -12,7 +12,7 @@
   "undocumented": 23,
   "undocumented_in_documented_pallets": 14
  },
- "generated_at": "2026-10-14T09:46:54+00:00",
+ "generated_at": "2026-10-14T14:46:31+00:00",
  "interfaces": 196,
  "label": "Portaldot mainnet, spec 1002 (read-only baseline); stored blob fixtures/metadata_1002.scale",
  "layouts": {
@@ -4830,139 +4830,139 @@
  "sources": {
   "assets": {
    "bytes": 61202,
-   "fetched_at": "2026-10-14T09:20:08+00:00",
+   "fetched_at": "2026-10-14T14:46:22+00:00",
    "sha256": "372e816ef136b96223f6bbba5987eeae856eda26dda52636bb48f482900a7941",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/assets.html"
   },
   "babe": {
    "bytes": 10973,
-   "fetched_at": "2026-10-14T09:20:09+00:00",
+   "fetched_at": "2026-10-14T14:46:23+00:00",
    "sha256": "e9bd76dad154d511a6d0448c0b2a85e20e184a547e0d664e65965c27ab028a80",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/babe.html"
   },
   "balances": {
    "bytes": 11395,
-   "fetched_at": "2026-10-14T09:20:09+00:00",
+   "fetched_at": "2026-10-14T14:46:23+00:00",
    "sha256": "54fefbe7d88f720096389a794b444bc653b94f375692705b379df89e4344d223",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/balances.html"
   },
   "bounties": {
    "bytes": 17814,
-   "fetched_at": "2026-10-14T09:20:09+00:00",
+   "fetched_at": "2026-10-14T14:46:24+00:00",
    "sha256": "35549fc6d33db5c2f956d6d4748b7c7c22206e670902788b0ec31d8acf36e069",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html"
   },
   "contracts": {
    "bytes": 23797,
-   "fetched_at": "2026-10-14T09:20:09+00:00",
+   "fetched_at": "2026-10-14T14:46:24+00:00",
    "sha256": "d31926b1ec7b4cb73aaae4a444b4a3148fae7b460674c12ed2651b1dada5096f",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html"
   },
   "electionProviderMultiPhase": {
    "bytes": 13252,
-   "fetched_at": "2026-10-14T09:20:10+00:00",
+   "fetched_at": "2026-10-14T14:46:24+00:00",
    "sha256": "f946c1caf4d6f8d3d18ba15b577fd14e993b4248d28a41b49c6e3693e96ed58f",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/electionProviderMultiPhase.html"
   },
   "grandpa": {
    "bytes": 11898,
-   "fetched_at": "2026-10-14T09:20:10+00:00",
+   "fetched_at": "2026-10-14T14:46:25+00:00",
    "sha256": "f6347843442ec2f9aadb6d69fb6672ead74287e31216662e077dbb0ba3689afe",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/grandpa.html"
   },
   "identity": {
    "bytes": 29616,
-   "fetched_at": "2026-10-14T09:20:11+00:00",
+   "fetched_at": "2026-10-14T14:46:25+00:00",
    "sha256": "e22e54dfee6450e72c2abdfced79610c970e9a559899159d908c377f739e2dd1",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html"
   },
   "imOnline": {
    "bytes": 9472,
-   "fetched_at": "2026-10-14T09:20:11+00:00",
+   "fetched_at": "2026-10-14T14:46:25+00:00",
    "sha256": "3579b9c19bf7da4c5c1b066193b66f5cf6cadde69557cf3ed445edefbefcc8ac",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/imOnline.html"
   },
   "index": {
    "bytes": 10583,
-   "fetched_at": "2026-10-14T09:20:08+00:00",
+   "fetched_at": "2026-10-14T14:46:22+00:00",
    "sha256": "06fd9f77e312278b3c3d8e37c8cc3befba8e18a9bcc727da34514b8b99b98b0a",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/index.html"
   },
   "indices": {
    "bytes": 14581,
-   "fetched_at": "2026-10-14T09:20:11+00:00",
+   "fetched_at": "2026-10-14T14:46:26+00:00",
    "sha256": "71d527fc2f317bd41d44cac2997267f1916e85353adb6ad874af023fcbb677c1",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/indices.html"
   },
   "lottery": {
    "bytes": 12105,
-   "fetched_at": "2026-10-14T09:20:12+00:00",
+   "fetched_at": "2026-10-14T14:46:26+00:00",
    "sha256": "3a8370488333ea3e81bf886e8fb2e070f85932a9fbdabd4bd738320595e2ff88",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/lottery.html"
   },
   "multisig": {
    "bytes": 23603,
-   "fetched_at": "2026-10-14T09:20:12+00:00",
+   "fetched_at": "2026-10-14T14:46:27+00:00",
    "sha256": "62d6465a1d1ba88709d46ed25f42a42fa0054ff353d8c7a45ebbdabf4c52da2f",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/multisig.html"
   },
   "proxy": {
    "bytes": 23926,
-   "fetched_at": "2026-10-14T09:20:12+00:00",
+   "fetched_at": "2026-10-14T14:46:27+00:00",
    "sha256": "253fe6c603e4322788432ef54167d49027d78a8033bf69b50716ee9f8d246d25",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/proxy.html"
   },
   "scheduler": {
    "bytes": 15772,
-   "fetched_at": "2026-10-14T09:20:13+00:00",
+   "fetched_at": "2026-10-14T14:46:28+00:00",
    "sha256": "65dfe574446533b0511391d0d0f918483574c5c79c22e2379f9f5b42c9431316",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/scheduler.html"
   },
   "session": {
    "bytes": 10468,
-   "fetched_at": "2026-10-14T09:20:13+00:00",
+   "fetched_at": "2026-10-14T14:46:28+00:00",
    "sha256": "123a585e787f85595e4e775630535840414df9af38299d58ae3e2f105e7046af",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/session.html"
   },
   "staking": {
    "bytes": 44331,
-   "fetched_at": "2026-10-14T09:20:13+00:00",
+   "fetched_at": "2026-10-14T14:46:28+00:00",
    "sha256": "b37adb13eacc3a73aeb8822b3a900860ca2b538cea66719d3468a723a920b399",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html"
   },
   "system": {
    "bytes": 14366,
-   "fetched_at": "2026-10-14T09:20:14+00:00",
+   "fetched_at": "2026-10-14T14:46:29+00:00",
    "sha256": "ebf19a60651f834eebeb03fde6f818f63a538c6391a22f810813f3db3d84f15b",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html"
   },
   "timestamp": {
    "bytes": 10459,
-   "fetched_at": "2026-10-14T09:20:14+00:00",
+   "fetched_at": "2026-10-14T14:46:29+00:00",
    "sha256": "826533b2d3846c03c92c279260b8dea447f4ec058b7ba22a32a7eb81c507452d",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/timestamp.html"
   },
   "transactionStorage": {
    "bytes": 11388,
-   "fetched_at": "2026-10-14T09:20:14+00:00",
+   "fetched_at": "2026-10-14T14:46:30+00:00",
    "sha256": "bad897e87647b0fcfbc423002d61a44f9e7c48c81c440afbb68e0dd0d8573b66",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/transactionStorage.html"
   },
   "treasury": {
    "bytes": 18000,
-   "fetched_at": "2026-10-14T09:20:15+00:00",
+   "fetched_at": "2026-10-14T14:46:30+00:00",
    "sha256": "03eac9012b856c2d2e4bff30fd3618655dd0ba3499b57f026b4147f0dcb2562d",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/treasury.html"
   },
   "utility": {
    "bytes": 18536,
-   "fetched_at": "2026-10-14T09:20:15+00:00",
+   "fetched_at": "2026-10-14T14:46:30+00:00",
    "sha256": "e811fe74632ef863f9525e4bc23c68f492e188eb311917210bde979ea48c517b",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/utility.html"
   },
   "vesting": {
    "bytes": 16292,
-   "fetched_at": "2026-10-14T09:20:16+00:00",
+   "fetched_at": "2026-10-14T14:46:31+00:00",
    "sha256": "c615e8e2ac3d773895effb597001c92d0db54d11a76beca222964ab7273c536f",
    "url": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/vesting.html"
   }
