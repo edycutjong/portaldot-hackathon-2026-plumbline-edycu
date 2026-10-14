@@ -16,7 +16,8 @@ Three scans over a directory, each finding stamped with one verdict from `plumbl
      (`api`, `this.api`, `this.api!`, `polkadotApi`, `apiPromise`, `apiRef.current`, `(api as ApiPromise)`)
      is read; `receipt.tx.hash.x()` or `apiResponse.tx…` is an UNSCANNED row, never a verdict. Arguments are positional, so only their count
      is compared, and not at all when an argument holds a spread or a `<` (a TypeScript type argument
-     cannot be told from a comparison). Optional chaining (`api.tx?.x?.y()`) is read. `.tx[<expr>]`, a
+     cannot be told from a comparison), nor for one object literal as the only argument (polkadot-api's
+     named arguments). Optional chaining (`api.tx?.x?.y()`) is read. `.tx[<expr>]`, a
      `.tx.<pallet>.<call>` reference that is not called, and a destructured `{ tx }` are UNSCANNED.
      `.vue` / `.svelte` files are listed as UNSCANNED (not parsed).
 
@@ -372,9 +373,27 @@ def _api_like(name: str) -> bool:
     return bool(_API_NAME.fullmatch(name)) or name in ("apiRef",)
 
 
+def _arity_one_object(masked: str, brace: int) -> bool:
+    """True when the `{` at `brace` closes and is followed only by whitespace (or one trailing comma) and `)`."""
+    depth = 0
+    for k in range(brace, len(masked)):
+        if masked[k] in "([{":
+            depth += 1
+        elif masked[k] in ")]}":
+            depth -= 1
+            if depth == 0:
+                tail = masked[k + 1:].lstrip()
+                return tail.startswith(")") or (tail.startswith(",") and tail[1:].lstrip().startswith(")"))
+    return False
+
+
 def _arity(masked: str, open_paren: int) -> int | None:
     """Top-level argument count of the call whose `(` is at `open_paren`; None when it cannot be counted
-    (a spread, a `<` that may open a TypeScript type argument, or no closing parenthesis)."""
+    (a spread, a `<` that may open a TypeScript type argument, no closing parenthesis, or one object literal
+    as the only argument — polkadot-api passes arguments by name, `tx.Balances.transfer_keep_alive({ dest, value })`)."""
+    rest = masked[open_paren + 1:].lstrip()
+    if rest.startswith("{") and _arity_one_object(masked, open_paren + 1 + masked[open_paren + 1:].index("{")):
+        return None
     depth, count, seen = 0, 0, False
     for k in range(open_paren, len(masked)):
         ch = masked[k]

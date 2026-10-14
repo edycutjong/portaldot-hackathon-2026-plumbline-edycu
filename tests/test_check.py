@@ -296,3 +296,11 @@ def test_non_api_receivers_never_block(tmp_path):
     write(tmp_path, "a.ts", "apiResponse.tx.data.map(x => x.id)\ncapital.tx.fund.add(1)\n")
     found = check.check(tmp_path, RT, SURFACE, RENAMES)
     assert {f.status for f in found} == {v.UNSCANNED} and check.exit_code(found) == 0
+
+
+def test_polkadot_api_object_argument_is_not_counted_as_one_positional_argument():
+    # polkadot-api passes arguments by name in one object: arity cannot be compared, so no ARG_DRIFT from it
+    sites = check.js_sites("typedApi.tx.Balances.transfer_keep_alive({ dest, value: 1n })")
+    assert sites == [(1, "Balances", "transfer_keep_alive", None, "")]
+    sites = check.js_sites("api.tx.balances.transfer({ id: a }, b)")  # an object as one of several: counted
+    assert sites == [(1, "balances", "transfer", 2, "")]
