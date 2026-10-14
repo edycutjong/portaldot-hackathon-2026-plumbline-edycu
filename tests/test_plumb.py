@@ -137,6 +137,12 @@ def test_a_drifted_row_shows_the_live_shape_when_the_arguments_differ_too():
     assert "args differ" not in plumb.classify(entry("new_name", ("x",)), RT, SURFACE, [row])[2]
 
 
+def test_a_rename_applies_to_demo_code_only_under_its_exact_pallet_name():
+    row = Rename("test", "Tokens", "new_name", "old_name", v.RENAME, "measured")
+    assert plumb.classify(entry("new_name", pallet="tokens"), RT, SURFACE, [row])[0] == v.ABSENT  # SDK: exact
+    assert plumb.classify(entry("new_name", pallet="tokens", source=v.V3_GUIDE), RT, SURFACE, [row])[0] == v.DRIFTED
+
+
 def test_a_rename_row_without_evidence_is_refused():
     with pytest.raises(plumb.LedgerError, match="needs evidence"):
         plumb.check_renames((Rename("test", "Tokens", "new_name", "old_name", v.RENAME, " "),), "test", SURFACE)
@@ -200,7 +206,7 @@ def test_committed_renames_hold_on_the_1002_blob_and_their_arguments_match_the_d
 # ---------------------------------------------------------------- I1: PROVEN needs a read-back receipt
 
 def receipt(call, **over):
-    return {"side": "substrate", "pallet": "Tokens", "call": call, "tx_hash": "0x01", "block_hash": "0x02",
+    return {"side": "substrate", "pallet": "Tokens", "call": call, "tx_hash": "0x" + "1" * 64, "block_hash": "0x" + "2" * 64,
             "block_number": 7, "success": 1, "readback_ok": 1, "readback_call": f"Tokens.{call}"} | over
 
 
@@ -221,6 +227,7 @@ def test_a_read_back_receipt_proves_the_call_and_is_linked():
 @pytest.mark.parametrize("bad", [
     {"readback_ok": 0}, {"success": 0}, {"tx_hash": None}, {"block_hash": None}, {"tx_hash": ""},
     {"block_hash": ""}, {"block_number": None}, {"dispatch_error": "Module(Tokens.Frozen)"}, {"side": "eth"},
+    {"tx_hash": " " * 66}, {"block_hash": "0x"}, {"tx_hash": "0x" + "g" * 64}, {"block_hash": "0x" + "2" * 63},
     {"readback_call": "Tokens.lock"},  # read back as another call
     {"readback_call": None},
 ])

@@ -92,11 +92,13 @@ TABLES = ("runtime", "live_call", "live_pallet", "doc_call", "rename", "verdict"
           "receipt", "run")
 RECEIPT_FIELDS = ("side", "pallet", "call", "tx_hash", "block_hash", "block_number", "success", "dispatch_error",
                   "events_json", "weight_json", "fee", "readback_ok", "readback_call")
-# I1 in SQL: a substrate receipt for this call, included in a named block without a dispatch error, whose
-# read-back decoded to the same call
+# I1 in SQL: a substrate receipt for this call, included in a numbered block without a dispatch error, with
+# 32-byte 0x-hex tx and block hashes, whose read-back decoded to the same call
 PROVEN_RECEIPT = ("runtime_id = ? AND side = 'substrate' AND success = 1 AND dispatch_error IS NULL "
                   "AND readback_ok = 1 AND readback_call = pallet || '.' || call "
-                  "AND coalesce(tx_hash, '') <> '' AND coalesce(block_hash, '') <> '' AND block_number IS NOT NULL")
+                  "AND block_number IS NOT NULL AND length(tx_hash) = 66 AND length(block_hash) = 66 "
+                  "AND lower(tx_hash) GLOB '0x[0-9a-f]*' AND lower(block_hash) GLOB '0x[0-9a-f]*' "
+                  "AND NOT lower(substr(tx_hash, 3)) GLOB '*[^0-9a-f]*' AND NOT lower(substr(block_hash, 3)) GLOB '*[^0-9a-f]*'")
 
 
 class LedgerError(ValueError):
@@ -254,8 +256,9 @@ def classify(entry: DocEntry, rt: Runtime, surface: Surface, renames: list[Renam
         return _absent(rename, rename.pallet if rename else None, "pallet absent")
     live_key = f"{pallet}.{entry.call}" if pallet else None
     if live_key not in surface.calls:
-        rename = next((r for r in renames if not r.module and _norm(r.pallet) == _norm(entry.pallet)
-                       and r.doc_call == entry.call), None)
+        exact = entry.source == v.V3_DEMO
+        rename = next((r for r in renames if not r.module and r.doc_call == entry.call and
+                       (r.pallet == entry.pallet if exact else _norm(r.pallet) == _norm(entry.pallet))), None)
         live = f"{rename.pallet}.{rename.live_call}" if rename else None
         status, live, detail = _absent(rename, live, "pallet absent" if pallet is None else "call absent")
         if status == v.DRIFTED and entry.args is not None and live in surface.calls:
