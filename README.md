@@ -3,7 +3,7 @@
 **Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof** (the target flow; today it reports a comparison class per call, measured on mainnet spec 1002).
 
 ![status](https://img.shields.io/badge/status-work%20in%20progress-orange)
-![tests](https://img.shields.io/badge/tests-59%20passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-244%20passing-brightgreen)
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![python](https://img.shields.io/badge/python-3.10%2B-blue)
 
@@ -26,7 +26,8 @@ way to find out is to submit a transaction and read the error. Every runtime upg
 ### Solution
 
 Plumbline reads the documented call surface and the runtime's own metadata, compares them call by call, and reports a
-comparison class per call (match / absent / arg-mismatch; verdicts and proofs are **planned**). The first measurement, on the Portaldot mainnet runtime (spec 1002, read-only), is shipped:
+comparison class per call (match / absent / arg-mismatch). Per-call verdicts now come from the drift ledger
+(`evidence/ledger_1002.json`); proofs on V3 are **planned**. The first measurement, on the Portaldot mainnet runtime (spec 1002, read-only), is shipped:
 
 | `mainnet-1002` baseline | Count |
 |---|---|
@@ -36,7 +37,7 @@ comparison class per call (match / absent / arg-mismatch; verdicts and proofs ar
 | Documented with arguments that differ from the runtime (name, count or type) | 15 (4 of them differ only by a leading underscore on the runtime's parameter name) |
 
 Source: `evidence/docs_1002.json` (written by `scripts/docs_baseline.py`, 2026-10-14). These are raw comparison classes; the
-verdict ledger that turns them into per-call verdicts with proof is **planned** (see Roadmap).
+drift ledger turns them into per-call verdicts (see Roadmap); proofs on V3 are **planned**.
 
 ### Blockchain Relevance
 
@@ -64,7 +65,8 @@ flowchart LR
     CANARY["canary extrinsics + read-back proof<br/>(planned)"] -.-> V3
 ```
 
-Solid boxes exist in this repository; dashed ones are **planned**.
+Solid boxes exist in this repository; dashed ones are **planned**. This diagram is from build day 1: the drift
+ledger, `plumbline check` and canary v0 (interim stand-in chain only, not V3) have shipped since — see Roadmap.
 
 **Core tech stack**
 
@@ -90,8 +92,10 @@ There is **no contract yet**. The Plumbline Ledger (a Revive Solidity contract t
 What the code uses today is read-only chain RPC through `substrate-interface`:
 `state_getRuntimeVersion`, `chain_getBlockHash`, `chain_getFinalizedHead`, `state_getMetadata` and
 `state_getStorageHash` (for `:code`), plus the SDK's own initialisation calls. `scripts/interim_node.sh` also calls
-`system_health` with `curl` (interim node isolation check). No transaction is built or sent, so nothing is deployed and there are no
-contract or asset IDs to list.
+`system_health` with `curl` (interim node isolation check). Transactions are sent only to the local interim stand-in
+chain (not V3): `plumbline canary` signs three dev-key extrinsics there (`Balances.transfer_keep_alive`,
+`System.remark_with_event`, `Revive.map_account`) and reads each back from its block — see `docs/PROOF.md`. Nothing is
+sent to mainnet and nothing is deployed, so there are no contract or asset IDs to list.
 
 ## Installation & Setup
 
@@ -110,7 +114,7 @@ cd portaldot-hackathon-2026-plumbline-edycu
 python3 -m venv .venv && . .venv/bin/activate
 pip install -e '.[dev]'
 
-pytest -q                                   # 59 passed, 2 deselected (live tests are opt-in: pytest -m live)
+pytest -q                                   # 244 passed, 3 deselected (live tests are opt-in: pytest -m live)
 
 # identify the stored mainnet spec-1002 runtime (offline)
 plumbline runtime -p stored:fixtures/metadata_1002.scale
@@ -146,7 +150,7 @@ There is nothing to compile or deploy and there is no frontend to launch yet.
   - `evidence/metadata_1002.json` — mainnet spec 1002, metadata V13, sha256 `b87080f9…9053`, 153205 bytes, fetched 2026-10-14
   - `evidence/docs_1002.json` — the baseline table above
   - `evidence/metadata_standin_sdk.json` — interim-sdk stand-in (not V3), metadata V14, pinned to genesis
-- **Tests:** 59 passed (+2 live, opt-in) as of 2026-10-14.
+- **Tests:** 244 passed (+3 live, opt-in) as of 2026-10-14.
 
 ## Roadmap
 
@@ -155,11 +159,11 @@ There is nothing to compile or deploy and there is no frontend to launch yet.
 - Mainnet spec 1002 metadata stored with sha256 and fetch time
 - Docs parser for the 22 extrinsic pages (three page layouts), `plumbline docs`, baseline of 196 / 64 / 15
 - Isolated interim stand-in chain script (not V3)
+- V3 guide + FAQ parser (`plumbline guide`) and the drift ledger on mainnet-1002 (`plumbline plumb`, `evidence/ledger_1002.json`)
+- Runtime diff (`plumbline diff`), offline dapp check (`plumbline check`, golden output for mainnet-1002 in
+  `fixtures/expected_check_1002.txt`), canary v0 with read-back on the interim chain only (`docs/PROOF.md`, not V3)
 
 **Next (planned)**
-- Parse the V3 testnet guide and FAQ call sites; the drift ledger with a verdict per call
-- Runtime diff between versions (`plumbline diff`); offline dapp check (`plumbline check`)
-- Canary extrinsics on a labelled interim chain with read-back proof
 - Run against the Portaldot V3 testnet as soon as it is reachable; Plumbline Ledger contract (Revive) on V3
 
 ## Team
