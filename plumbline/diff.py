@@ -10,10 +10,13 @@ and a V14+ runtime (modern, self-describing) can be compared item by item:
 
 Type names: V13 metadata spells each type as a Rust path string (`T::Balance`, `Compact<BalanceOf<T>>`);
 V14+ gives each field a `typeName` and a type id in the portable registry. Both are reduced the same
-way: `T::` and `<T as …>::` prefixes dropped, whitespace removed, and a V14 field whose registry type is
-compact wrapped in `Compact<…>` when its `typeName` does not say so. Two runtimes from different metadata
-generations still spell many types differently (`LookupSource` vs `AccountIdLookupOf<T>`): an arg row
-whose names are equal and only type spellings differ is marked `types_only`, never hidden.
+way: a qualified path `<X as Trait>::Assoc` becomes `X::Assoc`, then `T::` / `I::` prefixes are dropped
+and all whitespace is removed; a V14 field whose registry type is compact is wrapped in `Compact<…>` when
+its `typeName` does not say so. Two runtimes from different metadata generations still spell many types
+differently (`LookupSource` vs `AccountIdLookupOf<T>`), so an arg row whose argument names are equal is
+marked `names_equal`: its types differ, which may be spelling only or a real change (u32 -> u64); the
+diff cannot tell, and never hides the row. Known limit: aliases are not resolved, so a type alias whose
+width differs between the runtimes under the same name (e.g. an Assets `Balance`) yields no row.
 
 `diff()` emits rows of the architecture's kinds: added / removed (pallets and calls), renamed (a call,
 only through an explicit row in `plumbline.renames` whose two sides match the two runtimes — never by
@@ -68,12 +71,17 @@ class DiffRow:
 
 # ---------------------------------------------------------------- normalise
 
-_PREFIX = re.compile(r"<T\s+as\s+[^>]*?>::|\bT::|\bI::")
+# `<X as Trait>::` / `<X as Trait<I>>::` (one level of generics inside the trait) -> `X::`
+_QUALIFIED = re.compile(r"<\s*([\w:]+(?:<[^<>]*>)?)\s+as\s+[\w:]+(?:<[^<>]*>)?\s*>::")
+_PREFIX = re.compile(r"\b[TI]::")
 
 
 def type_name(text: str | None) -> str:
-    """One spelling of a type path: generic-parameter prefixes dropped, whitespace removed."""
-    return _PREFIX.sub("", text or "").replace(" ", "")
+    """One spelling of a type path: qualified paths unwrapped, `T::`/`I::` dropped, whitespace removed."""
+    unwrapped, previous = text or "", None
+    while unwrapped != previous:  # innermost first: `<<T as A>::B as C>::D` takes two passes
+        previous, unwrapped = unwrapped, _QUALIFIED.sub(lambda m: m.group(1) + "::", unwrapped)
+    return re.sub(r"\s+", "", _PREFIX.sub("", unwrapped))
 
 
 class _Registry:
@@ -200,7 +208,7 @@ def diff(a: NormalForm, b: NormalForm, renames: tuple[Rename, ...] = RENAMES) ->
             elif pa.calls[call] != pb.calls[call]:
                 names_equal = [n for n, _ in pa.calls[call]] == [n for n, _ in pb.calls[call]]
                 rows.append(DiffRow(name, item, ARG_CHANGED, {"args": _args(pa.calls[call])},
-                                    {"args": _args(pb.calls[call])}, "types_only" if names_equal else ""))
+                                    {"args": _args(pb.calls[call])}, "names_equal" if names_equal else ""))
         for const in sorted(set(pa.constants) | set(pb.constants)):
             before = pa.constants.get(const)
             after = pb.constants.get(const)
@@ -234,16 +242,16 @@ def _const_note(before, after) -> str:
 
 
 def summary(rows: list[DiffRow]) -> dict[str, int]:
-    """Row counts per kind (and per item class), plus how many arg-changed rows differ in type spelling only
-    and how many const-changed rows differ in type only (V14 constants carry no `typeName`, so a V13 alias
-    such as `Balance` meets its resolved primitive `u128`)."""
+    """Row counts per kind (and per item class), plus how many arg-changed rows keep their argument names
+    (types differ: spelling or real) and how many const-changed rows differ in type only (V14 constants carry
+    no `typeName`, so a V13 alias such as `Balance` meets its resolved primitive `u128`)."""
     out: dict[str, int] = {}
     for r in rows:
         cls = r.item.split(":", 1)[0] if r.item else "pallet"
         key = f"{r.kind} {cls}" if r.kind in (ADDED, REMOVED) else r.kind
         out[key] = out.get(key, 0) + 1
-    out["arg-changed types_only"] = sum(1 for r in rows if r.kind == ARG_CHANGED and r.note == "types_only")
-    out["const-changed type only"] = sum(1 for r in rows if r.kind == CONST_CHANGED and r.note == "type changed")
+    out["arg-changed (names equal)"] = sum(1 for r in rows if r.kind == ARG_CHANGED and r.note == "names_equal")
+    out["const-changed (type only)"] = sum(1 for r in rows if r.kind == CONST_CHANGED and r.note == "type changed")
     return dict(sorted(out.items()))
 
 

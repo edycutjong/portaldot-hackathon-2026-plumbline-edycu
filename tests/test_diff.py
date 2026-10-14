@@ -34,6 +34,11 @@ def test_type_name_drops_generic_prefixes_and_spaces():
     assert diff.type_name("Compact<BalanceOf<T>>") == "Compact<BalanceOf<T>>"
     assert diff.type_name("Vec<(T::AccountId, u32)>") == "Vec<(AccountId,u32)>"
     assert diff.type_name(None) == ""
+    assert diff.type_name("<T as Config<I>>::Foo") == "Foo"
+    assert diff.type_name("<T::Lookup as StaticLookup>::Source") == "Lookup::Source"
+    assert diff.type_name("<<T as Config>::Currency as Currency<AccountId>>::Balance") == "Currency::Balance"
+    assert diff.type_name("Option<<BalanceOf<T> as HasCompact>::Type>") == "Option<BalanceOf<T>::Type>"
+    assert diff.type_name("Vec<(T::AccountId,\n u32)>") == "Vec<(AccountId,u32)>"  # newlines too
 
 
 def test_normalise_v13_matches_the_recorded_1002_surface(nf_1002):
@@ -85,10 +90,10 @@ def test_diff_1002_vs_standin_not_v3_covers_every_kind_and_is_deterministic(nf_1
     added_pallets = {r.pallet for r in rows if r.kind == diff.ADDED and r.item == ""}
     assert {"Revive", "Nfts"} <= added_pallets
     tka = next(r for r in rows if r.pallet == "Balances" and r.item == "call:transfer_keep_alive")
-    assert tka.kind == diff.ARG_CHANGED and tka.note == "types_only"  # LookupSource vs AccountIdLookupOf<T>
+    assert tka.kind == diff.ARG_CHANGED and tka.note == "names_equal"  # LookupSource vs AccountIdLookupOf<T>
     counts = diff.summary(rows)
     assert counts["renamed"] == 2
-    assert sum(n for k, n in counts.items() if not k.endswith("only")) == len(rows)
+    assert sum(n for k, n in counts.items() if "(" not in k) == len(rows)
 
 
 def test_diff_standin_not_v3_vs_1002_reverses_the_rename(nf_1002, nf_standin):
@@ -133,7 +138,7 @@ def test_const_and_event_changes():
     assert rows[("event:F", diff.EVENT_CHANGED)].note == "added"
 
 
-def test_arg_change_with_new_names_is_not_types_only():
+def test_arg_change_with_new_names_is_not_names_equal():
     a = nf(P=diff.Pallet(calls={"c": (("endowment", "u128"),)}))
     b = nf(P=diff.Pallet(calls={"c": (("value", "u128"),)}))
     (row,) = diff.diff(a, b)
@@ -172,7 +177,7 @@ def test_cli_diff_1002_vs_standin_not_v3_is_bannered_text_and_json():
     as_json = CliRunner().invoke(app, args + ["--json"])
     data = json.loads(as_json.output)
     assert data["warning"] == STANDIN_BANNER and data["to"]["metadata_version"] == 14
-    assert len(data["rows"]) == sum(n for k, n in data["summary"].items() if not k.endswith("only"))
+    assert len(data["rows"]) == sum(n for k, n in data["summary"].items() if "(" not in k)
     bad = CliRunner().invoke(app, args + ["--kind", "moved"])
     assert bad.exit_code == 2
 
