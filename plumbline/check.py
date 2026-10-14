@@ -12,8 +12,9 @@ Three scans over a directory, each finding stamped with one verdict from `plumbl
      matched exactly, as substrate-interface matches them. A site whose names are not static is UNSCANNED.
   3. JavaScript / TypeScript call sites: `<expr>.tx.<pallet>.<call>(…)` (polkadot.js), found after string
      and comment contents are masked. Pallet names are matched with case and underscores ignored and the
-     call name is snake_cased, as polkadot.js maps them. Only a receiver named like an ApiPromise (`api`,
-     `this.api`, `polkadotApi`) is read; `receipt.tx.hash.x()` is an UNSCANNED row, never a verdict. Arguments are positional, so only their count
+     call name is snake_cased, as polkadot.js maps them. Only a receiver whose whole name is an API name
+     (`api`, `this.api`, `this.api!`, `polkadotApi`, `apiPromise`, `apiRef.current`, `(api as ApiPromise)`)
+     is read; `receipt.tx.hash.x()` or `apiResponse.tx…` is an UNSCANNED row, never a verdict. Arguments are positional, so only their count
      is compared, and not at all when an argument holds a spread or a `<` (a TypeScript type argument
      cannot be told from a comparison). Optional chaining (`api.tx?.x?.y()`) is read. `.tx[<expr>]`, a
      `.tx.<pallet>.<call>` reference that is not called, and a destructured `{ tx }` are UNSCANNED.
@@ -332,19 +333,43 @@ _TX_DESTRUCTURED = re.compile(r"\{[^{}]*\btx\b[^{}]*\}\s*=\s*([\w$.]+)")
 
 
 def _receiver(masked: str, pos: int) -> str:
-    """The identifier right before the `.tx` / `?.tx` at `pos` ('' for an expression such as `f().tx`)."""
+    """The identifier that holds the API before the `.tx` / `?.tx` at `pos`: `api.tx`, `this.api.tx`,
+    `this.api!.tx`, `apiRef.current.tx` -> `apiRef`, `(api as ApiPromise).tx` -> `api`; '' for any other
+    expression (`getApi().tx`)."""
     k = pos - 1
-    while k >= 0 and masked[k].isspace():
+    while k >= 0 and (masked[k].isspace() or masked[k] == "!"):  # TypeScript non-null assertion
         k -= 1
+    if k >= 0 and masked[k] == ")":  # a parenthesised receiver: its first identifier, if it opens with one
+        depth, j = 0, k
+        while j >= 0:
+            depth += masked[j] == ")"
+            depth -= masked[j] == "("
+            if depth == 0:
+                break
+            j -= 1
+        inner = re.match(r"\(\s*([A-Za-z_$][\w$]*)\s*(?:as\b|\))", masked[j:k + 1]) if j >= 0 else None
+        if inner is None or (j > 0 and (masked[j - 1].isalnum() or masked[j - 1] in "_$")):  # f(x).tx: a call
+            return ""
+        return inner.group(1)
     end = k + 1
     while k >= 0 and (masked[k].isalnum() or masked[k] in "_$"):
         k -= 1
-    return masked[k + 1:end]
+    name = masked[k + 1:end]
+    if name == "current":  # a React ref: apiRef.current.tx
+        while k >= 0 and masked[k].isspace():
+            k -= 1
+        if k >= 0 and masked[k] == ".":
+            return _receiver(masked, k - (masked[k - 1] == "?") if k >= 1 else k)
+    return name
+
+
+_API_NAME = re.compile(r"api|API|api(?:Promise|Rx|Instance)|[a-z][A-Za-z0-9]*Api")
 
 
 def _api_like(name: str) -> bool:
-    """polkadot.js code names its ApiPromise `api` (`this.api`, `polkadotApi`, `apiPromise`)."""
-    return "api" in name.lower()
+    """The whole identifier is a polkadot.js API name: `api`, `apiPromise`, `polkadotApi`, `chainApi`, `apiRef`
+    (via `.current`). `apiResponse` or `capital` are not."""
+    return bool(_API_NAME.fullmatch(name)) or name in ("apiRef",)
 
 
 def _arity(masked: str, open_paren: int) -> int | None:
@@ -402,7 +427,7 @@ def js_sites(text: str) -> list[tuple[int, str | None, str | None, int | None, s
         if _api_like(_receiver(masked, m.start())):
             sites.append((line(m.start()), None, None, None, "api.tx aliased"))
     for m in _TX_DESTRUCTURED.finditer(masked):
-        if _api_like(m.group(1)):
+        if _api_like(m.group(1).split(".")[-1]):  # `= api`, `= this.api`
             sites.append((line(m.start()), None, None, None, "api.tx destructured"))
     return sorted(sites, key=lambda s: (s[0], s[1] or "", s[2] or "", s[4]))
 

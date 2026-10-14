@@ -283,3 +283,16 @@ def test_unreadable_directories_are_reported_and_skips_are_named(tmp_path):
     assert stats["skipped"] == ["node_modules/"]
     text = check.render(found, RT, "offline", stats["files"], stats["skipped"])
     assert "not scanned (generated or vendored): node_modules/" in text
+
+
+def test_receiver_resolution_whole_api_names_only():
+    src = ("this.api!.tx.nfts.mint(a)\n(api as ApiPromise).tx.nfts.mint(a)\napiRef.current.tx.nfts.mint(a)\n"
+           "apiResponse.tx.data.map(x)\ncapital.tx.fund.add(1)\ngetApi().tx.nfts.mint(a)\napi?.tx.nfts.mint(a)\n")
+    got = [(s[0], s[1]) for s in check.js_sites(src)]
+    assert got == [(1, "nfts"), (2, "nfts"), (3, "nfts"), (4, None), (5, None), (6, None), (7, "nfts")]
+
+
+def test_non_api_receivers_never_block(tmp_path):
+    write(tmp_path, "a.ts", "apiResponse.tx.data.map(x => x.id)\ncapital.tx.fund.add(1)\n")
+    found = check.check(tmp_path, RT, SURFACE, RENAMES)
+    assert {f.status for f in found} == {v.UNSCANNED} and check.exit_code(found) == 0
