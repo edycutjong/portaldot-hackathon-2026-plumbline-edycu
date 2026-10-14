@@ -27,5 +27,6 @@ include = ["plumbline*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 # substrate-interface pulls in no async code; keep a globally installed pytest-asyncio from loading
-addopts = "-p no:asyncio"
+# live tests read public chains over the network; run them explicitly with `pytest -m live`
+addopts = "-p no:asyncio -m 'not live'"
 markers = ["live: needs network access to a chain endpoint (deselect with -m 'not live')"]

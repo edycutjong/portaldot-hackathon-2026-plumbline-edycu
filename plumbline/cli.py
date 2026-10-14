@@ -34,25 +34,30 @@ def runtime(profile: str = typer.Option(..., "--profile", "-p", help="mainnet-10
         if prof.stored_file:
             blob = open(prof.stored_file, "rb").read()
             decoded = md.decode_metadata(blob, prof.preset)
-            record = {"profile": prof.name, "metadata_version": md.metadata_version(blob),
+            record = {"profile": prof.name, "label": prof.label, "measured_as": prof.measured_as,
+                      "metadata_version": md.metadata_version(blob),
                       "metadata_sha256": md.sha256_hex(blob), "metadata_bytes": len(blob),
                       "pallets": len(md.pallet_names(decoded)), "calls": len(md.call_surface(decoded))}
         else:
             substrate = md.connect(prof, url)
-            blob = md.fetch_metadata_blob(substrate)
-            record = md.runtime_info(prof, substrate, blob, endpoint=url or prof.url).to_dict()
+            block = md.pinned_head(substrate)
+            blob = md.fetch_metadata_blob(substrate, block)
+            record = md.runtime_info(prof, substrate, blob, block, endpoint=url or prof.url).to_dict()
+            record["label"] = prof.label
             substrate.close()
-    except (md.ProfileError, md.UnknownChainError) as exc:
+    except (md.ProfileError, md.UnknownChainError, md.ChainUnreachableError) as exc:
         typer.echo(f"error: {exc}", err=True)
         raise typer.Exit(2)
     if as_json:
         typer.echo(json.dumps(record, indent=2, sort_keys=True))
     elif "spec_version" in record:
         typer.echo(f"{record['profile']}: {record['spec_name']}/{record['spec_version']} "
-                   f"metadata V{record['metadata_version']} sha256 {record['metadata_sha256']}")
+                   f"metadata V{record['metadata_version']} sha256 {record['metadata_sha256']} at {record['block_hash']}")
+        typer.echo(f"  {record['label']}")
     else:
         typer.echo(f"{record['profile']}: metadata V{record['metadata_version']} sha256 {record['metadata_sha256']} "
                    f"({record['pallets']} pallets, {record['calls']} calls)")
+        typer.echo(f"  {record['label']}")
 
 
 @app.command()
