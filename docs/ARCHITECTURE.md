@@ -40,7 +40,7 @@ flowchart LR
     GD -->|scripts/fetch_guide.py| GUIDE
     DOCS --> TBL
     GUIDE --> TBL
-    FIX --> TBL
+    FIX -->|docs_1002.json only| TBL
     TBL -->|default inputs| PLUMB
     DOCS -->|--docs-cache| PLUMB
     GUIDE -->|--guide-dir| PLUMB
@@ -49,10 +49,12 @@ flowchart LR
     FIX --> DIFF
     MD --> DIFF
     FIX --> CHECK
+    MD --> CHECK
     APP --> CHECK
     PLUMB --> CHECK
     CHECK --> GOLD
     INT --> CANARY
+    MD --> CANARY
     CANARY -->|receipts + read-back| PROOF
 
     V3["Portaldot V3 testnet<br/>PLANNED: endpoint did not resolve"]
