@@ -336,8 +336,9 @@ def canary_cmd(profile: str = typer.Option(..., "--profile", "-p", help="interim
     proof.parent.mkdir(parents=True, exist_ok=True)
     proof.write_text(canary_mod.proof_markdown(record))
     for r in record["receipts"]:
-        typer.echo(f"  {r['pallet']}.{r['call']:22} {r['extrinsic_id']:>9} {r['tx_hash']}  "
-                   f"{'success' if r['success'] else 'failed ' + str(r['dispatch_error'])}  "
+        outcome = ("success" if r["success"] else "outcome not read back" if r["success"] is None
+                   else f"failed {r['dispatch_error']}")
+        typer.echo(f"  {r['pallet']}.{r['call']:22} {str(r['extrinsic_id'] or '-'):>9} {r['tx_hash']}  {outcome}  "
                    f"read-back {'ok' if r['readback_ok'] else 'FAILED'}")
     typer.echo(f"{record['label']}: {len(record['receipts'])} receipts -> {out}, {proof}")
     if not all(r["readback_ok"] for r in record["receipts"]):  # a receipt is kept either way
@@ -356,7 +357,7 @@ def readback_cmd(record_file: Path = typer.Argument(..., help="a receipts record
         typer.echo(f"error: {exc}", err=True)
         raise typer.Exit(2)
     for row in rows:
-        typer.echo(f"  {row['extrinsic_id']:>9} {row['call']:32} decoded {row['decoded']}  block {row['block_number']}  "
+        typer.echo(f"  {str(row['extrinsic_id'] or '-'):>9} {row['call']:32} decoded {row['decoded']}  block {row['block_number']}  "
                    f"success {row['success_on_chain']}  {'MATCH' if row['match'] else 'MISMATCH'}")
     matched = sum(r["match"] for r in rows)
     typer.echo(f"{record.get('label', '')}: {matched}/{len(rows)} receipts match the chain")

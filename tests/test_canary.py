@@ -176,3 +176,16 @@ def test_cli_readback_of_a_bad_file_is_a_usage_error(tmp_path):
     for target in (tmp_path / "bad.json", tmp_path / "missing.json"):
         result = CliRunner().invoke(app, ["readback", str(target)])
         assert result.exit_code == 2 and result.output.startswith("error:"), result.output
+
+
+def test_a_receipt_never_read_back_is_rendered_and_verified_without_crashing(monkeypatch):
+    record = json.loads(EVIDENCE.read_text())
+    lost = dict(record["receipts"][0], extrinsic_id=None, block_number=None, success=None, readback_ok=0,
+                readback_call=None, readback_error="TimeoutError: x")
+    record = dict(record, receipts=[lost])
+    text = canary.proof_markdown(record)
+    assert "| `-` |" in text and "outcome not read back" in text and "failed: None" not in text
+    monkeypatch.setattr(md, "connect", lambda *a, **k: FakeChain([], {}))
+    FakeChain.close = lambda self: None
+    (row,) = canary.verify(record)
+    assert row["match"] is False and row["extrinsic_id"] is None

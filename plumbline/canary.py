@@ -185,6 +185,10 @@ def verify(record: dict, url: str | None = None) -> list[dict]:
     rows = []
     try:
         for r in record["receipts"]:
+            if not r.get("extrinsic_id"):  # included but never read back: nothing to compare against
+                rows.append({"extrinsic_id": None, "tx_hash": r["tx_hash"], "call": f"{r['pallet']}.{r['call']}",
+                             "decoded": None, "block_number": None, "success_on_chain": None, "match": False})
+                continue
             index = int(r["extrinsic_id"].split("-")[1])
             ok, decoded = readback(substrate, r["block_hash"], index, r["tx_hash"])
             number = substrate.get_block_number(r["block_hash"])
@@ -221,8 +225,9 @@ def proof_markdown(record: dict) -> str:
     ]
     for r in record["receipts"]:
         events = ", ".join(f"{e['pallet']}.{e['event']}" for e in json.loads(r["events_json"]))
-        result = "success" if r["success"] else f"failed: {r['dispatch_error']}"
-        lines.append(f"| {LABEL} | `{r['pallet']}.{r['call']}` | `{r['extrinsic_id']}` | `{r['tx_hash']}` | "
+        result = ("success" if r["success"] else "outcome not read back" if r["success"] is None
+                  else f"failed: {r['dispatch_error']}")
+        lines.append(f"| {LABEL} | `{r['pallet']}.{r['call']}` | `{r['extrinsic_id'] or '-'}` | `{r['tx_hash']}` | "
                      f"`{r['block_hash']}` | {result} | {events} | "
                      f"{'ok' if r['readback_ok'] else 'FAILED'} (`{r['readback_call']}`) |")
     lines += ["", "No row here is a Portaldot V3 transaction. V3 canaries need V3 back online and tPOTv3 funds.", ""]

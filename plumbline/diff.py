@@ -21,7 +21,7 @@ width differs between the runtimes under the same name (e.g. an Assets `Balance`
 `diff()` emits rows of the architecture's kinds: added / removed (pallets and calls), renamed (a call,
 only through an explicit row in `plumbline.renames` whose two sides match the two runtimes — never by
 similarity), arg-changed, const-changed (added, removed, retyped or new value), event-changed (added,
-removed, or field types changed). Rows are sorted, so the output is deterministic.
+removed, or field types differ — spelling or real). Rows are sorted, so the output is deterministic.
 """
 
 from __future__ import annotations
