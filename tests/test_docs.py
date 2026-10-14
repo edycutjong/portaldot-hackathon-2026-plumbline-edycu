@@ -46,8 +46,43 @@ def test_args_split_at_top_level_commas_and_unescape(pages):
     assert calls["resetAll"].args == ()
 
 
-def test_text_outside_article_body_is_ignored(pages):
+def test_interface_and_signature_outside_article_body_are_ignored(pages):
+    # alpha.html has a well-formed signature + interface pair after the articleBody div closes
     assert "ignored" not in {c.call for c in pages["alpha"].calls}
+    assert pages["alpha"].raw_interface_labels == 4
+
+
+def test_every_fixture_page_is_complete(pages):
+    assert all(res.complete for res in pages.values())
+
+
+def test_rejected_interface_line_and_label_outside_paragraph_are_reported():
+    page = ('<div itemprop="articleBody">'
+            '<ul><li><strong>interface</strong>: <code>x.tight</code></li></ul>'   # label not inside a <p>
+            '<p><strong>interface</strong>: <code>x.foo</code> (deprecated)</p>'     # line the pattern rejects
+            '<p>good(a: <code>u8</code>)</p><p><strong>interface</strong>: <code>x.good</code></p>'
+            '</div>')
+    res = docs.parse_page(page, "x")
+    assert res.interfaces == 1 and res.raw_interface_labels == 3
+    assert res.unmatched_lines == ["interface: x.foo (deprecated)"]
+    assert not res.complete
+
+
+def test_duplicate_documented_calls_are_reported():
+    page = '<div itemprop="articleBody"><p>interface: x.dup</p><p>interface: x.dup</p></div>'
+    res = docs.parse_page(page, "x")
+    assert docs.duplicate_calls([res]) == {"x.dup": [docs.DOCS_BASE + "x.html (interface 1)",
+                                                     docs.DOCS_BASE + "x.html (interface 2)"]}
+    assert len(docs.documented_calls([res])) == 1
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("a: u8,, b: u16", (("a", "u8"), ("b", "u16"))),
+    ("m: BTreeMap{K, V}, n: u8", (("m", "BTreeMap{K, V}"), ("n", "u8"))),
+    ("", ()),
+])
+def test_split_args_edge_cases(text, expected):
+    assert docs.split_args(text) == expected
 
 
 def test_source_ref_names_page_url_and_position(pages):
@@ -88,3 +123,29 @@ def test_compare_classes(pages):
     assert out["counts"]["undocumented"] == 2
     assert out["counts"]["undocumented_in_documented_pallets"] == 1
     assert out["pallets_without_docs_page"] == ["Delta"]
+
+
+def test_unpaired_doc_call_is_args_unknown_not_compared(pages):
+    documented = docs.documented_calls(pages.values())
+    live = {"Alpha.orphan_call": [], "Gamma.right_name": [("calls", "Vec<Call>")]}
+    cls = {r["doc_call"]: r["class"] for r in docs.compare(documented, live)["rows"]}
+    assert cls["alpha.orphanCall"] == cls["gamma.rightName"] == docs.ARGS_UNKNOWN
+
+
+def test_pallet_present_without_calls_is_call_absent_not_pallet_absent(pages):
+    documented = docs.documented_calls(pages.values())
+    out = docs.compare(documented, {"Alpha.move_funds": []}, live_pallets=["Alpha", "Gamma"])
+    cls = {r["doc_call"]: r["class"] for r in out["rows"]}
+    assert cls["gamma.batchThings"] == docs.CALL_ABSENT
+    assert cls["beta.approveThing"] == docs.PALLET_ABSENT
+
+
+def test_underscore_only_arg_mismatch_is_flagged():
+    page = ('<div itemprop="articleBody"><p>remark(remark: <code>Bytes</code>)</p><p>interface: system.remark</p>'
+            '<p>bond(value: <code>u128</code>)</p><p>interface: system.bond</p></div>')
+    documented = docs.documented_calls([docs.parse_page(page, "system")])
+    out = docs.compare(documented, {"System.remark": [("_remark", "Bytes")],
+                                    "System.bond": [("controller", "AccountId"), ("value", "u128")]})
+    flags = {r["doc_call"]: r.get("underscore_only") for r in out["rows"]}
+    assert flags == {"system.remark": True, "system.bond": False}
+    assert out["counts"]["arg-mismatch-underscore-only"] == 1
