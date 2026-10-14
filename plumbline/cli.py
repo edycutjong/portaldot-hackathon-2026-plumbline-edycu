@@ -1,13 +1,16 @@
 """`plumbline` command line. Subcommands are added as the engine modules land."""
 
 import json
+from collections import Counter
 from pathlib import Path
 
 import typer
 
 from . import __version__
 from . import docs as docs_mod
+from . import guide as guide_mod
 from . import metadata as md
+from . import verdicts
 
 app = typer.Typer(add_completion=False, no_args_is_help=True,
                   help="Check Portaldot's documented calls against a live or stored runtime.")
@@ -106,6 +109,29 @@ def docs(cache: Path = typer.Option(Path(".cache/docs"), help="directory filled 
         typer.echo(f"  {prof.label}")
     if complete != len(results) or duplicates:
         raise typer.Exit(1)
+
+@app.command("guide")
+def guide_cmd(guide_dir: Path = typer.Option(Path.home() / ".cache" / "plumbline-sources" / "guide",
+                                             help="a checkout made by scripts/fetch_guide.py")) -> None:
+    """Parse the V3 testnet guide (README tables, demo call sites by AST, FAQ modules) and count them."""
+    if not (guide_dir / "README.md").exists():
+        typer.echo(f"error: no guide checkout in {guide_dir}; run scripts/fetch_guide.py first", err=True)
+        raise typer.Exit(2)
+    head, dirty = guide_mod.clone_state(guide_dir)
+    res = guide_mod.parse_guide(guide_dir)
+    for source in (verdicts.V3_GUIDE, verdicts.V3_DEMO, verdicts.V3_FAQ):
+        sites = [s for s in res.sites if s.source == source]
+        hows = ", ".join(f"{how} {n}" for how, n in sorted(Counter(s.how for s in sites).items()))
+        typer.echo(f"  {source:9} {len(sites):3} sites ({hows})")
+    unresolved = [s.ref for s in res.sites if not s.resolved]
+    if unresolved:
+        typer.echo(f"  unresolved: {', '.join(unresolved)}")
+    pinned = head == guide_mod.GUIDE_COMMIT and not dirty
+    typer.echo(f"guide at {head or 'unknown commit'}" + ("" if pinned else
+               f" (NOT the pinned clean commit {guide_mod.GUIDE_COMMIT[:7]}; dirty: {dirty})"))
+    if not pinned or unresolved:
+        raise typer.Exit(1)
+
 
 if __name__ == "__main__":
     app()

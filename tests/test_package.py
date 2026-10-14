@@ -56,3 +56,15 @@ def test_runtime_command_exits_2_when_the_endpoint_is_unreachable():
     for url in ("ws://127.0.0.1:9", "http://127.0.0.1:9"):
         result = CliRunner().invoke(app, ["runtime", "--profile", "interim-sdk", "--url", url])
         assert result.exit_code == 2, (url, result.output)
+
+
+def test_guide_command_counts_fixture_sites_and_exits_1_off_the_pinned_commit(tmp_path):
+    # the layout fixtures are not a git checkout of the pinned commit, and include unresolved sites
+    result = CliRunner().invoke(app, ["guide", "--guide-dir", str(ROOT / "fixtures" / "guide_layouts")])
+    assert result.exit_code == 1, result.output
+    assert "v3-demo     8 sites" in result.stdout and "v3-faq      4 sites" in result.stdout
+    assert "unresolved: README.md:9" in result.stdout and "guide at unknown commit (NOT the pinned clean commit" in result.stdout
+
+
+def test_guide_command_without_checkout_exits_2(tmp_path):
+    assert CliRunner().invoke(app, ["guide", "--guide-dir", str(tmp_path)]).exit_code == 2
