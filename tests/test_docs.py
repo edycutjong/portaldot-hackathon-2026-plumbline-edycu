@@ -20,7 +20,7 @@ def test_index_lists_linked_pages_once_in_order():
 @pytest.mark.parametrize("page, interfaces, signatures, unpaired, layout", [
     ("alpha", 4, 3, ["orphanCall"], "plain"),
     ("beta", 2, 2, [], "api-tx"),
-    ("gamma", 3, 3, ["rightName"], "dash"),
+    ("gamma", 3, 2, ["rightName"], "dash"),
 ])
 def test_per_page_counts_for_each_layout(pages, page, interfaces, signatures, unpaired, layout):
     res = pages[page]
@@ -160,7 +160,15 @@ def test_signature_without_interface_makes_page_incomplete():
     assert not res.complete
 
 
-def test_text_after_the_closing_bracket_is_not_a_signature():
+def test_text_after_the_closing_bracket_is_not_a_signature_and_is_reported():
     res = docs.parse_page('<div itemprop="articleBody"><p>foo(a: <code>u8</code>) -&gt; ()</p>'
                           '<p>interface: x.foo</p></div>', "x")
     assert res.signatures == 0 and res.unpaired == ["foo"]
+    assert res.unmatched_lines == ["foo(a: u8) -> ()"] and not res.complete
+
+
+def test_signature_for_a_different_name_is_reported_unpaired():
+    res = docs.parse_page('<div itemprop="articleBody"><p>wrongName(a: <code>u8</code>)</p>'
+                          '<p>interface: x.rightName</p></div>', "x")
+    assert res.unpaired == ["rightName"] and res.unpaired_signatures == ["wrongName"]
+    assert not res.complete

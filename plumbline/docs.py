@@ -60,7 +60,7 @@ class PageResult:
     raw_interface_labels: int = 0  # `<strong>interface</strong>` labels in the article body, inside a <p> or not
     unpaired: list[str] = field(default_factory=list)  # interface names with no matching signature
     unpaired_signatures: list[str] = field(default_factory=list)  # signatures no interface line followed
-    unmatched_lines: list[str] = field(default_factory=list)  # interface-like paragraphs the pattern rejected
+    unmatched_lines: list[str] = field(default_factory=list)  # interface-/signature-like paragraphs rejected
     calls: list[DocCall] = field(default_factory=list)
 
     @property
@@ -178,7 +178,10 @@ def parse_page(page_html: str, page: str, url: str | None = None) -> PageResult:
     last_sig: tuple[str, str] | None = None
     for text in body.paragraphs:
         sig = SIGNATURE.match(text)
-        if sig and balanced(sig["args"]):
+        if sig and not balanced(sig["args"]):  # signature-shaped but malformed: report, don't drop
+            result.unmatched_lines.append(text)
+            continue
+        if sig:
             if last_sig:  # two signatures in a row: the first one documents no interface
                 result.unpaired_signatures.append(last_sig[0])
             last_sig = (sig["name"], sig["args"])
@@ -195,6 +198,8 @@ def parse_page(page_html: str, page: str, url: str | None = None) -> PageResult:
         args = split_args(last_sig[1]) if last_sig and last_sig[0] == call else None
         if args is None:
             result.unpaired.append(call)
+            if last_sig:  # a signature for some other name: it documents no interface either
+                result.unpaired_signatures.append(last_sig[0])
         result.calls.append(DocCall(pallet=iface["pallet"], call=call, args=args, page=page, url=url,
                                     layout=LAYOUTS[prefix], position=result.interfaces))
         last_sig = None
