@@ -52,7 +52,8 @@ class Profile:
     writes_txs: bool = False
     label: str = ""
     stored_file: str | None = None
-    measured_as: str | None = None  # for stored: profiles, the live profile the blob was recorded from
+    measured_as: str | None = None  # for stored: profiles, the live profile this repo recorded the blob from
+    asserted_as: str | None = None  # for stored: profiles, an `@profile` suffix on a blob with no recorded origin
 
 
 PROFILES: dict[str, Profile] = {
@@ -114,7 +115,6 @@ def get_profile(name: str) -> Profile:
         known = KNOWN_BLOBS.get(sha256_hex(blob))
         if base and known and base != known:
             raise ProfileError(f"{path} was recorded from {known}, not {base}")
-        measured_as = base or known
         if known:
             live = PROFILES[known]
             preset, label = live.preset, f"{live.label}; stored blob {path}"
@@ -125,7 +125,7 @@ def get_profile(name: str) -> Profile:
             preset = "legacy" if metadata_version(blob) < 14 else None
             label = f"stored blob {path} (origin not recorded)"
         return Profile(name=name, url=None, preset=preset, spec_names=(), label=label,
-                       stored_file=path, measured_as=measured_as)
+                       stored_file=path, measured_as=known, asserted_as=None if known else (base or None))
     try:
         return PROFILES[name]
     except KeyError:

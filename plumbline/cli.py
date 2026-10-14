@@ -40,11 +40,15 @@ def runtime(profile: str = typer.Option(..., "--profile", "-p", help="mainnet-10
                       "pallets": len(md.pallet_names(decoded)), "calls": len(md.call_surface(decoded))}
         else:
             substrate = md.connect(prof, url)
-            block = md.pinned_head(substrate)
-            blob = md.fetch_metadata_blob(substrate, block)
-            record = md.runtime_info(prof, substrate, blob, block, endpoint=url or prof.url).to_dict()
+            try:
+                block = md.pinned_head(substrate)
+                blob = md.fetch_metadata_blob(substrate, block)
+                record = md.runtime_info(prof, substrate, blob, block, endpoint=url or prof.url).to_dict()
+            except Exception as exc:  # RPC failure after a good connect
+                raise md.ChainUnreachableError(f"profile {prof.name}: reading runtime failed: {exc}") from exc
+            finally:
+                substrate.close()
             record["label"] = prof.label
-            substrate.close()
     except (md.ProfileError, md.UnknownChainError, md.ChainUnreachableError) as exc:
         typer.echo(f"error: {exc}", err=True)
         raise typer.Exit(2)

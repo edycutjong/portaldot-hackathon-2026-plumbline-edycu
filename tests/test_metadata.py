@@ -56,6 +56,7 @@ def test_stored_unknown_blob_infers_preset_from_version_and_says_origin_unknown(
     assert "origin not recorded" in prof.label
     asserted = md.get_profile(f"stored:{odd}@mainnet-1002")
     assert asserted.preset == "legacy" and "asserted mainnet-1002; origin not recorded" in asserted.label
+    assert (asserted.measured_as, asserted.asserted_as) == (None, "mainnet-1002")
     assert md.recorded_origin(odd.read_bytes()) is None
 
 

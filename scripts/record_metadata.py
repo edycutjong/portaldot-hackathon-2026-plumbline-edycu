@@ -34,15 +34,20 @@ def main() -> int:
     except (md.ProfileError, md.UnknownChainError, md.ChainUnreachableError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
-    if args.at == "genesis":
-        block = substrate.rpc_request("chain_getBlockHash", [0])["result"]
-    elif args.at == "head":
-        block = md.pinned_head(substrate)
-    else:
-        block = args.at
-    blob = md.fetch_metadata_blob(substrate, block)
-    info = md.runtime_info(profile, substrate, blob, block, endpoint=args.url or profile.url)
-    substrate.close()
+    try:
+        if args.at == "genesis":
+            block = substrate.rpc_request("chain_getBlockHash", [0])["result"]
+        elif args.at == "head":
+            block = md.pinned_head(substrate)
+        else:
+            block = args.at
+        blob = md.fetch_metadata_blob(substrate, block)
+        info = md.runtime_info(profile, substrate, blob, block, endpoint=args.url or profile.url)
+    except Exception as exc:  # RPC failure after a good connect, or a bad --at hash
+        print(f"error: reading {profile.name} at {args.at}: {exc}", file=sys.stderr)
+        return 2
+    finally:
+        substrate.close()
 
     decoded = md.decode_metadata(blob, profile.preset)  # the blob must decode offline before it is kept
     calls = md.call_surface(decoded)
