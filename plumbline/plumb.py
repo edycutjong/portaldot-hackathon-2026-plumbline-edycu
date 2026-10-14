@@ -242,14 +242,16 @@ def check_renames(renames: tuple[Rename, ...], profile: str, surface: Surface) -
 
 
 def classify(entry: DocEntry, rt: Runtime, surface: Surface, renames: list[Rename],
-             proven: set[str] = frozenset()) -> tuple[str, str | None, str | None]:
-    """(status, live equivalent, detail) for one documented entry on one runtime."""
+             proven: set[str] = frozenset(), exact: bool | None = None) -> tuple[str, str | None, str | None]:
+    """(status, live equivalent, detail) for one documented entry on one runtime. `exact` = match the
+    pallet name exactly (default: only for demo code, which the SDK matches exactly)."""
+    exact = entry.source == v.V3_DEMO if exact is None else exact
     if not entry.resolved:
         return v.UNKNOWN_DOC, None, entry.note or "unresolved"
     if entry.kind == v.RUNTIME_API:
         return v.UNKNOWN_DOC, None, (f"metadata V{rt.metadata_version} lists no runtime APIs"
                                      if rt.metadata_version < 15 else "runtime API lookup not implemented")
-    pallet = _live_pallet(entry.pallet, surface, exact=entry.source == v.V3_DEMO)
+    pallet = _live_pallet(entry.pallet, surface, exact=exact)
     if entry.kind == v.MODULE:
         if pallet:
             return v.UNPROVEN, pallet, entry.note or None
@@ -257,7 +259,6 @@ def classify(entry: DocEntry, rt: Runtime, surface: Surface, renames: list[Renam
         return _absent(rename, rename.pallet if rename else None, "pallet absent")
     live_key = f"{pallet}.{entry.call}" if pallet else None
     if live_key not in surface.calls:
-        exact = entry.source == v.V3_DEMO
         rename = next((r for r in renames if not r.module and r.doc_call == entry.call and
                        (r.pallet == entry.pallet if exact else _norm(r.pallet) == _norm(entry.pallet))), None)
         live = f"{rename.pallet}.{rename.live_call}" if rename else None
