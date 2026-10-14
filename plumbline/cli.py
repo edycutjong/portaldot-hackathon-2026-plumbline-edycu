@@ -7,6 +7,7 @@ from pathlib import Path
 import typer
 
 from . import __version__
+from . import canary as canary_mod
 from . import check as check_mod
 from . import diff as diff_mod
 from . import docs as docs_mod
@@ -302,6 +303,51 @@ def check_cmd(path: Path = typer.Argument(..., help="the dApp directory to scan"
         text = check_mod.render(findings, rt, mode)
         typer.echo((f"{STANDIN_BANNER}\n{text}{STANDIN_BANNER}" if standin else text).rstrip("\n"))
     raise typer.Exit(check_mod.exit_code(findings))
+
+
+@app.command("canary")
+def canary_cmd(profile: str = typer.Option(..., "--profile", "-p", help="interim-sdk (v0: dev keys, local chain only)"),
+               out: Path = typer.Option(Path("evidence/canary_interim.json"), help="the receipts record"),
+               proof: Path = typer.Option(Path("docs/PROOF.md"), help="the proof table generated from it"),
+               url: str = typer.Option(None, help="override the profile endpoint")) -> None:
+    """Send the canary calls (Balances.transfer_keep_alive, System.remark_with_event, Revive.map_account),
+    keep each receipt, read each back from its block. v0: interim-sdk only, labelled not V3."""
+    try:
+        record = canary_mod.run(profile, url)
+    except (canary_mod.CanaryError, md.ProfileError, md.UnknownChainError, md.ChainUnreachableError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(2)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
+    proof.parent.mkdir(parents=True, exist_ok=True)
+    proof.write_text(canary_mod.proof_markdown(record))
+    for r in record["receipts"]:
+        typer.echo(f"  {r['pallet']}.{r['call']:22} {r['extrinsic_id']:>9} {r['tx_hash']}  "
+                   f"{'success' if r['success'] else 'failed ' + str(r['dispatch_error'])}  "
+                   f"read-back {'ok' if r['readback_ok'] else 'FAILED'}")
+    typer.echo(f"{record['label']}: {len(record['receipts'])} receipts -> {out}, {proof}")
+    if not all(r["readback_ok"] for r in record["receipts"]):
+        raise typer.Exit(1)
+
+
+@app.command("readback")
+def readback_cmd(record_file: Path = typer.Argument(..., help="a receipts record written by plumbline canary"),
+                 url: str = typer.Option(None, help="override the record's endpoint")) -> None:
+    """Re-read every receipt of a canary record from the chain: block by hash, extrinsic by index, its hash,
+    decoded call and dispatch outcome. Exit 1 on any mismatch."""
+    record = json.loads(record_file.read_text())
+    try:
+        rows = canary_mod.verify(record, url)
+    except (md.ProfileError, md.UnknownChainError, md.ChainUnreachableError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(2)
+    for row in rows:
+        typer.echo(f"  {row['extrinsic_id']:>9} {row['call']:32} decoded {row['decoded']}  block {row['block_number']}  "
+                   f"success {row['success_on_chain']}  {'MATCH' if row['match'] else 'MISMATCH'}")
+    matched = sum(r["match"] for r in rows)
+    typer.echo(f"{record.get('label', '')}: {matched}/{len(rows)} receipts match the chain")
+    if matched != len(rows):
+        raise typer.Exit(1)
 
 
 if __name__ == "__main__":
