@@ -1,10 +1,12 @@
 """`plumbline` command line. Subcommands are added as the engine modules land."""
 
 import json
+from pathlib import Path
 
 import typer
 
 from . import __version__
+from . import docs as docs_mod
 from . import metadata as md
 
 app = typer.Typer(add_completion=False, no_args_is_help=True,
@@ -51,6 +53,35 @@ def runtime(profile: str = typer.Option(..., "--profile", "-p", help="mainnet-10
     else:
         typer.echo(f"{record['profile']}: metadata V{record['metadata_version']} sha256 {record['metadata_sha256']} "
                    f"({record['pallets']} pallets, {record['calls']} calls)")
+
+
+@app.command()
+def docs(cache: Path = typer.Option(Path(".cache/docs"), help="directory filled by scripts/fetch_docs.py"),
+         profile: str = typer.Option(None, "--profile", "-p",
+                                     help="also compare with a stored runtime, e.g. stored:fixtures/metadata_1002.scale")) -> None:
+    """Parse the cached mainnet extrinsic docs; optionally compare them with a stored runtime's calls."""
+    if not (cache / "index.html").exists():
+        typer.echo(f"error: no cached docs in {cache}; run scripts/fetch_docs.py first", err=True)
+        raise typer.Exit(2)
+    results = docs_mod.parse_dir(cache)
+    documented = docs_mod.documented_calls(results)
+    for res in results:
+        flag = f"  unpaired {res.unpaired}" if res.unpaired else ""
+        typer.echo(f"  {res.page:28} {res.interfaces:3}{flag}")
+    typer.echo(f"parsed {sum(r.parsed for r in results)}/{len(results)} pages, {len(documented)} documented calls")
+    if profile:
+        try:
+            prof = md.get_profile(profile)
+        except md.ProfileError as exc:
+            typer.echo(f"error: {exc}", err=True)
+            raise typer.Exit(2)
+        if not prof.stored_file:
+            typer.echo("error: --profile must be a stored:<file> profile", err=True)
+            raise typer.Exit(2)
+        live = md.call_surface(md.decode_metadata(Path(prof.stored_file).read_bytes(), prof.preset))
+        c = docs_mod.compare(documented, live)["counts"]
+        typer.echo(f"vs {prof.name} ({c['live_calls']} live calls): absent {c['absent']}, "
+                   f"arg-mismatch {c['arg-mismatch']}, match {c['match']}, undocumented live {c['undocumented']}")
 
 
 if __name__ == "__main__":
