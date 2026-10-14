@@ -29,7 +29,7 @@ SURFACE = plumb.Surface(
     pallets=["Tokens", "ConvictionVoting", "Empty"], metadata_hash=RT.metadata_hash)
 
 
-def entry(call, args=None, ordered=False, kind=v.CALL, pallet="tokens", source=v.V3_DEMO):
+def entry(call, args=None, ordered=False, kind=v.CALL, pallet="Tokens", source=v.V3_DEMO):
     return plumb.DocEntry(source, kind, pallet, call, args, ordered, ("x:1",))
 
 
@@ -96,6 +96,8 @@ def test_one_runtime_per_profile_and_the_surface_must_be_its_blob():
     (entry("transfer"), (v.ABSENT, None)),
     (entry("iss_ue"), (v.ABSENT, None)),                                         # a near name is not matched
     (entry("issue", pallet="Gadgets"), (v.ABSENT, None)),
+    (entry("issue", ("to", "amount"), pallet="tokens"), (v.ABSENT, None)),        # demo code: exact, like the SDK
+    (entry("issue", ("to", "amount"), pallet="tokens", source=v.V3_GUIDE), (v.UNPROVEN, "Tokens.issue")),  # prose
     (entry("", kind=v.MODULE, pallet="conviction_voting", source=v.V3_FAQ), (v.UNPROVEN, "ConvictionVoting")),
     (entry("", kind=v.MODULE, pallet="broker", source=v.V3_FAQ), (v.ABSENT, None)),
     (entry("lookup", kind=v.RUNTIME_API, pallet="TokensApi"), (v.UNKNOWN_DOC, None)),
@@ -108,7 +110,8 @@ def test_classify_rules(e, expected):
 
 def test_arg_drift_detail_carries_both_shapes_and_flags_underscore_only():
     surface = plumb.Surface(calls={"System.remark": [("_remark", "Bytes")]}, pallets=["System"])
-    status, _, detail = plumb.classify(entry("remark", ("remark",), True, pallet="system"), RT, surface, [])
+    status, _, detail = plumb.classify(entry("remark", ("remark",), True, pallet="system", source=v.MAINNET_DOCS),
+                                       RT, surface, [])
     assert status == v.ARG_DRIFT
     assert json.loads(detail) == {"doc_args": ["remark"], "live_args": ["_remark"], "underscore_only": True}
 
@@ -124,6 +127,19 @@ def test_an_absent_call_is_drifted_only_through_an_explicit_rename_row():
     row = Rename("test", "Tokens", "new_name", "old_name", v.RENAME, "measured")
     assert plumb.classify(entry("new_name"), RT, SURFACE, [row])[:2] == (v.DRIFTED, "Tokens.old_name")
     assert plumb.classify(entry("new_nam"), RT, SURFACE, [row])[:2] == (v.ABSENT, None)
+
+
+def test_a_drifted_row_shows_the_live_shape_when_the_arguments_differ_too():
+    row = Rename("test", "Tokens", "new_name", "old_name", v.RENAME, "measured")
+    status, live, detail = plumb.classify(entry("new_name", ("y",)), RT, SURFACE, [row])
+    assert (status, live) == (v.DRIFTED, "Tokens.old_name")
+    assert detail.endswith("args differ: documented ['y'], live ['x']")
+    assert "args differ" not in plumb.classify(entry("new_name", ("x",)), RT, SURFACE, [row])[2]
+
+
+def test_a_rename_row_without_evidence_is_refused():
+    with pytest.raises(plumb.LedgerError, match="needs evidence"):
+        plumb.check_renames((Rename("test", "Tokens", "new_name", "old_name", v.RENAME, " "),), "test", SURFACE)
 
 
 def test_a_none_row_needs_no_live_call_and_its_evidence_travels_with_absent():
@@ -164,7 +180,7 @@ def test_the_live_side_of_a_rename_gets_its_own_verdict():
 
 def test_a_module_rename_drifts_the_module_and_stamps_its_live_side():
     row = Rename("test", "ConvictionVoting", "voting", "", v.RENAME, "measured", module=True)
-    conn = ledger([entry("", kind=v.MODULE, pallet="voting", source=v.V3_FAQ)], renames=(row,))
+    conn = ledger([entry("", kind=v.MODULE, pallet="voting", source=v.V3_FAQ)], renames=(row,))  # noqa: E501
     got = {(r[0], r[1], r[2]): (r[4], r[5]) for r in rows(conn)}
     assert got[(v.V3_FAQ, v.MODULE, "voting")] == (v.DRIFTED, "ConvictionVoting")
     assert got[(v.RUNTIME, v.MODULE, "ConvictionVoting")] == (v.UNPROVEN, "ConvictionVoting")
@@ -185,7 +201,7 @@ def test_committed_renames_hold_on_the_1002_blob_and_their_arguments_match_the_d
 
 def receipt(call, **over):
     return {"side": "substrate", "pallet": "Tokens", "call": call, "tx_hash": "0x01", "block_hash": "0x02",
-            "success": 1, "readback_ok": 1, "readback_call": f"Tokens.{call}"} | over
+            "block_number": 7, "success": 1, "readback_ok": 1, "readback_call": f"Tokens.{call}"} | over
 
 
 def statuses(receipts):
@@ -203,7 +219,8 @@ def test_a_read_back_receipt_proves_the_call_and_is_linked():
 
 
 @pytest.mark.parametrize("bad", [
-    {"readback_ok": 0}, {"success": 0}, {"tx_hash": None}, {"block_hash": None},
+    {"readback_ok": 0}, {"success": 0}, {"tx_hash": None}, {"block_hash": None}, {"tx_hash": ""},
+    {"block_hash": ""}, {"block_number": None}, {"dispatch_error": "Module(Tokens.Frozen)"}, {"side": "eth"},
     {"readback_call": "Tokens.lock"},  # read back as another call
     {"readback_call": None},
 ])
@@ -381,6 +398,18 @@ def test_build_ledger_script_refuses_a_guide_table_for_another_commit_and_keeps_
               "--guide-table", str(tmp_path / "g.json"), "--db", str(tmp_path / "l.db"), "--out", str(tmp_path / "o.json"))
     assert res.returncode == 1 and "guide commit" in res.stderr
     assert (tmp_path / "l.db").read_bytes() == b"previous ledger"
+
+
+def test_build_ledger_script_turns_a_malformed_table_into_a_refusal_not_a_traceback(tmp_path):
+    record = json.loads(DOCS_1002.read_text())
+    twin = next(r for r in record["rows"] if r["doc_call"] == "proxy.createPure") | {"doc_call": "proxy.create_pure"}
+    record["rows"].append(twin)  # a different spelling of one call: both snake_case to create_pure
+    (tmp_path / "d.json").write_text(json.dumps(record))
+    (tmp_path / "l.db").write_bytes(b"previous ledger")
+    res = run("--profile", "stored:fixtures/metadata_1002.scale", "--runtime-record", "evidence/metadata_1002.json",
+              "--docs-table", str(tmp_path / "d.json"), "--db", str(tmp_path / "l.db"), "--out", str(tmp_path / "o.json"))
+    assert res.returncode == 1 and "IntegrityError" in res.stderr and "Traceback" not in res.stderr
+    assert not (tmp_path / "l.db.tmp").exists() and (tmp_path / "l.db").read_bytes() == b"previous ledger"
 
 
 def test_build_ledger_script_refuses_a_docs_table_with_a_doubled_call(tmp_path):

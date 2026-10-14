@@ -7,7 +7,8 @@ runs over the same inputs give byte-identical files and the same blake2-256 hash
 
 Rules (verdict names and meanings: `plumbline.verdicts`):
   - Pallets are matched by name with case and underscores ignored (`conviction_voting` = `ConvictionVoting`,
-    the snake_case and CamelCase spellings of one identifier); calls by exact snake_case name. Nothing
+    the snake_case and CamelCase spellings of one identifier); calls by exact snake_case name. Demo code
+    is matched exactly as written (pallet and call), because the SDK it calls matches exactly. Nothing
     else is matched: a near name is ABSENT, not a guess.
   - An absent call or module is DRIFTED only through an explicit row in `plumbline.renames` for the same
     profile, checked against the runtime (I3). The live side of every applied rename gets its own row:
@@ -91,9 +92,11 @@ TABLES = ("runtime", "live_call", "live_pallet", "doc_call", "rename", "verdict"
           "receipt", "run")
 RECEIPT_FIELDS = ("side", "pallet", "call", "tx_hash", "block_hash", "block_number", "success", "dispatch_error",
                   "events_json", "weight_json", "fee", "readback_ok", "readback_call")
-# I1 in SQL: the receipt is for this call, it succeeded, and its read-back decoded to the same call
-PROVEN_RECEIPT = ("runtime_id = ? AND success = 1 AND readback_ok = 1 AND tx_hash IS NOT NULL AND block_hash IS NOT NULL "
-                  "AND readback_call = pallet || '.' || call")
+# I1 in SQL: a substrate receipt for this call, included in a named block without a dispatch error, whose
+# read-back decoded to the same call
+PROVEN_RECEIPT = ("runtime_id = ? AND side = 'substrate' AND success = 1 AND dispatch_error IS NULL "
+                  "AND readback_ok = 1 AND readback_call = pallet || '.' || call "
+                  "AND coalesce(tx_hash, '') <> '' AND coalesce(block_hash, '') <> '' AND block_number IS NOT NULL")
 
 
 class LedgerError(ValueError):
@@ -150,7 +153,8 @@ def surface_from_blob(blob: bytes, preset: str | None) -> Surface:
 
 def entries_from_guide(sites: list[guide_mod.Site]) -> list[DocEntry]:
     """One entry per (source, kind, pallet, call); a site with two candidate calls names both, and says so.
-    Call names are snake_cased (an explorer path may spell `transferKeepAlive`). Sites of one call that
+    Prose call names are snake_cased (an explorer path may spell `transferKeepAlive`); demo names are kept
+    exactly as the code passes them to the SDK. Sites of one call that
     disagree on their argument names give no arguments (ARGS-UNCHECKED), with a note. Every unresolved
     site is its own entry."""
     grouped: dict[tuple, list[guide_mod.Site]] = {}
@@ -164,7 +168,7 @@ def entries_from_guide(sites: list[guide_mod.Site]) -> list[DocEntry]:
                                 None, False, (site.ref,), note=f"unresolved {site.how}{names}"))
             continue
         for call in site.calls:
-            name = docs_mod.snake(call) if site.kind == v.CALL else call
+            name = docs_mod.snake(call) if site.kind == v.CALL and site.source != v.V3_DEMO else call
             grouped.setdefault((site.source, site.kind, site.pallet, name), []).append(site)
     for (source, kind, pallet, call), group in grouped.items():
         arg_sets = {s.args for s in group}
@@ -209,7 +213,9 @@ def _norm(name: str) -> str:
     return name.replace("_", "").lower()
 
 
-def _live_pallet(name: str, surface: Surface) -> str | None:
+def _live_pallet(name: str, surface: Surface, exact: bool = False) -> str | None:
+    if exact:
+        return name if name in surface.pallets else None
     return next((p for p in surface.pallets if _norm(p) == _norm(name)), None)
 
 
@@ -219,6 +225,8 @@ def check_renames(renames: tuple[Rename, ...], profile: str, surface: Surface) -
     rows = [r for r in renames if r.profile == profile]
     for r in rows:
         label = f"rename {'module ' if r.module else ''}{r.pallet}.{r.doc_call} -> {r.live_call or '-'}"
+        if not r.evidence.strip():
+            raise LedgerError(f"{label}: a rename row needs evidence")
         doc_present = _live_pallet(r.doc_call, surface) if r.module else f"{r.pallet}.{r.doc_call}" in surface.calls
         if doc_present:
             raise LedgerError(f"{label}: the documented {'module' if r.module else 'call'} exists in {profile}")
@@ -238,7 +246,7 @@ def classify(entry: DocEntry, rt: Runtime, surface: Surface, renames: list[Renam
     if entry.kind == v.RUNTIME_API:
         return v.UNKNOWN_DOC, None, (f"metadata V{rt.metadata_version} lists no runtime APIs"
                                      if rt.metadata_version < 15 else "runtime API lookup not implemented")
-    pallet = _live_pallet(entry.pallet, surface)
+    pallet = _live_pallet(entry.pallet, surface, exact=entry.source == v.V3_DEMO)
     if entry.kind == v.MODULE:
         if pallet:
             return v.UNPROVEN, pallet, entry.note or None
@@ -249,11 +257,15 @@ def classify(entry: DocEntry, rt: Runtime, surface: Surface, renames: list[Renam
         rename = next((r for r in renames if not r.module and _norm(r.pallet) == _norm(entry.pallet)
                        and r.doc_call == entry.call), None)
         live = f"{rename.pallet}.{rename.live_call}" if rename else None
-        return _absent(rename, live, "pallet absent" if pallet is None else "call absent")
+        status, live, detail = _absent(rename, live, "pallet absent" if pallet is None else "call absent")
+        if status == v.DRIFTED and entry.args is not None and live in surface.calls:
+            live_names = [name for name, _ in surface.calls[live]]
+            if not _same_args(entry, live_names):  # the fix line must show the live shape too
+                detail += f"; args differ: documented {list(entry.args)}, live {live_names}"
+        return status, live, detail
     live_names = [name for name, _ in surface.calls[live_key]]
     if entry.args is not None:
-        same = list(entry.args) == live_names if entry.ordered else sorted(entry.args) == sorted(live_names)
-        if not same:
+        if not _same_args(entry, live_names):
             detail = {"doc_args": list(entry.args), "live_args": live_names}
             if [n.lstrip("_") for n in entry.args] == [n.lstrip("_") for n in live_names]:
                 detail["underscore_only"] = True
@@ -263,6 +275,10 @@ def classify(entry: DocEntry, rt: Runtime, surface: Surface, renames: list[Renam
     if entry.args is None:
         return v.ARGS_UNCHECKED, live_key, entry.note or None
     return v.UNPROVEN, live_key, entry.note or None
+
+
+def _same_args(entry: DocEntry, live_names: list[str]) -> bool:
+    return list(entry.args) == live_names if entry.ordered else sorted(entry.args) == sorted(live_names)
 
 
 def _absent(rename: Rename | None, live: str | None, why: str) -> tuple[str, str | None, str | None]:

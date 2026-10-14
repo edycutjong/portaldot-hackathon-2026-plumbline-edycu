@@ -17,6 +17,7 @@ an incomplete docs parse or a call documented twice.
 
 import argparse
 import json
+import sqlite3
 import sys
 from pathlib import Path
 
@@ -111,9 +112,9 @@ def main() -> int:
     try:
         data, conn = plumb.build(entries, [(runtime, surface)], inputs, db=tmp_db)
         conn.close()
-    except plumb.LedgerError as exc:
+    except (plumb.LedgerError, sqlite3.Error) as exc:  # e.g. a malformed table colliding on a primary key
         tmp_db.unlink(missing_ok=True)
-        return fail(str(exc))
+        return fail(f"{type(exc).__name__}: {exc}")
     tmp_db.replace(args.db)  # the ledger is rebuilt from its inputs, never patched in place
     args.out.write_bytes(data)
     digest = plumb.blake2_256(data)
