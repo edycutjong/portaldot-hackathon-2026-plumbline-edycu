@@ -3,8 +3,8 @@
 v0 runs only on the local `interim-sdk` chain with the well-known dev keys (`//Alice`), so it proves the
 runner end to end before any V3 funds exist. It is a stand-in, not V3: every receipt it writes carries the
 label `interim-sdk — not V3` and the profile and spec version it was sent to; `plumb` refuses a receipt whose
-profile or spec version is not its runtime's, and refuses the stand-in runtime itself, so none of these
-receipts can become a V3 (or mainnet) verdict.
+profile or spec version is not its runtime's (it trusts the record; it does not re-read the chain), and refuses the
+stand-in runtime itself, so an unedited stand-in receipt cannot become a V3 (or mainnet) verdict.
 
 One run:
   1. `//Alice` sends `Balances.transfer_keep_alive` to a fresh per-run account `//Plumbline//<run id>`.

@@ -9,7 +9,9 @@
 
 > Check-in README (v1, 2026-10-14). It describes what exists in this repository today; planned parts are marked
 > **planned**. No claim is made about Portaldot V3 behaviour anywhere in this file: every chain measurement is either
-> the Portaldot mainnet runtime (spec 1002, read-only) or a local stand-in chain (`interim-sdk`, **not V3**).
+> the Portaldot mainnet runtime (spec 1002, read-only) or a local stand-in chain (`interim-sdk`, **not V3**). One cited
+> exception: the two wasm cells inside `plumbline check` rest on a 2026-10-11 measurement on a local spec-1002 chain, made
+> before this repository existed and not re-run here (see `docs/BASELINE-1002.md`).
 
 ## Project Name
 
@@ -56,9 +58,10 @@ Full table with producers and dates: [`docs/BASELINE-1002.md`](docs/BASELINE-100
 **101 of the 320 rows come from the V3 guide's own call table, demo scripts and FAQ; their verdicts are computed against
 mainnet spec 1002 and are not V3 findings.**
 
-Other tools in the repo: `plumbline diff A B` lists every pallet, call, argument, constant and event that changes between
-two runtimes (it prints a **STAND-IN, NOT V3** banner when a side is the stand-in chain); `plumbline check <dApp dir>
---target <profile>` lists what in a dApp's code and wasm artifacts will not work on a runtime, with exit codes 0 / 1 / 2.
+Other tools in the repo: `plumbline diff A B` lists the pallets, calls, arguments, constants and events that differ between
+two runtimes (type aliases are not resolved; type-only differences are flagged `names_equal`; it prints a **STAND-IN, NOT V3** banner when a side is the stand-in chain); `plumbline check <dApp dir>
+--target <profile>` classifies each call site and wasm import set in a dApp against a runtime (blocking: ABSENT, DRIFTED, ARG_DRIFT,
+EXPECTED-REJECT; TYPE-TRAP is not detected yet; wasm verdicts cover two measured cases only), with exit codes 0 / 1 / 2.
 A golden `check` output on the mainnet-1002 profile is committed (`fixtures/expected_check_1002.txt`).
 
 ### Blockchain Relevance
@@ -85,7 +88,7 @@ flowchart LR
         MD["metadata.py<br/>chain profiles, identity check,<br/>pinned-block metadata read"]
         DOCS["docs.py<br/>3 page layouts to documented calls"]
         GUIDE["guide.py<br/>README table + AST call sites + FAQ modules"]
-        PLUMB["plumb.py + verdicts.py + renames.py<br/>SQLite drift ledger, one verdict per entry,<br/>explicit rename rows, canonical export"]
+        PLUMB["plumb.py + produce.py + verdicts.py + renames.py<br/>SQLite drift ledger, one verdict per entry,<br/>explicit rename rows, canonical export"]
         DIFF["diff.py<br/>normalise V13 / V14+, six diff kinds"]
         CHECK["check.py<br/>wasm import scan, call-site scan,<br/>exit codes"]
         CANARY["canary.py<br/>sign, submit, receipt, read-back"]
@@ -113,10 +116,12 @@ flowchart LR
     FIX --> PLUMB
     PLUMB --> EVD
     FIX --> DIFF
-    MD --> DIFF
+    MD -->|via cli.py| DIFF
     FIX --> CHECK
-    MD --> CHECK
+    MD -->|via cli.py, live profile| CHECK
     APP --> CHECK
+    DOCS --> CHECK
+    GUIDE --> CHECK
     PLUMB --> CHECK
     CHECK --> GOLD
     INT --> CANARY
@@ -125,7 +130,7 @@ flowchart LR
 
     V3["Portaldot V3 testnet<br/>PLANNED: endpoint did not resolve"]
     LEDGER["Plumbline Ledger contract (Revive)<br/>PLANNED: attests report hashes on V3"]
-    V3CAN["V3 canaries, tx per verdict<br/>PLANNED: needs V3 + tPOTv3 funds"]
+    V3CAN["V3 canaries, tx per verdict<br/>PLANNED: needs V3, tPOTv3 funds and a funded-seed signer (not implemented)"]
     V3 -.-> MD
     CANARY -.-> V3CAN
     V3CAN -.-> V3
@@ -158,7 +163,7 @@ profiles are offline and are labelled from the blob's recorded sha256. Every `ru
 carries its profile label.
 
 **Third-party inputs are untrusted data.** The V3 guide is cloned at a pinned commit outside this tree and read by AST and
-text only, never executed. Its text is not copied here: `evidence/guide_calls.json` holds names and `file:line`
+text only, never executed. At HEAD its text is not copied here: `evidence/guide_calls.json` holds names and `file:line`
 references only. The mainnet docs pages are fetched at run time into a gitignored cache.
 
 ## Smart Contracts
@@ -181,7 +186,8 @@ contract, asset or account IDs to list.
 `portaldot-dev.readthedocs.io` and github.com for the live steps. The interim-node step additionally needs macOS arm64
 and the polkadot-sdk `substrate-node` binary (release `polkadot-stable2606-3`, sha256
 `e687db4993973bd83922cfa9f01e29bb549af16560511b1fd51ff883b996207f`) at
-`~/.cache/plumbline-interim/substrate-node-aarch64-apple-darwin` (the script checks the hash and refuses any other file).
+`~/.cache/plumbline-interim/substrate-node-aarch64-apple-darwin`, or set `PLUMBLINE_INTERIM_BIN` (the script checks the hash and refuses any other file;
+see its header for the default lookup).
 
 **Steps** (every command below was run on 2026-10-14):
 
@@ -272,8 +278,8 @@ repository was written during the hackathon window (from 2026-10-14).
 
 **Open-source credits:** `substrate-interface` / `scalecodec` (Polkascan, Apache-2.0), `typer` (MIT), `pytest` (MIT);
 node binary for the interim chain from [paritytech/polkadot-sdk](https://github.com/paritytech/polkadot-sdk) releases.
-Documentation pages and the V3 testnet guide are read from their public sources at run time and are not copied into this
-repo.
+Documentation pages and the V3 testnet guide are read from their public sources at run time; at HEAD their text is not
+copied into this repo.
 
 ## License
 

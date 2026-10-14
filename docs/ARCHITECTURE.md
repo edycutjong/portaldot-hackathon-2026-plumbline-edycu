@@ -3,7 +3,7 @@
 Drawn from the code in `plumbline/` as of 2026-10-14 (not from a plan). Solid boxes exist in this repository and have
 tests; dashed boxes and dashed arrows are **planned** and are not built. The Portaldot V3 testnet did not resolve on
 2026-10-14, so the V3 path is planned and every chain measurement below is `mainnet-1002` (read-only) or the
-`interim-sdk` stand-in (**not V3**).
+`interim-sdk` stand-in (**not V3**); the one cited exception is the wasm cells inside `check` (see BASELINE-1002.md).
 
 ```mermaid
 flowchart LR
@@ -19,7 +19,7 @@ flowchart LR
         MD["metadata.py<br/>chain profiles, identity check,<br/>pinned-block metadata read"]
         DOCS["docs.py<br/>3 page layouts to documented calls"]
         GUIDE["guide.py<br/>README table + AST call sites + FAQ modules"]
-        PLUMB["plumb.py + verdicts.py + renames.py<br/>SQLite drift ledger, one verdict per entry,<br/>explicit rename rows, canonical export"]
+        PLUMB["plumb.py + produce.py + verdicts.py + renames.py<br/>SQLite drift ledger, one verdict per entry,<br/>explicit rename rows, canonical export"]
         DIFF["diff.py<br/>normalise V13 / V14+, six diff kinds"]
         CHECK["check.py<br/>wasm import scan, call-site scan,<br/>exit codes"]
         CANARY["canary.py<br/>sign, submit, receipt, read-back"]
@@ -47,10 +47,12 @@ flowchart LR
     FIX --> PLUMB
     PLUMB --> EVD
     FIX --> DIFF
-    MD --> DIFF
+    MD -->|via cli.py| DIFF
     FIX --> CHECK
-    MD --> CHECK
+    MD -->|via cli.py, live profile| CHECK
     APP --> CHECK
+    DOCS --> CHECK
+    GUIDE --> CHECK
     PLUMB --> CHECK
     CHECK --> GOLD
     INT --> CANARY
@@ -59,7 +61,7 @@ flowchart LR
 
     V3["Portaldot V3 testnet<br/>PLANNED: endpoint did not resolve"]
     LEDGER["Plumbline Ledger contract (Revive)<br/>PLANNED: attests report hashes on V3"]
-    V3CAN["V3 canaries, tx per verdict<br/>PLANNED: needs V3 + tPOTv3 funds"]
+    V3CAN["V3 canaries, tx per verdict<br/>PLANNED: needs V3, tPOTv3 funds and a funded-seed signer (not implemented)"]
     V3 -.-> MD
     CANARY -.-> V3CAN
     V3CAN -.-> V3
@@ -91,8 +93,8 @@ flowchart LR
 4. **Prove (runner only).** `canary.py` signs three calls with dev keys on the local `interim-sdk` chain, keeps each
    receipt (tx hash, block hash, extrinsic id, events), and `readback` re-fetches the block by hash and checks that the
    extrinsic at the receipt's index has the tx hash and decodes to the same call. Dev keys are refused on every other
-   profile and on any non-loopback endpoint. `plumb` refuses these receipts, so they can never become a mainnet or V3
-   verdict.
+   profile and on any non-loopback endpoint. `plumb` refuses a receipt whose profile or spec version differs from its runtime's (it trusts the record and does not
+   re-read the chain) and refuses the stand-in itself, so an unedited stand-in receipt cannot become a mainnet or V3 verdict.
 5. **Diff and check.** `diff.py` normalises V13 and V14+ metadata to one form and lists pallets, calls, arguments,
    constants and events that change between two runtimes (it prints a STAND-IN, NOT V3 banner at the top and bottom when a side is the
    stand-in; no number from that output is used in any document). `check.py` scans a dApp directory (Python and JS/TS call sites, wasm import sections) against one profile and
@@ -105,6 +107,6 @@ flowchart LR
 | Every verdict row carries profile, spec version and metadata hash | `plumb.py` schema and export; test in `tests/test_plumb.py` |
 | Verdict strings are defined once | `verdicts.py`; a test bans the literals elsewhere |
 | A recorded blob is labelled from its sha256; an unrecorded one is labelled "origin not recorded" and `plumb` refuses it, so a stand-in cannot be relabelled as V3 | `metadata.KNOWN_BLOBS`, `produce.py` |
-| The stand-in chain cannot produce a verdict | `plumb.py` refuses the profile and the blob |
-| Dev keys never leave the stand-in chain | `canary.dev_keypair` |
-| Third-party guide text is not copied into the repo | `evidence/guide_calls.json` holds names and `file:line` only |
+| The stand-in chain cannot enter the ledger (`check` and `diff` can run on it and print a STAND-IN, NOT V3 banner) | `produce.py`, `plumb.py` refuse the profile and the blob; `allow_standin` is test-only |
+| Dev keys never leave the stand-in chain | `canary.dev_keypair` (profile) and `canary.run` (loopback endpoint) |
+| Third-party guide text is not in the tree at HEAD | `evidence/guide_calls.json` holds names and `file:line` only |
