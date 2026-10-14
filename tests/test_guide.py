@@ -79,6 +79,7 @@ def test_readme_call_tables_take_the_pallet_from_the_section_heading():
         ("README.md:47", None, ("lock_it", "CollectionConfig"), guide.UNRESOLVED),  # extra ticks: not guessed
         ("README.md:48", "Widgets", ("wobble",), guide.TABLE),
         ("README.md:52", "Widgets", ("quoted",), guide.TABLE),  # a quoted table
+        ("README.md:60", None, ("summary",), guide.UNRESOLVED),  # "### Overview" is not a numbered section
     ]
 
 
@@ -94,7 +95,14 @@ def test_readme_explorer_paths_name_calls_and_runtime_apis_only():
         ("README.md:33", v.CALL, "Gadgets", ("make_gadget",)),
         ("README.md:48", v.CALL, "Widgets", ("wobble",)),  # bold segments, inside a table row
         ("README.md:54", v.CALL, "Widgets", ("transferKeepAlive",)),  # ASCII arrows; name kept as written
+        ("README.md:64", v.CALL, "Paths", ("go_left",)),  # ticked segments, `>` arrows, singular "Extrinsic"
     ]
+
+
+def test_readme_lines_that_look_like_call_docs_but_yield_no_site_are_unaccounted():
+    _, unaccounted = guide.scan_readme((LAYOUTS / "README.md").read_text())
+    # 39 call table in a fence · 65 path with no call segment · 68 path in a fence · 71 table with no rows
+    assert unaccounted == ["README.md:39", "README.md:65", "README.md:68", "README.md:71"]
 
 
 def test_faq_module_table_rows_reduce_status_to_the_closed_set_and_count_awaiting_lines():
@@ -127,6 +135,23 @@ def test_dynamic_references_are_reported_unresolved_never_dropped():
     assert guide.unaccounted_references(text, "demo/c_dynamic.py") == []
 
 
+def test_names_reached_through_strings_or_rebinding_are_unresolved():
+    text = (LAYOUTS / "demo" / "d_strings.py").read_text()
+    sites = guide.parse_demo(text, "demo/d_strings.py")
+    assert [(int(s.ref.rsplit(":", 1)[1]), s.kind, s.how) for s in sites] == [
+        (6, v.CALL, guide.UNRESOLVED),          # getattr(chain, name) with a non-literal name
+        (7, v.CALL, guide.UNRESOLVED),          # methodcaller("compose_call", …)
+        (8, v.RUNTIME_API, guide.UNRESOLVED),   # chain.__dict__["runtime_call"]
+        (17, v.CALL, guide.UNRESOLVED),         # FN = "burn" at module level, rebound via `global FN`
+    ]
+    assert guide.unaccounted_references(text, "demo/d_strings.py") == []
+
+
+def test_string_tokens_naming_an_sdk_method_must_be_covered():
+    assert guide.unaccounted_references('x = f"compose_call"\ny = "compose_call"\n', "x.py", guide.DemoScan([], set())) \
+        == ["x.py:2"]  # the plain string is found; an f-string is not a plain literal
+
+
 def test_omitted_or_none_call_params_are_zero_arguments():
     sites = {s.ref: s for s in guide.parse_demo((LAYOUTS / "demo" / "c_dynamic.py").read_text(), "demo/c_dynamic.py")}
     assert sites["demo/c_dynamic.py:7"].args == () and sites["demo/c_dynamic.py:8"].args == ()
@@ -155,8 +180,10 @@ def test_site_dict_round_trip(demo_a):
 
 def test_parse_guide_hashes_every_file_it_read():
     res = guide.parse_guide(LAYOUTS)
-    assert sorted(res.files) == ["FAQ.md", "README.md", "demo/a_calls.py", "demo/b_runtime.py", "demo/c_dynamic.py"]
-    assert res.count(v.V3_DEMO) == 16 and res.count(v.V3_FAQ) == 6 and res.unaccounted == []
+    assert sorted(res.files) == ["FAQ.md", "README.md", "demo/a_calls.py", "demo/b_runtime.py", "demo/c_dynamic.py",
+                                 "demo/d_strings.py"]
+    assert res.count(v.V3_DEMO) == 20 and res.count(v.V3_FAQ) == 6
+    assert res.unaccounted == ["README.md:39", "README.md:65", "README.md:68", "README.md:71"]
 
 
 def test_clone_state_refuses_a_folder_inside_another_repository():

@@ -52,3 +52,21 @@ Go to **Network → Tokens** (a UI page, not a call).
 > | `quoted` | a quoted table |
 
 Then use Developer -> Extrinsics -> Widgets -> transferKeepAlive (ASCII arrows, camelCase name).
+
+### Overview
+
+| Call | Description |
+|---|---|
+| `summary` | an unnumbered heading names no pallet |
+
+### 2.4 Paths
+
+- Open `Developer` > `Extrinsic` > `Paths` > `go_left` (ticks, `>` arrows, singular).
+- A broken path: Developer → Extrinsics → Paths (no call segment).
+
+```text
+Developer → Extrinsics → Paths → hidden_in_a_fence
+```
+
+| Call | Description |
+|---|---|

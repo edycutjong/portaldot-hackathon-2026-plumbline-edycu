@@ -8,15 +8,18 @@ sample code can disagree. Its three parts are kept as separate sources and never
             every Node Explorer path `Developer → Extrinsics → <Pallet> → <call>` (a call) or
             `Developer → Runtime calls → <api> → <method>` (a runtime API). A table row whose first cell
             is not exactly `name` or `name` / `name` is reported unresolved. Prose mentions are not read;
-            fenced code blocks are skipped.
+            fenced code blocks are skipped, but a Developer path or call table that yields no site (fenced
+            or not) is reported as unaccounted.
   v3-demo   demo/*.py, read as a Python AST (never imported, never executed): every
             `compose_call(call_module, call_function, call_params)`, every `runtime_call(api, method, …)`
             and every raw `rpc_request("state_call", ["<Api>_<method>", …])`, called as a method or as a
             bare name. A name argument that is not a string literal is resolved only from assignments in
             the same function whose values are string literals or a conditional between two literals.
-            Any other reference to those three names (an alias, `getattr`, a definition, an unresolved
-            argument) is an unresolved site: reported, never guessed. `unaccounted_references` checks
-            that every token naming them is covered by a site.
+            Any other reference to those three names (an alias, `getattr`, a string naming one of them, a
+            definition, an unresolved argument) and any `getattr` with a non-literal name is an unresolved
+            site: reported, never guessed. `unaccounted_references` checks that every identifier or string
+            token naming them is covered by a site (a name assembled from pieces, e.g. "compose" + "_call",
+            is out of reach of both).
   v3-faq    FAQ.md: each row of the table that has a `Runtime module` column (one module per row), with
             its status reduced to a closed set (the FAQ's own status key), never its text.
 
@@ -73,7 +76,7 @@ class GuideResult:
     sites: list[Site] = field(default_factory=list)
     files: dict[str, str] = field(default_factory=dict)  # relative path -> sha256 of the bytes parsed
     awaiting_lines: list[int] = field(default_factory=list)  # FAQ lines with a bold "awaiting …" status
-    unaccounted: list[str] = field(default_factory=list)  # demo refs naming an SDK method that no site covers
+    unaccounted: list[str] = field(default_factory=list)  # refs that look like call documentation, no site
 
     def count(self, source: str, how: str | None = None) -> int:
         return sum(1 for s in self.sites if s.source == source and (how is None or s.how == how))
@@ -142,6 +145,8 @@ def _scope_assignments(scope: ast.AST, name: str) -> list[ast.expr]:
                 visit(child)
 
     visit(scope)
+    if isinstance(scope, ast.Module) and any(isinstance(n, ast.Global) and name in n.names for n in ast.walk(scope)):
+        values.append(ast.Name(id=name))  # rebound from inside some function
     return values
 
 
@@ -234,12 +239,18 @@ def scan_demo(text: str, file: str) -> DemoScan:
         defs = (ast.FunctionDef, ast.AsyncFunctionDef)
         covered.update([node.lineno] if isinstance(node, defs) else _lines(node))  # a def: its name line only
 
+    consumed: set[int] = set()  # string constants already accounted for by a getattr site
     for node in ast.walk(tree):
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "getattr":
-            names, _ = _strings(_arg(node, 1, "name")[1], scope_of.get(node, tree))
+            name_expr = _arg(node, 1, "name")[1]
+            names, how = _strings(name_expr, scope_of.get(node, tree))
             hit = [n for n in names if n in SDK_METHODS]
-            if hit:  # getattr(obj, "compose_call")(…): which call it composes is not static
-                unresolved(node, hit[0])
+            if hit or how == UNRESOLVED:  # getattr(obj, "compose_call") / getattr(obj, name): not static
+                unresolved(node, hit[0] if hit else "compose_call")
+                consumed.update(id(n) for n in ast.walk(node) if isinstance(n, ast.Constant))
+            continue
+        if isinstance(node, ast.Constant) and node.value in SDK_METHODS and id(node) not in consumed:
+            unresolved(node, node.value)  # "compose_call" as data: methodcaller, __dict__[…], a dispatch table
             continue
         if not isinstance(node, ast.Call):
             # any other reference to an SDK method name: an alias, a definition, an import
@@ -299,13 +310,23 @@ def unaccounted_references(text: str, file: str, scan: DemoScan | None = None) -
     """Refs of code tokens (not comments or strings) naming an SDK method that no site accounts for."""
     scan = scan or scan_demo(text, file)
     lines = sorted({tok.start[0] for tok in tokenize.generate_tokens(io.StringIO(text).readline)
-                    if tok.type == tokenize.NAME and tok.string in SDK_METHODS})
+                    if (tok.type == tokenize.NAME and tok.string in SDK_METHODS)
+                    or (tok.type == tokenize.STRING and _string_value(tok.string) in SDK_METHODS)})
     return [f"{file}:{n}" for n in lines if n not in scan.covered_lines]
+
+
+def _string_value(token: str) -> str | None:
+    """The value of a plain string-literal token (parsed, never evaluated as code); None for f-strings."""
+    try:
+        node = ast.parse(token, mode="eval").body
+    except SyntaxError:
+        return None
+    return node.value if isinstance(node, ast.Constant) and isinstance(node.value, str) else None
 
 
 # ---------------------------------------------------------------- README.md
 
-HEADING = re.compile(r"^(?P<hashes>#{1,6})\s+(?:[\d.]+\s+)?(?P<title>.+?)\s*$")
+HEADING = re.compile(r"^(?P<hashes>#{1,6})\s+(?P<num>[\d.]+\s+)?(?P<title>.+?)\s*$")
 PALLET_TITLE = re.compile(r"^[A-Z][A-Za-z0-9]*$")
 CALL_TABLE_HEADER = re.compile(r"^\|\s*(?:Call|Function|Extrinsic|Method)s?\s*\|", re.IGNORECASE)
 TABLE_SEPARATOR = re.compile(r"^\|[\s:|-]+\|?\s*$")
@@ -313,10 +334,11 @@ QUOTE_INDENT = re.compile(r"^\s*(?:>\s*)*")
 FENCE = re.compile(r"^(?:```|~~~)")
 TICKED = re.compile(r"`([A-Za-z_][A-Za-z0-9_]*)`")
 ONE_TICKED = re.compile(r"^`([A-Za-z_][A-Za-z0-9_]*)`$")
-ARROW = r"\s*(?:→|->)\s*"
+ARROW = r"\s*(?:→|->|>)\s*"
 EXPLORER_PATH = re.compile(
-    rf"Developer{ARROW}(?P<area>Extrinsics|Runtime calls){ARROW}(?P<pallet>[A-Za-z][A-Za-z0-9_]*){ARROW}"
-    r"(?P<call>[A-Za-z_][A-Za-z0-9_]*)")
+    rf"Developer{ARROW}(?P<area>Extrinsics?|Runtime calls?){ARROW}(?P<pallet>[A-Za-z][A-Za-z0-9_]*){ARROW}"
+    r"(?P<call>[A-Za-z_][A-Za-z0-9_]*)", re.IGNORECASE)
+DEVELOPER_PATH = re.compile(rf"Developer{ARROW}\S", re.IGNORECASE)  # anything that looks like an explorer path
 
 
 def _cell_names(cell: str) -> list[str] | None:
@@ -326,34 +348,57 @@ def _cell_names(cell: str) -> list[str] | None:
     return [m[1] for m in matches] if parts and all(matches) else None
 
 
-def parse_readme(text: str, file: str = "README.md") -> list[Site]:
+def _plain(line: str) -> str:
+    """A line with emphasis and code ticks removed, for path matching."""
+    return line.replace("**", "").replace("__", "").replace("`", "")
+
+
+def scan_readme(text: str, file: str = "README.md") -> tuple[list[Site], list[str]]:
+    """Call sites in the README, and refs of lines that look like call documentation but yielded no site
+    (a Developer path or a call table inside a code fence, an empty call table, an unreadable path)."""
     sites: list[Site] = []
+    unaccounted: list[str] = []
     pallet: str | None = None
     table_pallet: str | None = None
+    table_header: str | None = None  # ref of the open call table's header until a row yields a site
     in_table = in_fence = False
+
+    def close_table() -> None:
+        nonlocal in_table, table_header
+        if table_header:
+            unaccounted.append(table_header)
+        in_table, table_header = False, None
+
     for lineno, raw in enumerate(text.splitlines(), start=1):
         line = QUOTE_INDENT.sub("", raw)
+        ref = f"{file}:{lineno}"
         if FENCE.match(line):
-            in_fence, in_table = not in_fence, False
+            close_table()
+            in_fence = not in_fence
             continue
         if in_fence:
+            if CALL_TABLE_HEADER.match(line) or DEVELOPER_PATH.search(_plain(line)):
+                unaccounted.append(ref)
             continue
-        ref = f"{file}:{lineno}"
         heading = HEADING.match(line)
         if heading:
-            in_table = False
+            close_table()
             level = len(heading["hashes"])
             if level < 3:
                 pallet = None
-            elif level == 3:  # "### 2.1 Assets": the pallet a section's call tables belong to
-                pallet = heading["title"] if PALLET_TITLE.match(heading["title"]) else None
+            elif level == 3:  # "### 2.1 Assets": a numbered section names the pallet its call tables belong to
+                title = heading["title"]
+                pallet = title if heading["num"] and PALLET_TITLE.match(title) else None
             continue
         if CALL_TABLE_HEADER.match(line):
-            in_table, table_pallet = True, pallet
+            close_table()
+            in_table, table_pallet, table_header = True, pallet, ref
             continue
         if in_table and not line.startswith("|"):
-            in_table = False
+            close_table()
+        before = len(sites)
         if in_table and not TABLE_SEPARATOR.match(line):
+            table_header = None
             first_cell = line.strip().strip("|").split("|")[0].strip()
             names = _cell_names(first_cell)
             if names and table_pallet:
@@ -362,11 +407,19 @@ def parse_readme(text: str, file: str = "README.md") -> list[Site]:
             else:  # an unreadable cell, or a table under a heading that names no pallet
                 sites.append(Site(source=v.V3_GUIDE, kind=v.CALL, pallet=None,
                                   calls=tuple(TICKED.findall(first_cell)), ref=ref, how=UNRESOLVED))
-        for m in EXPLORER_PATH.finditer(line.replace("**", "").replace("__", "")):
-            kind = v.CALL if m["area"] == "Extrinsics" else v.RUNTIME_API
+        paths = list(EXPLORER_PATH.finditer(_plain(line)))
+        for m in paths:
+            kind = v.CALL if m["area"].lower().startswith("extrinsic") else v.RUNTIME_API
             sites.append(Site(source=v.V3_GUIDE, kind=kind, pallet=m["pallet"], calls=(m["call"],), ref=ref,
                               how=EXPLORER))
-    return sites
+        if DEVELOPER_PATH.search(_plain(line)) and not paths and len(sites) == before:
+            unaccounted.append(ref)
+    close_table()
+    return sites, unaccounted
+
+
+def parse_readme(text: str, file: str = "README.md") -> list[Site]:
+    return scan_readme(text, file)[0]
 
 
 # ---------------------------------------------------------------- FAQ.md
@@ -431,7 +484,8 @@ def parse_guide(guide_dir: Path) -> GuideResult:
         result.files[rel] = hashlib.sha256(data).hexdigest()
         return data.decode("utf-8")
 
-    result.sites += parse_readme(read("README.md"), "README.md")
+    readme_sites, result.unaccounted = scan_readme(read("README.md"), "README.md")
+    result.sites += readme_sites
     for path in sorted((guide_dir / "demo").glob("*.py")):
         rel = path.relative_to(guide_dir).as_posix()
         text = read(rel)

@@ -62,7 +62,8 @@ def test_guide_command_counts_fixture_sites_and_exits_1_off_the_pinned_commit(tm
     # the layout fixtures are not a git checkout of the pinned commit, and include unresolved sites
     result = CliRunner().invoke(app, ["guide", "--guide-dir", str(ROOT / "fixtures" / "guide_layouts")])
     assert result.exit_code == 1, result.output
-    assert "v3-demo    16 sites" in result.stdout and "v3-faq      6 sites" in result.stdout
+    assert "v3-demo    20 sites" in result.stdout and "v3-faq      6 sites" in result.stdout
+    assert "references no site covers: README.md:39" in result.stdout
     assert "unresolved: README.md:9" in result.stdout and "guide at unknown commit (NOT the pinned clean commit" in result.stdout
 
 

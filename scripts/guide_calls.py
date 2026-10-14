@@ -4,7 +4,8 @@
     python -I scripts/guide_calls.py --out evidence/guide_calls.json
 
 Refuses (exit 1, writes nothing) unless the clone is a clean checkout of the pinned commit and every
-code token naming compose_call / runtime_call / rpc_request is covered by a site. Also
+code token naming compose_call / runtime_call / rpc_request, and every README line that looks like a
+Developer path or call table, is covered by a site. Also
 reports the plain-text cross-check: demo lines that mention `compose_call` but are not an AST call
 site (a comment, a string), so the AST count and a grep count can be compared line by line.
 """
@@ -70,7 +71,7 @@ def main() -> int:
         return 1
     res = guide.parse_guide(guide_dir)
     if res.unaccounted:
-        print(f"refusing to write evidence: code references no site accounts for: {', '.join(res.unaccounted)}",
+        print(f"refusing to write evidence: references no site accounts for: {', '.join(res.unaccounted)}",
               file=sys.stderr)
         return 1
     record = {

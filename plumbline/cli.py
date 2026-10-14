@@ -128,7 +128,7 @@ def guide_cmd(guide_dir: Path = typer.Option(Path.home() / ".cache" / "plumbline
     if unresolved:
         typer.echo(f"  unresolved: {', '.join(unresolved)}")
     if res.unaccounted:
-        typer.echo(f"  code references no site covers: {', '.join(res.unaccounted)}")
+        typer.echo(f"  references no site covers: {', '.join(res.unaccounted)}")
     pinned = head == guide_mod.GUIDE_COMMIT and not dirty
     typer.echo(f"guide at {head or 'unknown commit'}" + ("" if pinned else
                f" (NOT the pinned clean commit {guide_mod.GUIDE_COMMIT[:7]}; dirty: {dirty})"))
