@@ -7,10 +7,13 @@ from pathlib import Path
 import typer
 
 from . import __version__
+from . import check as check_mod
 from . import diff as diff_mod
 from . import docs as docs_mod
 from . import guide as guide_mod
 from . import metadata as md
+from . import plumb as plumb_mod
+from . import produce
 from . import verdicts
 
 app = typer.Typer(add_completion=False, no_args_is_help=True,
@@ -217,6 +220,88 @@ def diff_cmd(profile_a: str = typer.Argument(..., help="from: mainnet-1002 | v3 
 
 def _args_text(args: list) -> str:
     return "(" + ", ".join(f"{n}: {t}" for n, t in args) + ")"
+
+
+@app.command("plumb")
+def plumb_cmd(profile: str = typer.Option(..., "--profile", "-p", help="stored:<blob> recorded by scripts/record_metadata.py"),
+              runtime_record: Path = typer.Option(..., help="the blob's evidence record, e.g. evidence/metadata_1002.json"),
+              out: Path = typer.Option(..., help="where to write the canonical ledger JSON (+ .blake2-256)"),
+              guide_table: Path = typer.Option(Path("evidence/guide_calls.json")),
+              guide_dir: Path = typer.Option(None, help="parse a clean guide clone instead of the committed table"),
+              docs_table: Path = typer.Option(Path("evidence/docs_1002.json")),
+              docs_cache: Path = typer.Option(None, help="parse fetched docs pages instead of the committed table"),
+              db: Path = typer.Option(Path(".cache/ledger.db"))) -> None:
+    """Build the drift ledger: one verdict per documented call, module or runtime API on one runtime."""
+    code = produce.ledger(produce.Args(profile, runtime_record, out, guide_table, guide_dir, docs_table, docs_cache, db),
+                          say=typer.echo, warn=lambda m: typer.echo(m, err=True))
+    if code:
+        raise typer.Exit(code)
+
+
+REPO = Path(__file__).resolve().parents[1]
+# offline targets: the stored metadata blob and its evidence record (paths relative to the repository)
+STORED_TARGETS = {
+    "mainnet-1002": ("fixtures/metadata_1002.scale", "evidence/metadata_1002.json"),
+    "interim-sdk": ("fixtures/metadata_standin_sdk.scale", "evidence/metadata_standin_sdk.json"),
+}
+
+
+def _check_runtime(target: str, offline: bool) -> tuple[plumb_mod.Runtime, plumb_mod.Surface, str]:
+    if target.startswith("stored:"):
+        raise md.ProfileError("--target takes a chain profile (mainnet-1002 | v3 | interim-sdk), not stored:<file>")
+    prof = md.get_profile(target)
+    if offline:
+        if target not in STORED_TARGETS:
+            raise md.ProfileError(f"no stored metadata for {target} in this repository yet; "
+                                  f"run without --offline to read it live")
+        blob_rel, record_rel = STORED_TARGETS[target]
+        blob = (REPO / blob_rel).read_bytes()
+        if md.recorded_origin(blob) != target:
+            raise md.ProfileError(f"{blob_rel} is not a recorded {target} blob")
+        record = json.loads((REPO / record_rel).read_text())
+        rt = plumb_mod.runtime_from_record(record, blob, prof.label, report_state=verdicts.CACHED)
+        return rt, plumb_mod.surface_from_blob(blob, prof.preset), f"offline, stored {blob_rel}"
+    substrate = md.connect(prof)
+    try:
+        block = md.pinned_head(substrate)
+        blob = md.fetch_metadata_blob(substrate, block)
+        info = md.runtime_info(prof, substrate, blob, block)
+    except Exception as exc:  # RPC failure after a good connect
+        raise md.ChainUnreachableError(f"profile {prof.name}: reading runtime failed: {exc}") from exc
+    finally:
+        substrate.close()
+    rt = plumb_mod.runtime_from_record(info.to_dict(), blob, prof.label)
+    return rt, plumb_mod.surface_from_blob(blob, prof.preset), f"live {prof.url} at {block}"
+
+
+@app.command("check")
+def check_cmd(path: Path = typer.Argument(..., help="the dApp directory to scan"),
+              target: str = typer.Option(..., "--target", "-t", help="mainnet-1002 | v3 | interim-sdk"),
+              offline: bool = typer.Option(False, "--offline", help="use the stored metadata blob, no network"),
+              as_json: bool = typer.Option(False, "--json", help="print findings as canonical JSON")) -> None:
+    """What in a dApp's code and contract artifacts will not work on the target runtime. Exit 1 on
+    EXPECTED-REJECT, TYPE-TRAP, DRIFTED, ABSENT or ARG_DRIFT; 2 on a usage or chain error."""
+    if not path.is_dir():
+        typer.echo(f"error: {path} is not a directory", err=True)
+        raise typer.Exit(2)
+    try:
+        rt, surface, mode = _check_runtime(target, offline)
+        findings = check_mod.check(path, rt, surface)
+    except (md.ProfileError, md.UnknownChainError, md.ChainUnreachableError, plumb_mod.LedgerError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(2)
+    standin = target == "interim-sdk"
+    if as_json:
+        out = {"target": rt.profile, "spec_name": rt.spec_name, "spec_version": rt.spec_version,
+               "metadata_hash": rt.metadata_hash, "mode": mode, "label": rt.label,
+               "findings": [f.to_dict() for f in findings], "exit": check_mod.exit_code(findings)}
+        if standin:
+            out["warning"] = STANDIN_BANNER
+        typer.echo(json.dumps(out, sort_keys=True, separators=(",", ":")))
+    else:
+        text = check_mod.render(findings, rt, mode)
+        typer.echo((f"{STANDIN_BANNER}\n{text}{STANDIN_BANNER}" if standin else text).rstrip("\n"))
+    raise typer.Exit(check_mod.exit_code(findings))
 
 
 if __name__ == "__main__":

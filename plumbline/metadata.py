@@ -122,7 +122,10 @@ def get_profile(name: str) -> Profile:
             preset = PROFILES[base].preset
             label = f"stored blob {path} (asserted {base}; origin not recorded)"
         else:  # unknown origin: V13 blobs need the legacy preset, V14+ are self-describing
-            preset = "legacy" if metadata_version(blob) < 14 else None
+            try:
+                preset = "legacy" if metadata_version(blob) < 14 else None
+            except ValueError as exc:
+                raise ProfileError(f"{path}: {exc}") from None
             label = f"stored blob {path} (origin not recorded)"
         return Profile(name=name, url=None, preset=preset, spec_names=(), label=label,
                        stored_file=path, measured_as=known, asserted_as=None if known else (base or None))

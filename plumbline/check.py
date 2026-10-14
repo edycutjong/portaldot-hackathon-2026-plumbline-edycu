@@ -281,6 +281,10 @@ def _finding(rel_ref: str, written: str, entry: plumb.DocEntry, rt: plumb.Runtim
              renames: list[Rename], proven: set[str], exact: bool, arity: int | None = None) -> Finding:
     status, live, detail = plumb.classify(entry, rt, surface, renames, proven, exact=exact)
     live_args = [name for name, _ in surface.calls.get(live, [])] if live else []
+    if detail and detail.startswith("{"):  # ARG_DRIFT detail from classify: say it in words
+        d = json.loads(detail)
+        detail = f"written with ({', '.join(d['doc_args'])})" + ("; differs only by a leading underscore"
+                                                               if d.get("underscore_only") else "")
     fix = ""
     if status == v.DRIFTED:
         fix = f"-> {live}({', '.join(live_args)})"
