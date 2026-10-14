@@ -338,7 +338,8 @@ ARROW = r"\s*(?:→|->|>)\s*"
 EXPLORER_PATH = re.compile(
     rf"Developer{ARROW}(?P<area>Extrinsics?|Runtime calls?){ARROW}(?P<pallet>[A-Za-z][A-Za-z0-9_]*){ARROW}"
     r"(?P<call>[A-Za-z_][A-Za-z0-9_]*)", re.IGNORECASE)
-DEVELOPER_PATH = re.compile(rf"Developer{ARROW}\S", re.IGNORECASE)  # anything that looks like an explorer path
+# the start of a call or runtime-API path; other explorer pages (Chain state, Settings, …) are not call docs
+DEVELOPER_PATH = re.compile(rf"Developer{ARROW}(?:Extrinsics?|Runtime calls?)\b", re.IGNORECASE)
 
 
 def _cell_names(cell: str) -> list[str] | None:
@@ -396,7 +397,6 @@ def scan_readme(text: str, file: str = "README.md") -> tuple[list[Site], list[st
             continue
         if in_table and not line.startswith("|"):
             close_table()
-        before = len(sites)
         if in_table and not TABLE_SEPARATOR.match(line):
             table_header = None
             first_cell = line.strip().strip("|").split("|")[0].strip()
@@ -412,7 +412,7 @@ def scan_readme(text: str, file: str = "README.md") -> tuple[list[Site], list[st
             kind = v.CALL if m["area"].lower().startswith("extrinsic") else v.RUNTIME_API
             sites.append(Site(source=v.V3_GUIDE, kind=kind, pallet=m["pallet"], calls=(m["call"],), ref=ref,
                               how=EXPLORER))
-        if DEVELOPER_PATH.search(_plain(line)) and not paths and len(sites) == before:
+        if len(DEVELOPER_PATH.findall(_plain(line))) > len(paths):  # a path start that no full path matched
             unaccounted.append(ref)
     close_table()
     return sites, unaccounted

@@ -16,7 +16,8 @@ positional = chain.compose_call('Tokens', 'lock', {'who': 'x'})
 
 
 def send(keep_alive=True):
-    func = 'transfer_keep_alive' if keep_alive else 'transfer'
+    func = ('transfer_keep_alive' if keep_alive
+            else 'transfer')
     return chain.compose_call(call_module='Tokens', call_function=func, call_params=build())
 
 

@@ -21,8 +21,8 @@ def demo_a():
 
 def test_demo_sites_are_found_by_ast_not_by_text(demo_a):
     # 6 real compose_call sites; the comment and the string literal that mention it are not sites
-    assert [s.ref for s in demo_a] == ["demo/a_calls.py:9", "demo/a_calls.py:15", "demo/a_calls.py:20",
-                                       "demo/a_calls.py:24", "demo/a_calls.py:32", "demo/a_calls.py:33"]
+    assert [s.ref for s in demo_a] == ["demo/a_calls.py:9", "demo/a_calls.py:15", "demo/a_calls.py:21",
+                                       "demo/a_calls.py:25", "demo/a_calls.py:33", "demo/a_calls.py:34"]
     assert all(s.source == v.V3_DEMO and s.kind == v.CALL for s in demo_a)
 
 
@@ -133,6 +133,15 @@ def test_dynamic_references_are_reported_unresolved_never_dropped():
         (21, v.CALL, guide.UNRESOLVED),          # comprehension target shadows `fn = "burn"`
     ]
     assert guide.unaccounted_references(text, "demo/c_dynamic.py") == []
+
+
+@pytest.mark.parametrize("line, unaccounted", [
+    ("Open Developer → Chain state to read storage.", []),            # not a call path: no refusal
+    ("Developer > Settings, then Developer >= 3 tabs.", []),
+    ("Developer → Extrinsics → Gadgets → make_gadget, then Developer → Extrinsics → Gadgets.", ["R.md:1"]),
+])
+def test_only_unmatched_call_path_starts_are_unaccounted(line, unaccounted):
+    assert guide.scan_readme(line + "\n", "R.md")[1] == unaccounted
 
 
 def test_names_reached_through_strings_or_rebinding_are_unresolved():
