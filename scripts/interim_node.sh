@@ -30,17 +30,28 @@ listener() { lsof -nP -iTCP:"$1" -sTCP:LISTEN -t 2>/dev/null | head -1 || true; 
 # true only if $1 is a live process running our binary with our RPC port (guards against PID reuse)
 is_our_node() {
   local cmd; cmd="$(ps -p "$1" -o command= 2>/dev/null || true)"
-  [[ "$cmd" == *"$BIN_NAME"* && "$cmd" == *"--rpc-port $RPC_PORT"* && "$cmd" == *"/tcp/$P2P_PORT"* ]]
+  [[ "$cmd" == *"$(basename "$BIN")"* && "$cmd" == *"--rpc-port $RPC_PORT"* && "$cmd" == *"/tcp/$P2P_PORT"* ]]
 }
 
+# peer count from system_health, or empty if the RPC did not answer (never aborts under set -e)
 peers() {
-  curl -s -H 'Content-Type: application/json' \
-    -d '{"jsonrpc":"2.0","id":1,"method":"system_health","params":[]}' "http://127.0.0.1:$RPC_PORT" |
+  { curl -s -m 5 -H 'Content-Type: application/json' \
+      -d '{"jsonrpc":"2.0","id":1,"method":"system_health","params":[]}' "http://127.0.0.1:$RPC_PORT" || true; } |
     sed -n 's/.*"peers":\([0-9]*\).*/\1/p'
+}
+
+# isolation gate: 0 peers, asked until the RPC answers (up to 5 tries)
+check_isolated() {
+  local n=""
+  for _ in 1 2 3 4 5; do n="$(peers)"; [[ -n "$n" ]] && break; sleep 1; done
+  [[ "$n" == "0" ]] || { echo "isolation check failed: system_health peers=${n:-no answer}; stopping" >&2; return 1; }
 }
 
 start() {
   mkdir -p "$STATE_DIR"
+  if [[ -f "$PID_FILE" ]] && is_our_node "$(cat "$PID_FILE")"; then
+    echo "interim-sdk already running: PID $(cat "$PID_FILE")"; return 0
+  fi
   [[ -x "$BIN" ]] || { echo "node binary not found: $BIN (set PLUMBLINE_INTERIM_BIN)" >&2; exit 1; }
   local got; got="$(shasum -a 256 "$BIN" | cut -d' ' -f1)"
   [[ "$got" == "$BIN_SHA256" ]] || { echo "sha256 mismatch for $BIN: $got" >&2; exit 1; }
@@ -51,12 +62,21 @@ start() {
   nohup "$BIN" --dev --base-path "$DATA_DIR" --state-pruning archive --blocks-pruning archive \
     --rpc-port "$RPC_PORT" --listen-addr "/ip4/127.0.0.1/tcp/$P2P_PORT" --no-mdns \
     --no-prometheus --no-telemetry >"$LOG_FILE" 2>&1 &
-  echo $! >"$PID_FILE"
+  local pid=$!
+  echo "$pid" >"$PID_FILE"
   for _ in $(seq 1 60); do
-    if [[ "$(listener "$RPC_PORT")" == "$(cat "$PID_FILE")" ]]; then
-      local n; n="$(peers)"
-      if [[ "$n" != "0" ]]; then echo "isolation check failed: system_health peers=${n:-?}; stopping" >&2; stop; exit 1; fi
-      echo "interim-sdk up: PID $(cat "$PID_FILE") ws://127.0.0.1:$RPC_PORT peers 0 (stand-in, not V3)"; return 0
+    if ! kill -0 "$pid" 2>/dev/null; then
+      rm -f "$PID_FILE"; echo "node exited during start-up; see $LOG_FILE" >&2; exit 1
+    fi
+    if [[ "$(listener "$RPC_PORT")" == "$pid" ]]; then
+      # isolation: no peers now and 5 s later, and p2p bound to localhost only
+      if ! check_isolated || ! { sleep 5; check_isolated; }; then stop || true; exit 1; fi
+      local bound; bound="$(lsof -nP -a -p "$pid" -iTCP:"$P2P_PORT" -sTCP:LISTEN 2>/dev/null | awk 'NR>1 {print $9}' | sort -u || true)"
+      if [[ "$bound" != "127.0.0.1:$P2P_PORT" ]]; then
+        echo "isolation check failed: p2p listens on '${bound//$'\n'/ }', expected 127.0.0.1:$P2P_PORT; stopping" >&2
+        stop || true; exit 1
+      fi
+      echo "interim-sdk up: PID $pid ws://127.0.0.1:$RPC_PORT peers 0, p2p 127.0.0.1:$P2P_PORT (stand-in, not V3)"; return 0
     fi
     sleep 1
   done
@@ -84,6 +104,7 @@ stop() {
 status() {
   local pid=""; [[ -f "$PID_FILE" ]] && pid="$(cat "$PID_FILE")"
   echo "pid file: ${pid:-none}  rpc $RPC_PORT: $(listener "$RPC_PORT")  p2p $P2P_PORT: $(listener "$P2P_PORT")  peers: $(peers)"
+  return 0
 }
 
 case "${1:-}" in
