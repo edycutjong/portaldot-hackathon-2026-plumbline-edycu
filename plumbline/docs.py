@@ -59,6 +59,7 @@ class PageResult:
     signatures: int = 0
     raw_interface_labels: int = 0  # `<strong>interface</strong>` labels in the article body, inside a <p> or not
     unpaired: list[str] = field(default_factory=list)  # interface names with no matching signature
+    unpaired_signatures: list[str] = field(default_factory=list)  # signatures no interface line followed
     unmatched_lines: list[str] = field(default_factory=list)  # interface-like paragraphs the pattern rejected
     calls: list[DocCall] = field(default_factory=list)
 
@@ -69,7 +70,8 @@ class PageResult:
     @property
     def complete(self) -> bool:
         """Every interface label on the page became a call, and nothing interface-like was rejected."""
-        return self.parsed and not self.unmatched_lines and self.raw_interface_labels == self.interfaces
+        return (self.parsed and not self.unmatched_lines and not self.unpaired_signatures
+                and self.raw_interface_labels == self.interfaces)
 
 
 class _ParagraphText(HTMLParser):
@@ -142,6 +144,16 @@ def paragraphs(page_html: str) -> list[str]:
 OPEN, CLOSE = "<([{", ">)]}"
 
 
+def balanced(text: str) -> bool:
+    """Brackets never close below depth 0 and all close: rejects `a: u8) -> (` from `f(a: u8) -> ()`."""
+    depth = 0
+    for ch in text:
+        depth += (ch in OPEN) - (ch in CLOSE)
+        if depth < 0:
+            return False
+    return depth == 0
+
+
 def split_args(arg_text: str) -> tuple[tuple[str, str], ...]:
     """`dest: MultiAddress , value: Compact<u128>` -> (("dest", "MultiAddress"), ("value", "Compact<u128>"))."""
     parts, depth, start = [], 0, 0
@@ -166,7 +178,9 @@ def parse_page(page_html: str, page: str, url: str | None = None) -> PageResult:
     last_sig: tuple[str, str] | None = None
     for text in body.paragraphs:
         sig = SIGNATURE.match(text)
-        if sig:
+        if sig and balanced(sig["args"]):
+            if last_sig:  # two signatures in a row: the first one documents no interface
+                result.unpaired_signatures.append(last_sig[0])
             last_sig = (sig["name"], sig["args"])
             result.signatures += 1
             continue
@@ -184,6 +198,8 @@ def parse_page(page_html: str, page: str, url: str | None = None) -> PageResult:
         result.calls.append(DocCall(pallet=iface["pallet"], call=call, args=args, page=page, url=url,
                                     layout=LAYOUTS[prefix], position=result.interfaces))
         last_sig = None
+    if last_sig:
+        result.unpaired_signatures.append(last_sig[0])
     return result
 
 

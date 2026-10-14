@@ -149,3 +149,18 @@ def test_underscore_only_arg_mismatch_is_flagged():
     flags = {r["doc_call"]: r.get("underscore_only") for r in out["rows"]}
     assert flags == {"system.remark": True, "system.bond": False}
     assert out["counts"]["arg-mismatch-underscore-only"] == 1
+
+
+def test_signature_without_interface_makes_page_incomplete():
+    page = ('<div itemprop="articleBody"><p>first(a: <code>u8</code>)</p><p>second(b: <code>u8</code>)</p>'
+            '<p>interface: x.second</p><p>last(c: <code>u8</code>)</p></div>')
+    res = docs.parse_page(page, "x")
+    assert res.unpaired_signatures == ["first", "last"]
+    assert res.calls[0].args == (("b", "u8"),)
+    assert not res.complete
+
+
+def test_text_after_the_closing_bracket_is_not_a_signature():
+    res = docs.parse_page('<div itemprop="articleBody"><p>foo(a: <code>u8</code>) -&gt; ()</p>'
+                          '<p>interface: x.foo</p></div>', "x")
+    assert res.signatures == 0 and res.unpaired == ["foo"]
