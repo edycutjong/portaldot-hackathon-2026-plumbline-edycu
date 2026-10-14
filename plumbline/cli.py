@@ -71,9 +71,20 @@ def docs(cache: Path = typer.Option(Path(".cache/docs"), help="directory filled 
     results = docs_mod.parse_dir(cache)
     documented = docs_mod.documented_calls(results)
     for res in results:
-        flag = f"  unpaired {res.unpaired}" if res.unpaired else ""
-        typer.echo(f"  {res.page:28} {res.interfaces:3}{flag}")
-    typer.echo(f"parsed {sum(r.parsed for r in results)}/{len(results)} pages, {len(documented)} documented calls")
+        flags = []
+        if res.unpaired:
+            flags.append(f"unpaired {res.unpaired}")
+        if res.unmatched_lines:
+            flags.append(f"rejected interface lines {res.unmatched_lines}")
+        if res.raw_interface_labels != res.interfaces:
+            flags.append(f"{res.raw_interface_labels} interface labels but {res.interfaces} parsed")
+        typer.echo(f"  {res.page:28} {res.interfaces:3}" + ("  " + "; ".join(flags) if flags else ""))
+    duplicates = docs_mod.duplicate_calls(results)
+    if duplicates:
+        typer.echo(f"  duplicate calls: {sorted(duplicates)}")
+    complete = sum(r.complete for r in results)
+    typer.echo(f"parsed {sum(r.parsed for r in results)}/{len(results)} pages ({complete} complete), "
+               f"{len(documented)} documented calls")
     if profile:
         try:
             prof = md.get_profile(profile)
@@ -83,11 +94,14 @@ def docs(cache: Path = typer.Option(Path(".cache/docs"), help="directory filled 
         if not prof.stored_file:
             typer.echo("error: --profile must be a stored:<file> profile", err=True)
             raise typer.Exit(2)
-        live = md.call_surface(md.decode_metadata(Path(prof.stored_file).read_bytes(), prof.preset))
-        c = docs_mod.compare(documented, live)["counts"]
-        typer.echo(f"vs {prof.name} ({c['live_calls']} live calls): absent {c['absent']}, "
-                   f"arg-mismatch {c['arg-mismatch']}, match {c['match']}, undocumented live {c['undocumented']}")
-
+        decoded = md.decode_metadata(Path(prof.stored_file).read_bytes(), prof.preset)
+        c = docs_mod.compare(documented, md.call_surface(decoded), md.pallet_names(decoded))["counts"]
+        typer.echo(f"vs {prof.measured_as or prof.name} ({c['live_calls']} live calls): absent {c['absent']}, "
+                   f"arg-mismatch {c['arg-mismatch']}, args-unknown {c['args-unknown']}, match {c['match']}, "
+                   f"undocumented live {c['undocumented']}")
+        typer.echo(f"  {prof.label}")
+    if complete != len(results) or duplicates:
+        raise typer.Exit(1)
 
 if __name__ == "__main__":
     app()
