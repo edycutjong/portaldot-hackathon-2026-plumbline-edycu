@@ -1,8 +1,9 @@
 {
   "blob_file": "fixtures/metadata_1002.scale",
+  "block_hash": "0x43003d91fa7ece4b379f7bd5028399739cb56f017cea3d6b385d5e391954eb45",
   "code_hash": "0xc8e7e77fe84f1231787e75a751af48c52e68675ad55de062c81cc8df24066e55",
   "endpoint": "wss://mainnet.portaldot.io",
-  "fetched_at": "2026-10-14T09:15:25+00:00",
+  "fetched_at": "2026-10-14T09:32:35+00:00",
   "genesis_hash": "0x83b5212c69f85f3996f8696bb35bf913af51b176a5f53d0a74fd3a83dc0b8a54",
   "impl_name": "substrate-node",
   "label": "Portaldot mainnet, spec 1002 (read-only baseline)",

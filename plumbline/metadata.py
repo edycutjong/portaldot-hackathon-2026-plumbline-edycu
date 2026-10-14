@@ -37,16 +37,22 @@ class ProfileError(ValueError):
     """The profile name is not one Plumbline knows."""
 
 
+class ChainUnreachableError(RuntimeError):
+    """The profile's endpoint could not be reached."""
+
+
 @dataclass(frozen=True)
 class Profile:
     name: str
     url: str | None
     preset: str | None
     spec_names: tuple[str, ...]
-    genesis_hash: str | None = None  # None = not pinned (dev chains, or not yet observed)
+    genesis_hash: str | None = None  # None = not pinned (not yet observed)
+    spec_versions: tuple[int, ...] = ()  # () = any spec version
     writes_txs: bool = False
     label: str = ""
     stored_file: str | None = None
+    measured_as: str | None = None  # for stored: profiles, the live profile the blob was recorded from
 
 
 PROFILES: dict[str, Profile] = {
@@ -57,13 +63,15 @@ PROFILES: dict[str, Profile] = {
         spec_names=("portaldot",),
         # observed via chain_getBlockHash(0) on 2026-10-14
         genesis_hash="0x83b5212c69f85f3996f8696bb35bf913af51b176a5f53d0a74fd3a83dc0b8a54",
+        spec_versions=(1002,),  # the legacy preset is only known to be right for this spec
         label="Portaldot mainnet, spec 1002 (read-only baseline)",
     ),
     "v3": Profile(
         name="v3",
         url="wss://testnetv3-node.feso-apps.xyz",
         preset=None,
-        # third-party measured, not yet confirmed by this tool; the genesis hash is pinned on first contact
+        # spec name as measured by a third party, not yet confirmed by this tool; genesis not pinned
+        # until the endpoint has been reached once
         spec_names=("portaldotV3",),
         writes_txs=True,
         label="Portaldot V3 testnet",
@@ -73,27 +81,47 @@ PROFILES: dict[str, Profile] = {
         url="ws://127.0.0.1:39944",
         preset=None,
         spec_names=("node",),
+        # genesis of `--dev` on polkadot-stable2606-3, observed 2026-10-14
+        genesis_hash="0x0c4402ef4ccc34d28b16523e1cf26831716527c61a65d8e0840ab26e1636c8a2",
+        spec_versions=(268,),
         writes_txs=True,
         label="interim-sdk: local polkadot-sdk substrate-node --dev (stand-in, not V3)",
     ),
 }
 
 
+# Metadata blobs this repository has recorded (sha256 -> the live profile it was read from).
+# A stored blob is labelled from this table, never from free text, so a stand-in can't be relabelled.
+KNOWN_BLOBS: dict[str, str] = {
+    "b87080f9349f936e859748df90ca7837d1e2d15cb02abba347499b8639869053": "mainnet-1002",  # fixtures/metadata_1002.scale
+    "9732aff0f6b558576c1551596852448cdf5d1e9ac58705f0ab286d84e73728db": "interim-sdk",   # fixtures/metadata_standin_sdk.scale
+}
+
+
 def get_profile(name: str) -> Profile:
-    """Resolve a profile name, including `stored:<file>[@<base-profile>]`."""
+    """Resolve a profile name, including `stored:<file>[@<live-profile>]`."""
     if name.startswith("stored:"):
         spec = name[len("stored:"):]
-        path, _, base = spec.partition("@")
+        path, sep, base = spec.rpartition("@")
+        if not sep or base not in PROFILES:  # no suffix, or an `@` that is part of the path
+            path, base = spec, ""
         if not path:
             raise ProfileError("stored: profile needs a file path, e.g. stored:fixtures/metadata_1002.scale")
         if not Path(path).exists():
             raise ProfileError(f"stored metadata file not found: {path}")
-        if base:
-            preset = get_profile(base).preset
-        else:  # no base profile named: V13 blobs need the legacy preset, V14+ are self-describing
-            preset = "legacy" if metadata_version(Path(path).read_bytes()) < 14 else None
-        return Profile(name=name, url=None, preset=preset, spec_names=(), label=f"stored blob {path}",
-                       stored_file=path)
+        blob = Path(path).read_bytes()
+        known = KNOWN_BLOBS.get(sha256_hex(blob))
+        if base and known and base != known:
+            raise ProfileError(f"{path} was recorded from {known}, not {base}")
+        measured_as = base or known
+        if measured_as:
+            live = PROFILES[measured_as]
+            preset, label = live.preset, f"{live.label}; stored blob {path}"
+        else:  # unknown origin: V13 blobs need the legacy preset, V14+ are self-describing
+            preset = "legacy" if metadata_version(blob) < 14 else None
+            label = f"stored blob {path} (origin not recorded)"
+        return Profile(name=name, url=None, preset=preset, spec_names=(), label=label,
+                       stored_file=path, measured_as=measured_as)
     try:
         return PROFILES[name]
     except KeyError:
@@ -114,7 +142,7 @@ class RuntimeInfo:
     metadata_bytes: int
     genesis_hash: str | None = None
     code_hash: str | None = None
-    block_hash: str | None = None  # the block the metadata was read at (None = chain head at fetch time)
+    block_hash: str | None = None  # the block every field of this record was read at
     fetched_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat(timespec="seconds"))
 
     def to_dict(self) -> dict:
@@ -135,26 +163,37 @@ def connect(profile: Profile, url: str | None = None):
     kwargs = {"url": endpoint}
     if profile.preset:
         kwargs["type_registry_preset"] = profile.preset
-    substrate = SubstrateInterface(**kwargs)
-    substrate.init_runtime()
-    verify_identity(profile, substrate)
+    try:
+        substrate = SubstrateInterface(**kwargs)
+    except Exception as exc:  # the SDK raises several unrelated types for DNS / socket failures
+        raise ChainUnreachableError(f"profile {profile.name}: cannot reach {endpoint}: {exc}") from exc
+    try:
+        verify_identity(profile, substrate)  # plain RPC reads, before any type decoding
+        substrate.init_runtime()
+    except Exception:
+        substrate.close()
+        raise
     return substrate
 
 
 def verify_identity(profile: Profile, substrate) -> tuple[str, str]:
     version = substrate.rpc_request("state_getRuntimeVersion", [])["result"]
     genesis = substrate.rpc_request("chain_getBlockHash", [0])["result"]
-    check_identity(profile, version.get("specName", ""), genesis)
+    check_identity(profile, version.get("specName", ""), genesis, version.get("specVersion"))
     return version.get("specName", ""), genesis
 
 
-def check_identity(profile: Profile, spec_name: str, genesis_hash: str) -> None:
+def check_identity(profile: Profile, spec_name: str, genesis_hash: str, spec_version: int | None = None) -> None:
     if profile.spec_names and spec_name not in profile.spec_names:
         raise UnknownChainError(
             f"profile {profile.name} expects spec_name in {profile.spec_names}, endpoint reports {spec_name!r}")
     if profile.genesis_hash and genesis_hash.lower() != profile.genesis_hash.lower():
         raise UnknownChainError(
             f"profile {profile.name} expects genesis {profile.genesis_hash}, endpoint reports {genesis_hash}")
+    if profile.spec_versions and spec_version is not None and spec_version not in profile.spec_versions:
+        raise UnknownChainError(
+            f"profile {profile.name} expects spec_version in {profile.spec_versions}, endpoint reports {spec_version} "
+            f"(runtime upgraded? the profile's type handling is only known to be right for the listed versions)")
 
 
 def assets_instance(profile: Profile, url: str | None = None):
@@ -164,10 +203,16 @@ def assets_instance(profile: Profile, url: str | None = None):
     drops an override set earlier. It changes `Balance` for the whole instance, so never share this
     instance with Balances calls.
     """
+    if profile.name != "mainnet-1002":
+        raise ProfileError(f"the Assets u64 override is a mainnet-1002 workaround; profile {profile.name} needs none")
     substrate = connect(profile, url)
-    if profile.name == "mainnet-1002":
-        substrate.runtime_config.update_type_registry_types({"Balance": "u64"})
+    substrate.runtime_config.update_type_registry_types({"Balance": "u64"})
     return substrate
+
+
+def pinned_head(substrate) -> str:
+    """Resolve the finalized head once, so every read of one record comes from the same block."""
+    return substrate.rpc_request("chain_getFinalizedHead", [])["result"]
 
 
 def fetch_metadata_blob(substrate, block_hash: str | None = None) -> bytes:
@@ -178,12 +223,11 @@ def fetch_metadata_blob(substrate, block_hash: str | None = None) -> bytes:
     return bytes.fromhex(substrate.rpc_request("state_getMetadata", params)["result"][2:])
 
 
-def runtime_info(profile: Profile, substrate, blob: bytes, endpoint: str | None = None,
-                 block_hash: str | None = None) -> RuntimeInfo:
-    at = [block_hash] if block_hash else []
-    version = substrate.rpc_request("state_getRuntimeVersion", at)["result"]
+def runtime_info(profile: Profile, substrate, blob: bytes, block_hash: str, endpoint: str | None = None) -> RuntimeInfo:
+    """Runtime facts read at `block_hash`: the same block the metadata blob must have been read at."""
+    version = substrate.rpc_request("state_getRuntimeVersion", [block_hash])["result"]
     genesis = substrate.rpc_request("chain_getBlockHash", [0])["result"]
-    code_hash = substrate.rpc_request("state_getStorageHash", [CODE_KEY] + at)["result"]
+    code_hash = substrate.rpc_request("state_getStorageHash", [CODE_KEY, block_hash])["result"]
     return RuntimeInfo(
         profile=profile.name,
         endpoint=endpoint or profile.url,

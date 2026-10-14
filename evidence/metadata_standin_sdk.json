@@ -3,7 +3,7 @@
   "block_hash": "0x0c4402ef4ccc34d28b16523e1cf26831716527c61a65d8e0840ab26e1636c8a2",
   "code_hash": "0x72e84be232be151b059440f89710895de0cb6b71b6529f97e9c02340765f1ec0",
   "endpoint": "ws://127.0.0.1:39944",
-  "fetched_at": "2026-10-14T09:18:22+00:00",
+  "fetched_at": "2026-10-14T09:32:37+00:00",
   "genesis_hash": "0x0c4402ef4ccc34d28b16523e1cf26831716527c61a65d8e0840ab26e1636c8a2",
   "impl_name": "substrate-node",
   "label": "interim-sdk: local polkadot-sdk substrate-node --dev (stand-in, not V3)",
