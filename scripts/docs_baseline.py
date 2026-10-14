@@ -5,7 +5,7 @@
 
 The profile label written into the evidence comes from the blob's recorded origin (its sha256 in
 `plumbline.metadata.KNOWN_BLOBS`), never from free text. Exits 1, writing nothing, if any page is not
-completely parsed or a call is documented twice. Classes are raw comparisons (match / arg-mismatch /
+completely parsed, a call is documented twice, or a cached page differs from its manifest entry. Classes are raw comparisons (match / arg-mismatch /
 args-unknown / call-absent / pallet-absent); ledger verdicts are assigned by the ledger, not here.
 """
 
@@ -34,13 +34,16 @@ def main() -> int:
         raise SystemExit(f"error: {exc}")
     if not prof.stored_file:
         raise SystemExit("docs_baseline compares against a stored blob; record one with scripts/record_metadata.py")
-    if not prof.measured_as:
-        raise SystemExit(f"{prof.stored_file}: origin not recorded (sha256 not in KNOWN_BLOBS); refusing to label it")
     blob = Path(prof.stored_file).read_bytes()
+    if md.recorded_origin(blob) is None:
+        raise SystemExit(f"error: {prof.stored_file}: origin not recorded (sha256 not in KNOWN_BLOBS); refusing to label it")
     decoded = md.decode_metadata(blob, prof.preset)
     live = md.call_surface(decoded)
 
-    results = docs.parse_dir(args.cache)
+    try:
+        results = docs.parse_dir(args.cache)
+    except FileNotFoundError as exc:
+        raise SystemExit(f"error: {exc} (run scripts/fetch_docs.py)")
     incomplete = [r.page for r in results if not r.complete]
     duplicates = docs.duplicate_calls(results)
     if incomplete or duplicates:
@@ -55,6 +58,10 @@ def main() -> int:
     for page in ["index"] + [r.page for r in results]:
         body = (args.cache / f"{page}.html").read_bytes()  # hash what was parsed, not what the manifest says
         entry = manifest["files"].get(page, {})
+        if entry and entry.get("sha256") != hashlib.sha256(body).hexdigest():
+            print(f"refusing to write evidence: {page}.html differs from manifest.json (partial re-fetch?)",
+                  file=sys.stderr)
+            return 1
         sources[page] = {"url": entry.get("url", f"{docs.DOCS_BASE}{page}.html"), "bytes": len(body),
                          "sha256": hashlib.sha256(body).hexdigest(), "fetched_at": entry.get("fetched_at")}
 

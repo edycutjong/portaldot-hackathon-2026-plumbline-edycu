@@ -28,8 +28,12 @@ def main() -> int:
     ap.add_argument("--evidence", required=True, type=Path, help="where to write the JSON evidence record")
     args = ap.parse_args()
 
-    profile = md.get_profile(args.profile)
-    substrate = md.connect(profile, args.url)  # fails loud on an unknown chain
+    try:
+        profile = md.get_profile(args.profile)
+        substrate = md.connect(profile, args.url)  # fails loud on an unknown chain
+    except (md.ProfileError, md.UnknownChainError, md.ChainUnreachableError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
     if args.at == "genesis":
         block = substrate.rpc_request("chain_getBlockHash", [0])["result"]
     elif args.at == "head":
