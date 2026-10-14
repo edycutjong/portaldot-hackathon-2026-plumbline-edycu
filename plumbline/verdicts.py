@@ -1,0 +1,64 @@
+"""The ledger's vocabulary: the ONE place verdict, source and kind strings are defined.
+
+The SQLite schema's CHECK constraints, the ledger export and every module that assigns a verdict
+import these names; no other module spells a verdict string. Definitions:
+
+  PROVEN             documented, present in the target runtime, and a canary receipt exists whose
+                     extrinsic, read back by block hash, decodes to the same pallet.call (I1).
+  DRIFTED            documented, absent from the target's metadata, with an explicit rename/substitute
+                     row naming the live equivalent (I3; never inferred).
+  ARG_DRIFT          documented and present, but the documented arguments differ from the live ones.
+  ARGS-UNCHECKED     documented and present; the source gives no arguments to compare.
+  ABSENT             documented (call or listed module) and absent from the target's metadata, with no
+                     known equivalent.
+  UNDOCUMENTED       a live call that no parsed source names.
+  UNPROVEN           documented and present with matching (or no) arguments, but no receipt yet.
+  EXPECTED-REJECT    a contract artifact whose imports the target is known to reject (check, later).
+  COMPAT-UNMEASURED  an artifact/target cell with no measurement behind it (check, later).
+  TYPE-TRAP          a call site that passes a value of the wrong account type (check, later).
+  UNSCANNED          a dApp call site the scanner could not resolve statically (check, later).
+  UNKNOWN-DOC        a documented entry the ledger cannot check against this runtime: the parser could
+                     not resolve it, or it is a runtime API and the metadata version lists no APIs.
+
+Per report: CACHED (metadata read from a stored blob, not live), STALE (the runtime changed since).
+"""
+
+PROVEN = "PROVEN"
+DRIFTED = "DRIFTED"
+ARG_DRIFT = "ARG_DRIFT"
+ARGS_UNCHECKED = "ARGS-UNCHECKED"
+ABSENT = "ABSENT"
+UNDOCUMENTED = "UNDOCUMENTED"
+UNPROVEN = "UNPROVEN"
+EXPECTED_REJECT = "EXPECTED-REJECT"
+COMPAT_UNMEASURED = "COMPAT-UNMEASURED"
+TYPE_TRAP = "TYPE-TRAP"
+UNSCANNED = "UNSCANNED"
+UNKNOWN_DOC = "UNKNOWN-DOC"
+
+VERDICTS = (PROVEN, DRIFTED, ARG_DRIFT, ARGS_UNCHECKED, ABSENT, UNDOCUMENTED, UNPROVEN, EXPECTED_REJECT,
+            COMPAT_UNMEASURED, TYPE_TRAP, UNSCANNED, UNKNOWN_DOC)
+
+CACHED = "CACHED"
+STALE = "STALE"
+REPORT_STATES = (CACHED, STALE)
+
+# Where a documented entry came from. RUNTIME marks UNDOCUMENTED rows: the live call itself is the source.
+V3_GUIDE = "v3-guide"          # the V3 guide README
+V3_DEMO = "v3-demo"            # the guide's demo/*.py sample code
+V3_FAQ = "v3-faq"              # the V3 FAQ module table
+MAINNET_DOCS = "mainnet-docs"  # portaldot-dev.readthedocs.io extrinsic pages
+RUNTIME = "runtime"
+SOURCES = (V3_GUIDE, V3_DEMO, V3_FAQ, MAINNET_DOCS)
+
+# What a documented entry names.
+CALL = "call"                  # a dispatchable pallet call
+RUNTIME_API = "runtime-api"    # a runtime API method (state_call / runtime_call)
+MODULE = "module"              # a whole pallet (FAQ rows)
+DOC_KINDS = (CALL, RUNTIME_API, MODULE)
+
+# Rename rows (explicit, with evidence; never fuzzy).
+RENAME = "rename"
+SUBSTITUTE = "substitute"
+NONE = "none"
+RENAME_KINDS = (RENAME, SUBSTITUTE, NONE)
