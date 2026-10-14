@@ -309,13 +309,14 @@ def parse_guide(guide_dir: Path) -> GuideResult:
 
 
 def clone_state(guide_dir: Path) -> tuple[str | None, bool]:
-    """(HEAD commit, has local changes) of a guide checkout; (None, True) if it is not a git checkout."""
+    """(HEAD commit, has local changes) of a guide checkout; (None, True) if it is not its own git checkout."""
     def git(*args: str) -> subprocess.CompletedProcess:
         return subprocess.run(["git", "-C", str(guide_dir), *args], capture_output=True, text=True)
 
     head = git("rev-parse", "HEAD")
-    if head.returncode != 0:
-        return None, True
+    top = git("rev-parse", "--show-toplevel")
+    if head.returncode != 0 or Path(top.stdout.strip()).resolve() != Path(guide_dir).resolve():
+        return None, True  # not a checkout, or a folder inside some other repository
     status = git("status", "--porcelain", "--untracked-files=all")
     return head.stdout.strip(), bool(status.stdout.strip()) or status.returncode != 0
 

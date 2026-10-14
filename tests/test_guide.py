@@ -99,3 +99,12 @@ def test_parse_guide_hashes_every_file_it_read():
     res = guide.parse_guide(LAYOUTS)
     assert sorted(res.files) == ["FAQ.md", "README.md", "demo/a_calls.py", "demo/b_runtime.py"]
     assert res.count(v.V3_DEMO) == 8 and res.count(v.V3_FAQ) == 4
+
+
+def test_clone_state_refuses_a_folder_inside_another_repository():
+    # fixtures/guide_layouts sits inside this repository: it is not a guide checkout of its own
+    assert guide.clone_state(LAYOUTS) == (None, True)
+
+
+def test_clone_state_of_a_plain_folder(tmp_path):
+    assert guide.clone_state(tmp_path) == (None, True)
