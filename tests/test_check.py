@@ -56,7 +56,7 @@ def test_abi_family():
     assert check.abi_family([("env", "memory", "memory")]) is None
 
 
-@pytest.mark.parametrize("name, target, status", [
+@pytest.mark.parametrize("name, target, status", [  # seal_newer imports seal1.get_storage + seal2.set_storage
     ("seal0_only.wasm", "mainnet-1002", v.UNPROVEN),
     ("seal_newer.wasm", "mainnet-1002", v.EXPECTED_REJECT),
     ("seal_newer.contract", "mainnet-1002", v.EXPECTED_REJECT),
@@ -71,6 +71,43 @@ def test_artifact_cells(name, target, status):
         assert f"on {target} yet" in finding.detail
 
 
+def test_newer_abi_imports_no_measurement_covers_are_unmeasured():
+    imports = [("env", "memory", "memory"), ("seal1", "seal_call", "func")]
+    status, evidence, fix = check.artifact_cell("mainnet-1002", imports)
+    assert status == v.COMPAT_UNMEASURED and fix == ""
+    hit = check.artifact_cell("mainnet-1002", imports + [("seal2", "set_storage", "func")])
+    assert hit[0] == v.EXPECTED_REJECT and "seal2.set_storage" in hit[1] and "inferred" in hit[1]
+    assert "or target V3" not in hit[2]
+
+
+def test_ink_target_dir_is_scanned_other_build_output_is_not(tmp_path):
+    for rel in ("target/ink/flip.contract", "target/debug/x.wasm", "node_modules/y.wasm", "contract/z.WASM"):
+        path = tmp_path / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes((WASM / "seal_newer.contract").read_bytes() if rel.endswith(".contract")
+                         else (WASM / "seal0_only.wasm").read_bytes())
+    stats = {}
+    found = check.check(tmp_path, RT, SURFACE, RENAMES, stats=stats)
+    assert [f.ref for f in found] == ["contract/z.WASM", "target/ink/flip.contract"] and stats["files"] == 2
+
+
+def test_empty_dir_says_nothing_to_check(tmp_path):
+    stats = {}
+    text = check.render(check.check(tmp_path, RT, SURFACE, RENAMES, stats=stats), RT, "offline", stats["files"])
+    assert "nothing to check in 0 files scanned" in text and text.endswith("exit 0\n")
+
+
+def test_unreadable_files_and_unparsed_frameworks_are_unscanned(tmp_path):
+    write(tmp_path, "a.vue", "<script>api.tx.nfts.mint()</script>")
+    write(tmp_path, "b.ts", "api.tx.nfts.mint()")
+    (tmp_path / "b.ts").chmod(0)
+    try:
+        found = check.check(tmp_path, RT, SURFACE, RENAMES)
+    finally:
+        (tmp_path / "b.ts").chmod(0o644)
+    assert [(f.ref, f.status) for f in found] == [("a.vue", v.UNSCANNED), ("b.ts", v.UNSCANNED)]
+
+
 def test_unreadable_and_polkavm_artifacts_are_unscanned(tmp_path):
     (tmp_path / "bad.wasm").write_bytes(b"\0asm\x01\0\0\0\x02\x09")
     (tmp_path / "x.polkavm").write_bytes(b"PVM\0")
@@ -80,10 +117,20 @@ def test_unreadable_and_polkavm_artifacts_are_unscanned(tmp_path):
 
 
 def test_mask_js_hides_comments_and_strings_and_keeps_lines():
-    src = 'a.tx.x.y(1) // api.tx.no.no(1)\n/* api.tx.no.no(\n) */ s = "api.tx.no.no(" + `t ${api.tx.no.no(1)}`\n'
+    src = ('a.tx.x.y(1) // api.tx.no.no(1)\n/* api.tx.no.no(\n) */ s = "api.tx.no.no(" + `t api.tx.no.no(1) '
+           '${api.tx.yes.call(1)} ${`${api.tx.deep.call()}`}`\n')
     masked = check.mask_js(src)
     assert masked.count("\n") == src.count("\n") and len(masked) == len(src)
-    assert [s[1:3] for s in check.js_sites(src)] == [("x", "y")]
+    # template text is masked; code inside ${...} (also nested) stays visible
+    assert [s[1:3] for s in check.js_sites(src)] == [("x", "y"), ("deep", "call"), ("yes", "call")]
+
+
+def test_mask_js_reads_regex_literals_as_literals():
+    src = ("const q = /'/g; api.tx.balances.transfer(a, b)\n"
+           "const r = s.replace(/\\/\\/[/]x/, ''); api.tx.system.remark(c)\n"
+           "const half = total / 2; api.tx.assets.mint(a, b, c) / 1\n")
+    assert [s[1:4] for s in check.js_sites(src)] == [("balances", "transfer", 2), ("system", "remark", 1),
+                                                     ("assets", "mint", 3)]
 
 
 def test_js_sites_arity_and_dynamic():
@@ -93,9 +140,25 @@ def test_js_sites_arity_and_dynamic():
            "api.tx[pallet][call](x)\n"
            "api.tx.assets[method](x)\n"
            "api.tx.system.remark('a, b')\n")
-    assert check.js_sites(src) == [(1, "balances", "transferKeepAlive", 3), (2, "proxy", "createPure", 0),
-                                   (3, "utility", "batch", None), (4, None, None, None), (5, None, None, None),
-                                   (6, "system", "remark", 1)]
+    assert [s[:4] for s in check.js_sites(src)] == [
+        (1, "balances", "transferKeepAlive", 3), (2, "proxy", "createPure", 0), (3, "utility", "batch", None),
+        (4, None, None, None), (5, None, None, None), (6, "system", "remark", 1)]
+
+
+def test_js_sites_optional_chaining_references_destructuring_and_type_arguments():
+    src = ("api.tx?.balances?.transferKeepAlive?.(a, b)\n"
+           "api.tx.balances?.transfer(a)\n"
+           "const f = api.tx.balances.transfer\n"
+           "const pal = api.tx.proxy;\n"
+           "const { tx } = api\n"
+           "api.tx.balances.transfer(dest as Foo<A, B>, 1)\n"
+           "const t = receipt.tx; t.wait()\n")
+    got = [s[:4] + (s[4],) for s in check.js_sites(src)]
+    assert got == [(1, "balances", "transferKeepAlive", 2, ""), (2, "balances", "transfer", 1, ""),
+                   (3, None, None, None, "api.tx reference, not a call"),
+                   (4, None, None, None, "api.tx reference, not a call"),
+                   (5, None, None, None, "api.tx destructured"),
+                   (6, "balances", "transfer", None, "")]  # a `<` makes the count unknown, never a false drift
 
 
 def write(root: Path, rel: str, text: str) -> None:
@@ -127,7 +190,7 @@ def test_check_verdicts_per_site(tmp_path):
     ]
     by_ref = {f.ref: f for f in findings}
     assert by_ref["a/send.ts:3"].fix == "-> Proxy.anonymous(proxy_type, delay, index)"
-    assert by_ref["a/send.ts:2"].detail == "1 positional arguments passed, Balances.transfer_keep_alive takes 2"
+    assert by_ref["a/send.ts:2"].detail == "1 positional argument passed, Balances.transfer_keep_alive takes 2"
     assert by_ref["b/app.py:2"].fix == "-> live shape System.remark(_remark)"
     assert check.exit_code(findings) == 1
 
@@ -145,7 +208,8 @@ def test_render_is_deterministic_and_has_no_clock_time(tmp_path):
     one = check.render(check.check(tmp_path, RT, SURFACE, RENAMES), RT, "offline")
     two = check.render(check.check(tmp_path, RT, SURFACE, RENAMES), RT, "offline")
     assert one == two and "2026" not in one
-    assert one.splitlines()[-1] == "summary: 1 findings · DRIFTED 1 · blocking 1 · exit 1"
+    assert one.splitlines()[-1] == "summary: 1 finding · DRIFTED 1 · blocking 1 · exit 1"
+    assert "not checked yet: TYPE-TRAP" in one
 
 
 def test_rename_rows_are_checked_against_the_target(tmp_path):
@@ -164,10 +228,12 @@ def test_blocking_set_is_the_spec_list():
     assert set(check.BLOCKING) == {v.EXPECTED_REJECT, v.TYPE_TRAP, v.DRIFTED, v.ABSENT, v.ARG_DRIFT}
 
 
-def test_compat_cells_use_known_profiles_and_verdicts():
+def test_measured_cells_cite_the_baseline_and_say_no_receipt_here():
     from plumbline import metadata as md
-    for (profile, family), (status, evidence) in check.COMPAT.items():
-        assert profile in md.PROFILES and family in (check.SEAL0, check.SEAL_NEWER)
-        assert status in v.VERDICTS and "baseline measurement" in evidence
-    assert json.dumps(check.Finding("r", "s", v.ABSENT).to_dict())
+    assert set(check.REJECTED_IMPORTS) <= set(md.PROFILES)
+    for imports in ([("seal0", "a", "func")], [("seal2", "set_storage", "func")]):
+        status, evidence, _ = check.artifact_cell("mainnet-1002", imports)
+        assert status in (v.UNPROVEN, v.EXPECTED_REJECT)
+        assert "baseline measurement 2026-10-11" in evidence and "no receipt in this repository" in evidence
+    assert json.loads(json.dumps(check.Finding("r", "s", v.ABSENT).to_dict()))["status"] == v.ABSENT
     assert BLOB_1002.exists()

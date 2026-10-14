@@ -1,7 +1,8 @@
 PLUMBLINE check · target mainnet-1002 · portaldot/1002 · metadata V13 sha256 b87080f9349f… · offline, stored fixtures/metadata_1002.scale
   Portaldot mainnet, spec 1002 (read-only baseline)
+  not checked yet: TYPE-TRAP (a raw H160 passed where an SS58 account is needed)
 contract/minimal_seal0.wasm  imports env/seal0 (3 functions), seal0 only  UNPROVEN
-                               a seal0-only module instantiated on a local spec-1002 chain running mainnet's exact runtime code (baseline measurement 2026-10-11, cited, not re-run here; no receipt in this repository)
+                               a seal0-only module instantiated on spec 1002 (baseline measurement 2026-10-11 on a local spec-1002 chain running mainnet's exact runtime code, made before this repository existed: cited, not re-run here, no receipt in this repository)
 src/escrow.py:8              Contracts.instantiate_with_code              ARG_DRIFT       -> live shape Contracts.instantiate_with_code(endowment, gas_limit, code, data, salt)
                                written with (value, gas_limit, storage_deposit_limit, code, data, salt)
 src/evm.py:8                 Revive.call                                  ABSENT          not on mainnet-1002
@@ -18,4 +19,4 @@ src/token.py:7               Assets.transfer                              UNPROV
                                present on mainnet-1002; no receipt
 src/vault.ts:6               proxy.createPure                             DRIFTED         -> Proxy.anonymous(proxy_type, delay, index)
                                rename: docs proxy.createPure(proxy_type, delay, index) is absent on spec 1002; Proxy.anonymous takes the same arguments by name and order (evidence/docs_1002.json vs fixtures/metadata_1002.scale; checked by tests/test_plumb.py)
-summary: 9 findings · DRIFTED 1, ARG_DRIFT 2, ARGS-UNCHECKED 1, ABSENT 2, UNPROVEN 2, UNSCANNED 1 · blocking 5 · exit 1
+summary: 9 findings in 9 files scanned · DRIFTED 1, ARG_DRIFT 2, ARGS-UNCHECKED 1, ABSENT 2, UNPROVEN 2, UNSCANNED 1 · blocking 5 · exit 1

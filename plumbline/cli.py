@@ -285,22 +285,24 @@ def check_cmd(path: Path = typer.Argument(..., help="the dApp directory to scan"
     if not path.is_dir():
         typer.echo(f"error: {path} is not a directory", err=True)
         raise typer.Exit(2)
+    stats: dict = {}
     try:
         rt, surface, mode = _check_runtime(target, offline)
-        findings = check_mod.check(path, rt, surface)
-    except (md.ProfileError, md.UnknownChainError, md.ChainUnreachableError, plumb_mod.LedgerError) as exc:
+        findings = check_mod.check(path, rt, surface, stats=stats)
+    except (md.ProfileError, md.UnknownChainError, md.ChainUnreachableError, plumb_mod.LedgerError, OSError) as exc:
         typer.echo(f"error: {exc}", err=True)
         raise typer.Exit(2)
     standin = target == "interim-sdk"
     if as_json:
         out = {"target": rt.profile, "spec_name": rt.spec_name, "spec_version": rt.spec_version,
                "metadata_hash": rt.metadata_hash, "mode": mode, "label": rt.label,
-               "findings": [f.to_dict() for f in findings], "exit": check_mod.exit_code(findings)}
+               "files_scanned": stats["files"], "findings": [f.to_dict() for f in findings],
+               "exit": check_mod.exit_code(findings)}
         if standin:
             out["warning"] = STANDIN_BANNER
         typer.echo(json.dumps(out, sort_keys=True, separators=(",", ":")))
     else:
-        text = check_mod.render(findings, rt, mode)
+        text = check_mod.render(findings, rt, mode, files=stats["files"])
         typer.echo((f"{STANDIN_BANNER}\n{text}{STANDIN_BANNER}" if standin else text).rstrip("\n"))
     raise typer.Exit(check_mod.exit_code(findings))
 
@@ -309,12 +311,24 @@ def check_cmd(path: Path = typer.Argument(..., help="the dApp directory to scan"
 def canary_cmd(profile: str = typer.Option(..., "--profile", "-p", help="interim-sdk (v0: dev keys, local chain only)"),
                out: Path = typer.Option(Path("evidence/canary_interim.json"), help="the receipts record"),
                proof: Path = typer.Option(Path("docs/PROOF.md"), help="the proof table generated from it"),
-               url: str = typer.Option(None, help="override the profile endpoint")) -> None:
+               url: str = typer.Option(None, help="override the profile endpoint (loopback only for dev keys)"),
+               replace: bool = typer.Option(False, "--replace", help="overwrite an existing receipts record")) -> None:
     """Send the canary calls (Balances.transfer_keep_alive, System.remark_with_event, Revive.map_account),
     keep each receipt, read each back from its block. v0: interim-sdk only, labelled not V3."""
+    if out.exists() and not replace:
+        typer.echo(f"error: {out} exists; pass --replace to overwrite it with a new run", err=True)
+        raise typer.Exit(2)
     try:
         record = canary_mod.run(profile, url)
-    except (canary_mod.CanaryError, md.ProfileError, md.UnknownChainError, md.ChainUnreachableError) as exc:
+    except canary_mod.CanaryError as exc:
+        if exc.partial and exc.partial["receipts"]:  # receipts already on chain are kept, never dropped
+            partial = out.with_name(out.stem + ".partial.json")
+            partial.write_text(json.dumps(exc.partial | {"incomplete": str(exc)}, indent=2, sort_keys=True) + "\n")
+            typer.echo(f"error: {exc} ({len(exc.partial['receipts'])} receipts kept in {partial})", err=True)
+            raise typer.Exit(1)
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(2)
+    except (md.ProfileError, md.UnknownChainError, md.ChainUnreachableError) as exc:
         typer.echo(f"error: {exc}", err=True)
         raise typer.Exit(2)
     out.parent.mkdir(parents=True, exist_ok=True)
