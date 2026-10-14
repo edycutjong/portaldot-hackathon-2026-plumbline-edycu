@@ -155,3 +155,33 @@ def test_diff_kinds_are_the_ledger_schema_kinds_and_rows_store():
                       ("Q", "", "added", "null", json.dumps({"calls": 0}))]
     with pytest.raises(sqlite3.IntegrityError):  # a kind outside DIFF_KINDS is refused by the schema
         conn.execute("INSERT INTO diff_row (from_runtime, to_runtime, pallet, item, kind) VALUES (1,2,'P','x','moved')")
+
+
+def test_cli_diff_1002_vs_standin_not_v3_is_bannered_text_and_json():
+    from typer.testing import CliRunner
+
+    from plumbline.cli import STANDIN_BANNER, app
+
+    args = ["diff", f"stored:{BLOB_1002}", f"stored:{STANDIN}"]
+    text = CliRunner().invoke(app, args + ["--kind", "renamed"])
+    assert text.exit_code == 0, text.output
+    lines = text.output.splitlines()
+    assert lines[0] == STANDIN_BANNER and lines[-1] == STANDIN_BANNER
+    assert "  renamed       call   Proxy.anonymous -> create_pure" in text.output
+    assert "2 shown" in lines[-2]
+    as_json = CliRunner().invoke(app, args + ["--json"])
+    data = json.loads(as_json.output)
+    assert data["warning"] == STANDIN_BANNER and data["to"]["metadata_version"] == 14
+    assert len(data["rows"]) == sum(n for k, n in data["summary"].items() if not k.endswith("only"))
+    bad = CliRunner().invoke(app, args + ["--kind", "moved"])
+    assert bad.exit_code == 2
+
+
+def test_cli_diff_without_a_standin_has_no_banner():
+    from typer.testing import CliRunner
+
+    from plumbline.cli import STANDIN_BANNER, app
+
+    result = CliRunner().invoke(app, ["diff", f"stored:{BLOB_1002}", f"stored:{BLOB_1002}"])
+    assert result.exit_code == 0 and STANDIN_BANNER not in result.output
+    assert result.output.rstrip().endswith("(0 rows)")
