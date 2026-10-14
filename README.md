@@ -1,6 +1,6 @@
 # Plumbline
 
-**Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof.** Today it gives a verdict for every documented call (measured on mainnet spec 1002) and has a proof runner that works end to end on a local stand-in chain. Its proofs on Portaldot V3 are **pending**: the V3 testnet endpoint did not resolve on 2026-10-14.
+**Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof.** Today it gives a verdict for every documented call (measured on mainnet spec 1002) and has a proof runner that works end to end on a local stand-in chain (not V3). Its proofs on Portaldot V3 are **pending**: the V3 testnet endpoint did not resolve on 2026-10-14.
 
 ![status](https://img.shields.io/badge/status-prototype-orange)
 ![tests](https://img.shields.io/badge/tests-255%20passing-brightgreen)
@@ -51,7 +51,7 @@ runtime and was read back from its block; otherwise the ledger says what it coul
 | Match (name and arguments) | 117 |
 | Documented but absent from the runtime | 64 (62 ABSENT, 2 DRIFTED: `Proxy.create_pure` / `kill_pure` → `Proxy.anonymous` / `kill_anonymous`) |
 | Documented with arguments that differ from the runtime | 15 (4 of them differ only by a leading underscore on the runtime's parameter name) |
-| Live calls no docs page documents | 23 |
+| Live calls whose names no docs page lists | 23 (2 are the live sides of the renamed proxy calls) |
 
 Full table with producers and dates: [`docs/BASELINE-1002.md`](docs/BASELINE-1002.md). Ledger: `evidence/ledger_1002.json`
 (320 verdict rows, blake2-256 `d067b31b…de21ee7`, reproduced byte for byte from freshly fetched inputs).
@@ -59,7 +59,8 @@ Full table with producers and dates: [`docs/BASELINE-1002.md`](docs/BASELINE-100
 mainnet spec 1002 and are not V3 findings.**
 
 Other tools in the repo: `plumbline diff A B` lists the pallets, calls, arguments, constants and events that differ between
-two runtimes (type aliases are not resolved; type-only differences are flagged `names_equal`; it prints a **STAND-IN, NOT V3** banner when a side is the stand-in chain); `plumbline check <dApp dir>
+two runtimes (an argument row with equal names but different types is flagged `names_equal`: spelling only or a real change,
+the diff cannot tell; type aliases are not resolved, so a same-named alias whose width changes yields no row; it prints a **STAND-IN, NOT V3** banner when a side is the stand-in chain); `plumbline check <dApp dir>
 --target <profile>` classifies each call site and wasm import set in a dApp against a runtime (blocking: ABSENT, DRIFTED, ARG_DRIFT,
 EXPECTED-REJECT; TYPE-TRAP is not detected yet; wasm verdicts cover two measured cases only), with exit codes 0 / 1 / 2.
 A golden `check` output on the mainnet-1002 profile is committed (`fixtures/expected_check_1002.txt`).
@@ -164,7 +165,7 @@ carries its profile label.
 
 **Third-party inputs are untrusted data.** The V3 guide is cloned at a pinned commit outside this tree and read by AST and
 text only, never executed. At HEAD its text is not copied here: `evidence/guide_calls.json` holds names and `file:line`
-references only. The mainnet docs pages are fetched at run time into a gitignored cache.
+references only (two short FAQ status phrases appear in the tree snapshots of eight early commits, before `d92203e`; HEAD holds none). The mainnet docs pages are fetched at run time into a gitignored cache.
 
 ## Smart Contracts
 

@@ -31,7 +31,7 @@ Command: `python scripts/fetch_docs.py && python scripts/docs_baseline.py --prof
 | Match (name and arguments) | 117 | |
 | Documented but absent from the runtime | 64 | all 64 are call-absent (the pallet exists, the call does not); 0 are pallet-absent |
 | Documented, present, arguments differ | 15 | 4 of the 15 differ only by a leading underscore on the runtime's parameter name |
-| Live calls no page documents | 23 | 14 of them are in pallets that have a docs page; pallets with no docs page: Authorship, Gilt, Sudo |
+| Live calls whose names no page lists | 23 | 14 of them are in pallets that have a docs page; pallets with no docs page: Authorship, Gilt, Sudo; 2 are the live sides of the renamed proxy calls |
 
 196 = 117 + 64 + 15. Every `treasury` call the docs list (6) is absent from the runtime.
 
@@ -81,9 +81,16 @@ sample: 8 source files with one call site each and 1 contract artifact; each sta
 
 Summary line: `9 findings in 9 files scanned · DRIFTED 1, ARG_DRIFT 2, ARGS-UNCHECKED 1, ABSENT 2, UNPROVEN 2, UNSCANNED 1 · blocking 5 · exit 1`.
 
-The wasm artifact's cell (`UNPROVEN`: a seal0-only module) rests on a measurement made on 2026-10-11, before this
-repository existed, on a local chain running spec 1002; it is cited, not re-run here, and no receipt or
-other artifact for it is in this repository.
+`plumbline check` has two wasm cells, and both rest on measurements made on 2026-10-11, before this repository existed,
+on a local chain running spec 1002; they are cited, not re-run here, and no receipt or other artifact for them is in this
+repository.
+
+- **seal0-only → `UNPROVEN`** (the cell this example's artifact hits). The measured module was a different, hand-written
+  157-byte seal0-only module with two imports that instantiated on spec 1002; `examples/mainnet-dapp/contract/minimal_seal0.wasm`
+  (140 bytes) was never instantiated, so the cell generalises one measurement to any seal0-only module.
+- **`seal1.get_storage` + `seal2.set_storage` → `EXPECTED-REJECT`** (not exercised by the golden output; covered by
+  `tests/test_check.py`). An ink! 5.1.1 artifact importing exactly that set was rejected by spec 1002 with `System.Other`;
+  which import caused the rejection is inferred, not measured.
 
 ## Tests
 
