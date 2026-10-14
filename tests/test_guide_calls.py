@@ -22,7 +22,11 @@ def table():
 def test_committed_call_table_counts(table):
     assert table["commit"] == guide.GUIDE_COMMIT
     demo, readme, faq = table["counts"]["v3-demo"], table["counts"]["v3-guide"], table["counts"]["v3-faq"]
-    assert (demo["compose_call_sites"], demo["compose_call_unresolved"], demo["distinct_calls"]) == (46, 0, 46)
+    assert (demo["compose_call_sites"], demo["compose_call_unresolved"], demo["distinct_pallet_calls"]) == (46, 0, 46)
+    # 46 distinct pallet.call names: Balances.transfer_keep_alive has two sites, and one Assets site names
+    # two candidates (transfer_keep_alive / transfer), so the two 46s coincide
+    assert demo["candidate_sites"] == ["demo/01_assets_demo.py:147"]
+    assert table["unaccounted"] == []
     # grep counts 47 lines; the extra one is a comment, not a call site
     assert demo["text_lines_mentioning_compose_call"] == 47
     assert demo["text_lines_not_a_call_site"] == ["demo/04_solidity_demo.py:411"]
@@ -32,10 +36,12 @@ def test_committed_call_table_counts(table):
 
 
 def test_committed_call_table_holds_no_guide_text(table):
-    # only names, refs and the FAQ's short status cells; no field long enough to be copied prose
+    # only names, refs and the FAQ status reduced to its closed set; no free-text field at all
     for site in table["sites"]:
-        assert set(site) == {"source", "kind", "pallet", "calls", "ref", "how", "args", "note"}
-        assert len(site["note"]) <= 80
+        assert set(site) == {"source", "kind", "pallet", "calls", "ref", "how", "args", "status"}
+        assert site["status"] in guide.FAQ_STATUSES + ("",)
+    statuses = [s["status"] for s in table["sites"] if s["source"] == "v3-faq"]
+    assert (statuses.count(guide.FAQ_LISTED), statuses.count(guide.FAQ_DOCUMENTED)) == (10, 2)
 
 
 def test_committed_files_are_the_parsed_inputs(table):
@@ -50,3 +56,4 @@ def test_fresh_clone_reproduces_the_committed_call_table(table):
     res = guide.parse_guide(CLONE)
     assert [guide.site_to_dict(s) for s in res.sites] == table["sites"]
     assert res.files == table["files"] and res.awaiting_lines == table["faq_awaiting_lines"]
+    assert res.unaccounted == table["unaccounted"] == []

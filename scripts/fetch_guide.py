@@ -4,8 +4,8 @@
 
 The guide is third-party content with no stated licence: it is cloned outside the tree, read by
 `plumbline.guide` as text and Python AST only (never imported or executed), and none of its files are
-committed here. Only the extracted call table (names + file:line refs) is. Exits 1 if an existing
-clone is on another commit or has local changes.
+committed here. Only the extracted call table (names + file:line refs) is. Exits 1 if the fetch fails,
+or if an existing clone is on another commit or has local changes (it is never repaired in place).
 """
 
 import argparse
@@ -31,8 +31,12 @@ def main() -> int:
     dest = args.dest.expanduser()
     if not dest.exists():
         dest.parent.mkdir(parents=True, exist_ok=True)
-        git("clone", "--quiet", "--no-checkout", GUIDE_REPO, str(dest))
-        git("-c", "advice.detachedHead=false", "checkout", "--quiet", GUIDE_COMMIT, cwd=dest)
+        try:
+            git("clone", "--quiet", "--no-checkout", GUIDE_REPO, str(dest))
+            git("-c", "advice.detachedHead=false", "checkout", "--quiet", GUIDE_COMMIT, cwd=dest)
+        except subprocess.CalledProcessError as exc:
+            print(f"error: fetching {GUIDE_REPO}@{GUIDE_COMMIT[:7]} failed: {exc.stderr.strip()}", file=sys.stderr)
+            return 1
     head, dirty = clone_state(dest)
     if head != GUIDE_COMMIT or dirty:
         print(f"error: {dest} is at {head} (dirty: {dirty}); expected a clean checkout of {GUIDE_COMMIT}",

@@ -3,7 +3,8 @@
     python -I scripts/fetch_guide.py
     python -I scripts/guide_calls.py --out evidence/guide_calls.json
 
-Refuses (exit 1, writes nothing) unless the clone is a clean checkout of the pinned commit. Also
+Refuses (exit 1, writes nothing) unless the clone is a clean checkout of the pinned commit and every
+code token naming compose_call / runtime_call / rpc_request is covered by a site. Also
 reports the plain-text cross-check: demo lines that mention `compose_call` but are not an AST call
 site (a comment, a string), so the AST count and a grep count can be compared line by line.
 """
@@ -36,7 +37,8 @@ def counts(res: guide.GuideResult, guide_dir: Path) -> dict:
             "compose_call_sites": len(compose),
             "compose_call_unresolved": sum(not s.resolved for s in compose),
             "compose_call_by_how": dict(sorted(Counter(s.how for s in compose).items())),
-            "distinct_calls": len({(s.pallet, c) for s in compose if s.resolved for c in s.calls}),
+            "distinct_pallet_calls": len({(s.pallet, c) for s in compose if s.resolved for c in s.calls}),
+            "candidate_sites": [s.ref for s in compose if len(s.calls) > 1],
             "runtime_call_sites": sum(s.how == guide.RUNTIME_CALL for s in demo),
             "state_call_sites": sum(s.how == guide.STATE_CALL for s in demo),
             "text_lines_mentioning_compose_call": len(text_lines),
@@ -67,20 +69,27 @@ def main() -> int:
               f"checkout of {guide.GUIDE_COMMIT}; run scripts/fetch_guide.py", file=sys.stderr)
         return 1
     res = guide.parse_guide(guide_dir)
+    if res.unaccounted:
+        print(f"refusing to write evidence: code references no site accounts for: {', '.join(res.unaccounted)}",
+              file=sys.stderr)
+        return 1
     record = {
         "repo": guide.GUIDE_REPO,
         "commit": guide.GUIDE_COMMIT,
         "files": res.files,
         "counts": counts(res, guide_dir),
         "faq_awaiting_lines": res.awaiting_lines,
+        "unaccounted": res.unaccounted,
         "sites": [guide.site_to_dict(s) for s in res.sites],
-        "note": "Names and file:line references extracted from the guide; no guide text is reproduced.",
+        "note": "Names, file:line references and the FAQ status key (a closed set) extracted from the guide; "
+                "no guide text is reproduced.",
     }
     args.out.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
     c = record["counts"]
     d, g, f = c[v.V3_DEMO], c[v.V3_GUIDE], c[v.V3_FAQ]
     print(f"guide {guide.GUIDE_COMMIT[:7]}: v3-demo {d['compose_call_sites']} compose_call sites "
-          f"({d['compose_call_unresolved']} unresolved, {d['distinct_calls']} distinct calls), "
+          f"({d['compose_call_unresolved']} unresolved; {d['distinct_pallet_calls']} distinct pallet.call names, "
+          f"{len(d['candidate_sites'])} site with candidates), "
           f"{d['runtime_call_sites']} runtime_call + {d['state_call_sites']} raw state_call; "
           f"text lines mentioning compose_call {d['text_lines_mentioning_compose_call']} "
           f"(not a call site: {', '.join(d['text_lines_not_a_call_site']) or 'none'})")

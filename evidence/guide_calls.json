@@ -2,13 +2,16 @@
  "commit": "d671a32758573f4d9ab00d891b2dd6a48f36bcbb",
  "counts": {
   "v3-demo": {
+   "candidate_sites": [
+    "demo/01_assets_demo.py:147"
+   ],
    "compose_call_by_how": {
     "literal": 45,
     "local": 1
    },
    "compose_call_sites": 46,
    "compose_call_unresolved": 0,
-   "distinct_calls": 46,
+   "distinct_pallet_calls": 46,
    "runtime_call_sites": 1,
    "state_call_sites": 1,
    "text_lines_mentioning_compose_call": 47,
@@ -48,7 +51,7 @@
   "demo/03_nfts_demo.py": "ac731d15f8390e97649d01f868189f80377b89e4cdc092fa6389f19117b0ad2f",
   "demo/04_solidity_demo.py": "6ccecb07ddd79db785a1deab62d9d5a0764fac6fe63f359fdaefe01ef8f60502"
  },
- "note": "Names and file:line references extracted from the guide; no guide text is reproduced.",
+ "note": "Names, file:line references and the FAQ status key (a closed set) extracted from the guide; no guide text is reproduced.",
  "repo": "https://github.com/ItsCogumellum/portaldot-v3-testnet-guide",
  "sites": [
   {
@@ -58,10 +61,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "README.md:108",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -70,10 +73,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "README.md:109",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -82,10 +85,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "README.md:110",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -94,10 +97,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "README.md:111",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -106,10 +109,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "README.md:112",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -118,10 +121,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "README.md:113",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -130,10 +133,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "README.md:114",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -142,10 +145,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "README.md:115",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -154,10 +157,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "README.md:116",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -166,10 +169,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:157",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -178,10 +181,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:158",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -190,10 +193,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:159",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -202,10 +205,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:160",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -214,10 +217,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:161",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -226,10 +229,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:161",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -238,10 +241,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:162",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -250,10 +253,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:162",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -262,10 +265,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:163",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -274,10 +277,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:164",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -286,10 +289,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:165",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -298,10 +301,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:165",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -310,10 +313,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:166",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -322,10 +325,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "README.md:166",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -334,10 +337,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:197",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -346,10 +349,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:198",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -358,10 +361,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:199",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -370,10 +373,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:200",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -382,10 +385,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:201",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -394,10 +397,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:201",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -406,10 +409,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:202",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -418,10 +421,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:203",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -430,10 +433,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:204",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -442,10 +445,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:204",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -454,10 +457,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:205",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -466,10 +469,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:205",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -478,10 +481,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:205",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -490,10 +493,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:206",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -502,10 +505,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:207",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -514,10 +517,10 @@
    ],
    "how": "call-table",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "README.md:207",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -526,10 +529,10 @@
    ],
    "how": "explorer-path",
    "kind": "runtime-api",
-   "note": "",
    "pallet": "reviveApi",
    "ref": "README.md:324",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -538,10 +541,10 @@
    ],
    "how": "explorer-path",
    "kind": "runtime-api",
-   "note": "",
    "pallet": "reviveApi",
    "ref": "README.md:342",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": null,
@@ -550,10 +553,10 @@
    ],
    "how": "explorer-path",
    "kind": "call",
-   "note": "",
    "pallet": "Revive",
    "ref": "README.md:352",
-   "source": "v3-guide"
+   "source": "v3-guide",
+   "status": ""
   },
   {
    "args": [
@@ -565,10 +568,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Balances",
    "ref": "demo/00_base_demo.py:88",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -580,10 +583,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Balances",
    "ref": "demo/00_base_demo.py:118",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -596,10 +599,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "demo/01_assets_demo.py:85",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -612,10 +615,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "demo/01_assets_demo.py:105",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -628,10 +631,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "demo/01_assets_demo.py:125",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -645,10 +648,10 @@
    ],
    "how": "local",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "demo/01_assets_demo.py:147",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -660,10 +663,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "demo/01_assets_demo.py:167",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -675,10 +678,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "demo/01_assets_demo.py:181",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -689,10 +692,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "demo/01_assets_demo.py:195",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -703,10 +706,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "demo/01_assets_demo.py:206",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -719,10 +722,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "demo/01_assets_demo.py:223",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -736,10 +739,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "demo/01_assets_demo.py:244",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -751,10 +754,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Assets",
    "ref": "demo/01_assets_demo.py:263",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -766,10 +769,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:95",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -782,10 +785,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:116",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -798,10 +801,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:138",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -814,10 +817,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:160",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -829,10 +832,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:178",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -844,10 +847,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:192",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -858,10 +861,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:209",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -872,10 +875,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:220",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -888,10 +891,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:237",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -904,10 +907,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:268",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -921,10 +924,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:290",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -938,10 +941,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:307",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -955,10 +958,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:333",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -971,10 +974,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Uniques",
    "ref": "demo/02_uniques_demo.py:356",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -986,10 +989,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:132",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1003,10 +1006,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:154",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1018,10 +1021,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:173",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1034,10 +1037,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:191",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1049,10 +1052,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:209",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1064,10 +1067,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:223",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1081,10 +1084,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:241",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1096,10 +1099,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:265",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1113,10 +1116,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:289",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1129,10 +1132,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:317",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1144,10 +1147,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:333",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1162,10 +1165,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:358",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1178,10 +1181,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:376",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1193,10 +1196,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:391",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1209,10 +1212,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:504",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1226,10 +1229,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:530",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1242,10 +1245,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Nfts",
    "ref": "demo/03_nfts_demo.py:553",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [],
@@ -1254,10 +1257,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Revive",
    "ref": "demo/04_solidity_demo.py:283",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": null,
@@ -1266,10 +1269,10 @@
    ],
    "how": "runtime_call",
    "kind": "runtime-api",
-   "note": "",
    "pallet": "ReviveApi",
    "ref": "demo/04_solidity_demo.py:310",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": null,
@@ -1278,10 +1281,10 @@
    ],
    "how": "state_call",
    "kind": "runtime-api",
-   "note": "",
    "pallet": "ReviveApi",
    "ref": "demo/04_solidity_demo.py:336",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": [
@@ -1296,10 +1299,10 @@
    ],
    "how": "literal",
    "kind": "call",
-   "note": "",
    "pallet": "Revive",
    "ref": "demo/04_solidity_demo.py:421",
-   "source": "v3-demo"
+   "source": "v3-demo",
+   "status": ""
   },
   {
    "args": null,
@@ -1308,10 +1311,10 @@
    ],
    "how": "faq-table",
    "kind": "module",
-   "note": "Listed for V3.0; launch timing not specified",
    "pallet": "beefy",
    "ref": "FAQ.md:104",
-   "source": "v3-faq"
+   "source": "v3-faq",
+   "status": "listed"
   },
   {
    "args": null,
@@ -1320,10 +1323,10 @@
    ],
    "how": "faq-table",
    "kind": "module",
-   "note": "Listed for V3.0; launch timing not specified",
    "pallet": "referenda",
    "ref": "FAQ.md:105",
-   "source": "v3-faq"
+   "source": "v3-faq",
+   "status": "listed"
   },
   {
    "args": null,
@@ -1332,10 +1335,10 @@
    ],
    "how": "faq-table",
    "kind": "module",
-   "note": "Listed for V3.0; launch timing not specified",
    "pallet": "conviction_voting",
    "ref": "FAQ.md:106",
-   "source": "v3-faq"
+   "source": "v3-faq",
+   "status": "listed"
   },
   {
    "args": null,
@@ -1344,10 +1347,10 @@
    ],
    "how": "faq-table",
    "kind": "module",
-   "note": "Listed for V3.0; launch timing not specified",
    "pallet": "preimage",
    "ref": "FAQ.md:107",
-   "source": "v3-faq"
+   "source": "v3-faq",
+   "status": "listed"
   },
   {
    "args": null,
@@ -1356,10 +1359,10 @@
    ],
    "how": "faq-table",
    "kind": "module",
-   "note": "Listed for V3.0; launch timing not specified",
    "pallet": "paras",
    "ref": "FAQ.md:108",
-   "source": "v3-faq"
+   "source": "v3-faq",
+   "status": "listed"
   },
   {
    "args": null,
@@ -1368,10 +1371,10 @@
    ],
    "how": "faq-table",
    "kind": "module",
-   "note": "Listed for V3.0; launch timing not specified",
    "pallet": "cumulus_parachain_system",
    "ref": "FAQ.md:109",
-   "source": "v3-faq"
+   "source": "v3-faq",
+   "status": "listed"
   },
   {
    "args": null,
@@ -1380,10 +1383,10 @@
    ],
    "how": "faq-table",
    "kind": "module",
-   "note": "Listed for V3.0; launch timing not specified",
    "pallet": "broker",
    "ref": "FAQ.md:110",
-   "source": "v3-faq"
+   "source": "v3-faq",
+   "status": "listed"
   },
   {
    "args": null,
@@ -1392,10 +1395,10 @@
    ],
    "how": "faq-table",
    "kind": "module",
-   "note": "Listed for V3.0; launch timing not specified",
    "pallet": "contracts",
    "ref": "FAQ.md:111",
-   "source": "v3-faq"
+   "source": "v3-faq",
+   "status": "listed"
   },
   {
    "args": null,
@@ -1404,10 +1407,10 @@
    ],
    "how": "faq-table",
    "kind": "module",
-   "note": "Documented on testnet; mainnet launch details not specified",
    "pallet": "revive",
    "ref": "FAQ.md:112",
-   "source": "v3-faq"
+   "source": "v3-faq",
+   "status": "documented"
   },
   {
    "args": null,
@@ -1416,10 +1419,10 @@
    ],
    "how": "faq-table",
    "kind": "module",
-   "note": "Documented on testnet; mainnet launch details not specified",
    "pallet": "nfts",
    "ref": "FAQ.md:113",
-   "source": "v3-faq"
+   "source": "v3-faq",
+   "status": "documented"
   },
   {
    "args": null,
@@ -1428,10 +1431,10 @@
    ],
    "how": "faq-table",
    "kind": "module",
-   "note": "Listed for V3.0; launch timing not specified",
    "pallet": "identity",
    "ref": "FAQ.md:114",
-   "source": "v3-faq"
+   "source": "v3-faq",
+   "status": "listed"
   },
   {
    "args": null,
@@ -1440,10 +1443,11 @@
    ],
    "how": "faq-table",
    "kind": "module",
-   "note": "Listed for V3.0; launch timing not specified",
    "pallet": "ibridge",
    "ref": "FAQ.md:115",
-   "source": "v3-faq"
+   "source": "v3-faq",
+   "status": "listed"
   }
- ]
+ ],
+ "unaccounted": []
 }
