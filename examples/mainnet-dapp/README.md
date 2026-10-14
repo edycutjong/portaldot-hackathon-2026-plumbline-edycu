@@ -13,7 +13,8 @@ plumbline check examples/mainnet-dapp --target mainnet-1002 --offline
 
 The output for the `mainnet-1002` profile is stored in `../../fixtures/expected_check_1002.txt` and is
 reproduced byte for byte by `tests/test_check_cli.py`. A golden output for Portaldot V3 is written only
-after a real run against V3 metadata.
+after a real run against V3 metadata. On `mainnet-1002` the two calls copied from the V3 guide (`Nfts.mint`,
+`Revive.call`) come out ABSENT: spec 1002 has neither pallet. That says nothing about V3.
 
 | File | Call | Copied from |
 |---|---|---|

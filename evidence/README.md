@@ -1,6 +1,7 @@
 # evidence
 
-Measured outputs, each written by a script in `../scripts/` and named after the chain profile it was measured on.
+Measured outputs, each written by a script in `../scripts/` or a `plumbline` command, and named after the chain
+profile it was measured on.
 
 | File | Producer | What |
 |---|---|---|

@@ -221,7 +221,8 @@ def diff(a: NormalForm, b: NormalForm, renames: tuple[Rename, ...] = RENAMES) ->
             before = pa.events.get(event)
             after = pb.events.get(event)
             if before != after:
-                note = "added" if before is None else "removed" if after is None else "field types changed"
+                note = "added" if before is None else "removed" if after is None else \
+                    "field types differ (spelling or real)"
                 rows.append(DiffRow(name, f"event:{event}", EVENT_CHANGED,
                                     None if before is None else {"fields": list(before)},
                                     None if after is None else {"fields": list(after)}, note))

@@ -134,7 +134,7 @@ def test_const_and_event_changes():
     assert rows[("const:K", diff.CONST_CHANGED)].note == "value changed"
     assert rows[("const:Gone", diff.CONST_CHANGED)].after is None
     assert rows[("const:New", diff.CONST_CHANGED)].before is None
-    assert rows[("event:E", diff.EVENT_CHANGED)].note == "field types changed"
+    assert rows[("event:E", diff.EVENT_CHANGED)].note == "field types differ (spelling or real)"
     assert rows[("event:F", diff.EVENT_CHANGED)].note == "added"
 
 

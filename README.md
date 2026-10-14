@@ -43,8 +43,9 @@ drift ledger turns them into per-call verdicts (see Roadmap); proofs on V3 are *
 
 Plumbline works on Portaldot's own surface: Substrate runtime metadata and the extrinsics the official docs describe.
 It is meant to be run against each runtime Portaldot ships. The target is **Portaldot V3**; the V3 run is **pending**
-(V3 testnet unreachable on 2026-10-14). Until it is reachable, the only chain measured is the mainnet runtime, spec 1002,
-read-only, as a baseline.
+(V3 testnet unreachable on 2026-10-14). Until it is reachable, the only Portaldot chain measured is the mainnet runtime,
+spec 1002, read-only, as a baseline; a local upstream polkadot-sdk dev chain (interim-sdk, a stand-in, not V3) is used
+only as test input and to exercise the canary runner.
 
 ## Technical Architecture
 
