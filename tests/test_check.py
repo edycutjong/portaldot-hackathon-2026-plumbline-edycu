@@ -75,7 +75,9 @@ def test_newer_abi_imports_no_measurement_covers_are_unmeasured():
     imports = [("env", "memory", "memory"), ("seal1", "seal_call", "func")]
     status, evidence, fix = check.artifact_cell("mainnet-1002", imports)
     assert status == v.COMPAT_UNMEASURED and fix == ""
-    hit = check.artifact_cell("mainnet-1002", imports + [("seal2", "set_storage", "func")])
+    one = check.artifact_cell("mainnet-1002", imports + [("seal2", "set_storage", "func")])
+    assert one[0] == v.COMPAT_UNMEASURED  # one of the two measured functions is not the measured set
+    hit = check.artifact_cell("mainnet-1002", imports + [("seal2", "set_storage", "func"), ("seal1", "get_storage", "func")])
     assert hit[0] == v.EXPECTED_REJECT and "seal2.set_storage" in hit[1] and "inferred" in hit[1]
     assert "or target V3" not in hit[2]
 
@@ -117,7 +119,7 @@ def test_unreadable_and_polkavm_artifacts_are_unscanned(tmp_path):
 
 
 def test_mask_js_hides_comments_and_strings_and_keeps_lines():
-    src = ('a.tx.x.y(1) // api.tx.no.no(1)\n/* api.tx.no.no(\n) */ s = "api.tx.no.no(" + `t api.tx.no.no(1) '
+    src = ('api.tx.x.y(1) // api.tx.no.no(1)\n/* api.tx.no.no(\n) */ s = "api.tx.no.no(" + `t api.tx.no.no(1) '
            '${api.tx.yes.call(1)} ${`${api.tx.deep.call()}`}`\n')
     masked = check.mask_js(src)
     assert masked.count("\n") == src.count("\n") and len(masked) == len(src)
@@ -231,9 +233,53 @@ def test_blocking_set_is_the_spec_list():
 def test_measured_cells_cite_the_baseline_and_say_no_receipt_here():
     from plumbline import metadata as md
     assert set(check.REJECTED_IMPORTS) <= set(md.PROFILES)
-    for imports in ([("seal0", "a", "func")], [("seal2", "set_storage", "func")]):
+    for imports in ([("seal0", "a", "func")], [("seal1", "get_storage", "func"), ("seal2", "set_storage", "func")]):
         status, evidence, _ = check.artifact_cell("mainnet-1002", imports)
         assert status in (v.UNPROVEN, v.EXPECTED_REJECT)
         assert "baseline measurement 2026-10-11" in evidence and "no receipt in this repository" in evidence
     assert json.loads(json.dumps(check.Finding("r", "s", v.ABSENT).to_dict()))["status"] == v.ABSENT
     assert BLOB_1002.exists()
+
+
+def test_jsx_markup_slashes_are_not_regex_literals():
+    src = ("const A = () => <p>{label}</p>; <button onClick={() => api.tx.balances.transfer(a, 1)}>Send</button>\n"
+           "<Input value={v} /> <Button onClick={() => api.tx.system.remark(r)} />\n"
+           "const half = n++ / 2; api.tx.assets.burn(a, b, c)\n")
+    assert [s[1:4] for s in check.js_sites(src)] == [("balances", "transfer", 2), ("system", "remark", 1),
+                                                     ("assets", "burn", 3)]
+
+
+def test_only_an_api_like_receiver_is_read_as_a_runtime_call():
+    src = ("receipt.tx.hash.toString()\n"
+           "const t = api.tx;\n"
+           "const { balances } = api.tx;\n"
+           "const { tx, hash } = receipt;\n"
+           "const { tx } = this.api;\n"
+           "polkadotApi.tx.nfts.mint(c, i, w)\n"
+           "(await getApi()).tx.nfts.mint(c, i, w)\n")
+    got = [(s[0], s[1], s[4]) for s in check.js_sites(src)]
+    assert got == [(1, None, "receipt.tx.hash.toString(): receiver not an api"), (2, None, "api.tx aliased"),
+                   (3, None, "api.tx aliased"), (5, None, "api.tx destructured"), (6, "nfts", ""),
+                   (7, None, "(expression).tx.nfts.mint(): receiver not an api")]
+
+
+def test_receipt_tx_is_never_a_blocking_verdict(tmp_path):
+    write(tmp_path, "a.ts", "receipt.tx.hash.toString()\n")
+    found = check.check(tmp_path, RT, SURFACE, RENAMES)
+    assert [f.status for f in found] == [v.UNSCANNED] and check.exit_code(found) == 0
+
+
+def test_unreadable_directories_are_reported_and_skips_are_named(tmp_path):
+    write(tmp_path, "locked/x.ts", "api.tx.nfts.mint()\n")
+    write(tmp_path, "node_modules/y/z.ts", "api.tx.nfts.mint()\n")
+    write(tmp_path, "src/ok.ts", "api.tx.balances.transferKeepAlive(a, b)\n")
+    (tmp_path / "locked").chmod(0)
+    try:
+        stats = {}
+        found = check.check(tmp_path, RT, SURFACE, RENAMES, stats=stats)
+    finally:
+        (tmp_path / "locked").chmod(0o755)
+    assert [(f.ref, f.status) for f in found] == [("locked/", v.UNSCANNED), ("src/ok.ts:1", v.ARGS_UNCHECKED)]
+    assert stats["skipped"] == ["node_modules/"]
+    text = check.render(found, RT, "offline", stats["files"], stats["skipped"])
+    assert "not scanned (generated or vendored): node_modules/" in text

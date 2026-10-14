@@ -4,15 +4,16 @@ Three scans over a directory, each finding stamped with one verdict from `plumbl
 
   1. Contract artifacts (`.wasm`, `.contract`, also under `target/ink/`): the wasm import section, read
      from the bytes (never run). A module is matched against measured cells only (`artifact_cell`): on
-     mainnet-1002 a seal0-only module, and a module importing one of the exact newer-ABI functions a
-     rejected artifact imported. Anything else is COMPAT-UNMEASURED. A module with no `seal*` import is
+     mainnet-1002 a seal0-only module, and a module importing all of the newer-ABI functions a rejected
+     artifact imported. Anything else is COMPAT-UNMEASURED. A module with no `seal*` import is
      not a contracts module. PolkaVM blobs (`.polkavm`, Revive) are UNSCANNED (no import scan yet).
   2. Python call sites: `compose_call` / `runtime_call` / raw `state_call`, read as an AST by the same
      scanner as the V3 guide's demo code (`plumbline.guide.scan_demo`), so pallet and call names are
      matched exactly, as substrate-interface matches them. A site whose names are not static is UNSCANNED.
   3. JavaScript / TypeScript call sites: `<expr>.tx.<pallet>.<call>(…)` (polkadot.js), found after string
      and comment contents are masked. Pallet names are matched with case and underscores ignored and the
-     call name is snake_cased, as polkadot.js maps them. Arguments are positional, so only their count
+     call name is snake_cased, as polkadot.js maps them. Only a receiver named like an ApiPromise (`api`,
+     `this.api`, `polkadotApi`) is read; `receipt.tx.hash.x()` is an UNSCANNED row, never a verdict. Arguments are positional, so only their count
      is compared, and not at all when an argument holds a spread or a `<` (a TypeScript type argument
      cannot be told from a comparison). Optional chaining (`api.tx?.x?.y()`) is read. `.tx[<expr>]`, a
      `.tx.<pallet>.<call>` reference that is not called, and a destructured `{ tx }` are UNSCANNED.
@@ -28,6 +29,7 @@ TYPE-TRAP (raw H160 passed where an SS58 account is needed) is not detected yet;
 from __future__ import annotations
 
 import json
+import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -59,15 +61,15 @@ def artifact_cell(target: str, imports: list[tuple[str, str, str]]) -> tuple[str
     if target == "mainnet-1002" and family == SEAL0:
         return v.UNPROVEN, f"a seal0-only module instantiated on spec 1002 ({BASELINE})", ""
     if target == "mainnet-1002" and family == SEAL_NEWER:
-        hits = sorted({(m, f) for m, f, _ in imports} & REJECTED_IMPORTS[target])
-        if hits:
-            names = ", ".join(f"{m}.{f}" for m, f in hits)
+        measured = REJECTED_IMPORTS[target]
+        if measured <= {(m, f) for m, f, _ in imports}:  # every newer-ABI function the rejected artifact imported
+            names = ", ".join(f"{m}.{f}" for m, f in sorted(measured))
             return (v.EXPECTED_REJECT,
                     f"imports {names}, as did an ink! 5.1.1 artifact that spec 1002 rejected with System.Other "
                     f"({BASELINE}); the error did not name an import, so which one caused it is inferred",
                     "rebuild for the rent-era seal0 ABI")
         return (v.COMPAT_UNMEASURED, f"newer-ABI imports that no measurement on {target} covers (the one rejected "
-                                     f"artifact measured imported other functions)", "")
+                                     f"artifact measured imported a different set)", "")
     return v.COMPAT_UNMEASURED, f"no measurement of {family} modules on {target} yet", ""
 
 
@@ -211,16 +213,20 @@ def _n(count: int, noun: str) -> str:
 
 # ---------------------------------------------------------------- JS / TS call sites
 
-REGEX_AFTER = set("(,=:[!&|?{};+-*%<>~^")
+REGEX_AFTER = set("(,=:[!&|?{;+-*%>~^")  # not `}` / `<`: in JSX `</p>` and `{x} />` the slash is markup
 REGEX_AFTER_WORDS = {"return", "typeof", "case", "in", "of", "new", "delete", "void", "throw", "yield", "await",
                      "else", "do"}
 
 
-def _regex_allowed(out: list[str], i: int) -> bool:
-    """Whether a `/` at `i` starts a regex literal (not a division), judged by the code before it."""
+def _regex_allowed(text: str, out: list[str], i: int) -> bool:
+    """Whether a `/` at `i` starts a regex literal (not a division or JSX markup), judged by the code around it."""
+    if text[i + 1:i + 2] == ">":  # `/>`: a self-closing JSX tag
+        return False
     k = i - 1
     while k >= 0 and out[k].isspace():
         k -= 1
+    if k >= 1 and out[k] in "+-" and out[k - 1] == out[k]:  # `n++ / 2`
+        return False
     if k < 0 or out[k] in REGEX_AFTER:
         return True
     if out[k].isalnum() or out[k] in "_$":
@@ -282,7 +288,7 @@ def mask_js(text: str) -> str:
         elif c == "`":
             in_template = True
             i += 1
-        elif c == "/" and _regex_allowed(out, i):
+        elif c == "/" and _regex_allowed(text, out, i):
             j, in_class = i + 1, False
             while j < n and text[j] != "\n":
                 if text[j] == "\\":
@@ -321,7 +327,24 @@ _TX = r"(?:\?\.|\.)\s*tx\b"                # `.tx` / `?.tx` as a property
 _TX_CALL = re.compile(_TX + _DOT + _ID + _DOT + _ID + r"\s*(?:\?\.\s*)?\(")
 _TX_REF = re.compile(_TX + _DOT + _ID + r"(?:" + _DOT + _ID + r")?")
 _TX_DYNAMIC = re.compile(_TX + r"\s*(?:\[|" + _DOT + r"[A-Za-z_$][\w$]*\s*\??\.?\s*\[)")
-_TX_DESTRUCTURED = re.compile(r"\{[^{}]*\btx\b[^{}]*\}\s*=")
+_TX_BARE = re.compile(_TX + r"(?!\s*(?:\?\.|\.|\[))")
+_TX_DESTRUCTURED = re.compile(r"\{[^{}]*\btx\b[^{}]*\}\s*=\s*([\w$.]+)")
+
+
+def _receiver(masked: str, pos: int) -> str:
+    """The identifier right before the `.tx` / `?.tx` at `pos` ('' for an expression such as `f().tx`)."""
+    k = pos - 1
+    while k >= 0 and masked[k].isspace():
+        k -= 1
+    end = k + 1
+    while k >= 0 and (masked[k].isalnum() or masked[k] in "_$"):
+        k -= 1
+    return masked[k + 1:end]
+
+
+def _api_like(name: str) -> bool:
+    """polkadot.js code names its ApiPromise `api` (`this.api`, `polkadotApi`, `apiPromise`)."""
+    return "api" in name.lower()
 
 
 def _arity(masked: str, open_paren: int) -> int | None:
@@ -351,7 +374,8 @@ def _arity(masked: str, open_paren: int) -> int | None:
 
 def js_sites(text: str) -> list[tuple[int, str | None, str | None, int | None, str]]:
     """(line, pallet, call, arity, note) per site. pallet None = a site whose names cannot be read
-    statically; `note` then says why (dynamic, reference, destructured)."""
+    statically; `note` then says why (dynamic, reference, aliased, destructured, receiver not an api). Only a
+    receiver named like a polkadot.js API (`api`, `this.api`, `polkadotApi`) is read as one."""
     masked = mask_js(text)
 
     def line(pos: int) -> int:
@@ -360,16 +384,26 @@ def js_sites(text: str) -> list[tuple[int, str | None, str | None, int | None, s
     sites, called = [], set()
     for m in _TX_CALL.finditer(masked):
         called.add(m.start())
-        sites.append((line(m.start()), m.group(1), m.group(2), _arity(masked, m.end() - 1), ""))
+        who = _receiver(masked, m.start())
+        if _api_like(who):
+            sites.append((line(m.start()), m.group(1), m.group(2), _arity(masked, m.end() - 1), ""))
+        else:  # e.g. receipt.tx.hash.toString(): not read as a runtime call, never a blocking verdict
+            sites.append((line(m.start()), None, None, None,
+                          f"{who or '(expression)'}.tx.{m.group(1)}.{m.group(2)}(): receiver not an api"))
     dynamic = set()
     for m in _TX_DYNAMIC.finditer(masked):
         dynamic.add(m.start())
-        sites.append((line(m.start()), None, None, None, "dynamic api.tx[...]"))
+        if _api_like(_receiver(masked, m.start())):
+            sites.append((line(m.start()), None, None, None, "dynamic api.tx[...]"))
     for m in _TX_REF.finditer(masked):
-        if m.start() not in called and m.start() not in dynamic:
+        if m.start() not in called and m.start() not in dynamic and _api_like(_receiver(masked, m.start())):
             sites.append((line(m.start()), None, None, None, "api.tx reference, not a call"))
+    for m in _TX_BARE.finditer(masked):
+        if _api_like(_receiver(masked, m.start())):
+            sites.append((line(m.start()), None, None, None, "api.tx aliased"))
     for m in _TX_DESTRUCTURED.finditer(masked):
-        sites.append((line(m.start()), None, None, None, "api.tx destructured"))
+        if _api_like(m.group(1)):
+            sites.append((line(m.start()), None, None, None, "api.tx destructured"))
     return sorted(sites, key=lambda s: (s[0], s[1] or "", s[2] or "", s[4]))
 
 
@@ -416,13 +450,47 @@ def _skipped(dir_parts: tuple[str, ...]) -> bool:
     return False
 
 
+REPORTED_SKIPS = {"node_modules", ".venv", "venv", "dist", "build", "target"}
+
+
+def _skip_dir(parts: tuple[str, ...]) -> bool:
+    """A directory not descended into: generated or vendored, or `target/<x>` other than `target/ink`."""
+    for idx, part in enumerate(parts):
+        if part in SKIP_DIRS or (part == "target" and idx + 1 < len(parts) and parts[idx + 1] != "ink"):
+            return True
+    return False
+
+
+def walk(root: Path) -> tuple[list[Path], list[str], list[str]]:
+    """(files, unreadable directories, skipped directories worth naming), all relative order fixed."""
+    files, unreadable, skipped = [], [], []
+
+    def onerror(exc: OSError) -> None:
+        unreadable.append(Path(exc.filename).relative_to(root).as_posix() if exc.filename else str(exc))
+
+    for dirpath, dirnames, filenames in os.walk(root, onerror=onerror):
+        rel = Path(dirpath).relative_to(root)
+        keep = []
+        for d in dirnames:
+            if _skip_dir((rel / d).parts):
+                if d in REPORTED_SKIPS:
+                    skipped.append((rel / d).as_posix() + "/")
+            else:
+                keep.append(d)
+        dirnames[:] = keep
+        files += [Path(dirpath) / f for f in filenames if not _skipped((rel / f).parts[:-1])]
+    return sorted(files), sorted(unreadable), sorted(skipped)
+
+
 def check(root: Path, rt: plumb.Runtime, surface: plumb.Surface, renames: tuple[Rename, ...] = RENAMES,
           proven: set[str] = frozenset(), stats: dict | None = None) -> list[Finding]:
-    """Every finding for the files under `root`, ordered by path, then line. `stats["files"]` is set to
-    the number of files scanned."""
+    """Every finding for the files under `root`, ordered by path, then line. `stats["files"]` is set to the
+    number of files scanned, `stats["skipped"]` to the generated/vendored directories not descended into."""
     rows = plumb.check_renames(renames, rt.profile, surface)
     findings: list[tuple[str, int, Finding]] = []
-    files = sorted(p for p in root.rglob("*") if p.is_file() and not _skipped(p.relative_to(root).parts[:-1]))
+    files, unreadable, skipped = walk(root)
+    for rel in unreadable:
+        findings.append((rel, 0, Finding(rel + "/", "unreadable directory", v.UNSCANNED, detail="permission denied")))
     scanned = 0
     for path in files:
         rel = path.relative_to(root).as_posix()
@@ -468,6 +536,7 @@ def check(root: Path, rt: plumb.Runtime, surface: plumb.Surface, renames: tuple[
                                                      exact=False, arity=arity)))
     if stats is not None:
         stats["files"] = scanned
+        stats["skipped"] = skipped
     findings.sort(key=lambda f: (f[0], f[1], f[2].subject))
     return [f for _, _, f in findings]
 
@@ -476,12 +545,16 @@ def exit_code(findings: list[Finding]) -> int:
     return 1 if any(f.status in BLOCKING for f in findings) else 0
 
 
-def render(findings: list[Finding], rt: plumb.Runtime, mode: str, files: int | None = None) -> str:
+def render(findings: list[Finding], rt: plumb.Runtime, mode: str, files: int | None = None,
+           skipped: list[str] = ()) -> str:
     """The report as text. No clock time: the same inputs give the same bytes."""
     lines = [f"PLUMBLINE check · target {rt.profile} · {rt.spec_name}/{rt.spec_version} · metadata "
              f"V{rt.metadata_version} sha256 {rt.metadata_hash[:12]}… · {mode}",
              f"  {rt.label}",
              "  not checked yet: TYPE-TRAP (a raw H160 passed where an SS58 account is needed)"]
+    if skipped:
+        lines.append(f"  not scanned (generated or vendored): {', '.join(skipped[:8])}"
+                     + (f" and {len(skipped) - 8} more" if len(skipped) > 8 else ""))
     w_ref = max((len(f.ref) for f in findings), default=0)
     w_sub = max((len(f.subject) for f in findings), default=0)
     w_st = max((len(f.status) for f in findings), default=0)
