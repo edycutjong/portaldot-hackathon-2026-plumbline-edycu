@@ -4,7 +4,7 @@ An **engineered** fixture for `plumbline check`: a small dApp written the way an
 written it for Portaldot mainnet, from the official mainnet docs, plus one call copied from each of two V3
 guide samples. Every call site cites the docs page or guide `file:line` it was copied from.
 
-It is never run. It does not import an SDK, holds no keys and sends nothing; it exists so `check` has a
+It is never run. Its only SDK imports are `import type` lines (no runtime code), it holds no keys and sends nothing; it exists so `check` has a
 known input whose findings can be reviewed by hand.
 
 ```bash

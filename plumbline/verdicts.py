@@ -14,10 +14,10 @@ import these names; no other module spells a verdict string. Definitions:
   UNDOCUMENTED       a live call that no parsed source names (directly or as the live side of a rename).
   UNPROVEN           documented and present with matching arguments (or a listed module that is present),
                      but no receipt yet. Also the live side of a rename that no receipt proves.
-  EXPECTED-REJECT    a contract artifact whose imports the target is known to reject (check, later).
-  COMPAT-UNMEASURED  an artifact/target cell with no measurement behind it (check, later).
-  TYPE-TRAP          a call site that passes a value of the wrong account type (check, later).
-  UNSCANNED          a dApp call site the scanner could not resolve statically (check, later).
+  EXPECTED-REJECT    a contract artifact whose imports the target is known to reject (from `check`).
+  COMPAT-UNMEASURED  an artifact/target cell with no measurement behind it (from `check`).
+  TYPE-TRAP          a call site that passes a value of the wrong account type (`check` does not detect it yet).
+  UNSCANNED          a dApp call site the scanner could not resolve statically (from `check`).
   UNKNOWN-DOC        a documented entry the ledger cannot check against this runtime: the parser could
                      not resolve it, or it is a runtime API (V13/V14 metadata lists none; reading the V15
                      API list is not implemented yet).

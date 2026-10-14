@@ -3,7 +3,7 @@
 **Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof** (the target flow; today it reports a comparison class per call, measured on mainnet spec 1002).
 
 ![status](https://img.shields.io/badge/status-work%20in%20progress-orange)
-![tests](https://img.shields.io/badge/tests-252%20passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-255%20passing-brightgreen)
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![python](https://img.shields.io/badge/python-3.10%2B-blue)
 
@@ -115,7 +115,7 @@ cd portaldot-hackathon-2026-plumbline-edycu
 python3 -m venv .venv && . .venv/bin/activate
 pip install -e '.[dev]'
 
-pytest -q                                   # 252 passed, 3 deselected (live tests are opt-in: pytest -m live)
+pytest -q                                   # 255 passed, 3 deselected (live tests are opt-in: pytest -m live)
 
 # identify the stored mainnet spec-1002 runtime (offline)
 plumbline runtime -p stored:fixtures/metadata_1002.scale
@@ -151,7 +151,7 @@ There is nothing to compile or deploy and there is no frontend to launch yet.
   - `evidence/metadata_1002.json` — mainnet spec 1002, metadata V13, sha256 `b87080f9…9053`, 153205 bytes, fetched 2026-10-14
   - `evidence/docs_1002.json` — the baseline table above
   - `evidence/metadata_standin_sdk.json` — interim-sdk stand-in (not V3), metadata V14, pinned to genesis
-- **Tests:** 252 passed (+3 live, opt-in) as of 2026-10-14.
+- **Tests:** 255 passed (+3 live, opt-in) as of 2026-10-14.
 
 ## Roadmap
 
