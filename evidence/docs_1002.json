@@ -2,6 +2,8 @@
  "counts": {
   "absent": 64,
   "arg-mismatch": 15,
+  "arg-mismatch-underscore-only": 4,
+  "args-unknown": 0,
   "call-absent": 64,
   "documented": 196,
   "live_calls": 155,
@@ -10,7 +12,9 @@
   "undocumented": 23,
   "undocumented_in_documented_pallets": 14
  },
+ "generated_at": "2026-10-14T09:35:28+00:00",
  "interfaces": 196,
+ "label": "Portaldot mainnet, spec 1002 (read-only baseline); stored blob fixtures/metadata_1002.scale",
  "layouts": {
   "assets": [
    "plain"
@@ -83,6 +87,7 @@
  "metadata_sha256": "b87080f9349f936e859748df90ca7837d1e2d15cb02abba347499b8639869053",
  "metadata_version": 13,
  "pages": 22,
+ "pages_complete": 22,
  "pages_parsed": 22,
  "pallets_without_docs_page": [
   "Authorship",
@@ -90,6 +95,30 @@
   "Sudo"
  ],
  "per_page": {
+  "assets": 33,
+  "babe": 3,
+  "balances": 3,
+  "bounties": 10,
+  "contracts": 10,
+  "electionProviderMultiPhase": 5,
+  "grandpa": 3,
+  "identity": 24,
+  "imOnline": 1,
+  "indices": 6,
+  "lottery": 4,
+  "multisig": 5,
+  "proxy": 11,
+  "scheduler": 10,
+  "session": 2,
+  "staking": 31,
+  "system": 11,
+  "timestamp": 1,
+  "transactionStorage": 3,
+  "treasury": 6,
+  "utility": 8,
+  "vesting": 6
+ },
+ "per_page_signatures": {
   "assets": 33,
   "babe": 3,
   "balances": 3,
@@ -1169,7 +1198,8 @@
    ],
    "live_call": "Balances.transfer",
    "page": "balances",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/balances.html (interface 1)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/balances.html (interface 1)",
+   "underscore_only": false
   },
   {
    "class": "match",
@@ -1375,7 +1405,8 @@
    ],
    "live_call": "Bounties.extend_bounty_expiry",
    "page": "bounties",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html (interface 7)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/bounties.html (interface 7)",
+   "underscore_only": true
   },
   {
    "class": "match",
@@ -1503,7 +1534,8 @@
    ],
    "live_call": "Contracts.call",
    "page": "contracts",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 1)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 1)",
+   "underscore_only": false
   },
   {
    "class": "call-absent",
@@ -1588,7 +1620,8 @@
    ],
    "live_call": "Contracts.instantiate",
    "page": "contracts",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 3)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 3)",
+   "underscore_only": false
   },
   {
    "class": "call-absent",
@@ -1677,7 +1710,8 @@
    ],
    "live_call": "Contracts.instantiate_with_code",
    "page": "contracts",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 5)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/contracts.html (interface 5)",
+   "underscore_only": false
   },
   {
    "class": "call-absent",
@@ -1816,7 +1850,8 @@
    ],
    "live_call": "ElectionProviderMultiPhase.set_emergency_election_result",
    "page": "electionProviderMultiPhase",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/electionProviderMultiPhase.html (interface 2)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/electionProviderMultiPhase.html (interface 2)",
+   "underscore_only": false
   },
   {
    "class": "match",
@@ -1876,7 +1911,8 @@
    ],
    "live_call": "ElectionProviderMultiPhase.submit_unsigned",
    "page": "electionProviderMultiPhase",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/electionProviderMultiPhase.html (interface 5)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/electionProviderMultiPhase.html (interface 5)",
+   "underscore_only": false
   },
   {
    "class": "match",
@@ -2139,7 +2175,8 @@
    ],
    "live_call": "Identity.provide_judgement",
    "page": "identity",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 9)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/identity.html (interface 9)",
+   "underscore_only": false
   },
   {
    "class": "match",
@@ -2467,7 +2504,8 @@
    ],
    "live_call": "ImOnline.heartbeat",
    "page": "imOnline",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/imOnline.html (interface 1)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/imOnline.html (interface 1)",
+   "underscore_only": true
   },
   {
    "class": "match",
@@ -2796,7 +2834,8 @@
    ],
    "live_call": "Multisig.as_multi",
    "page": "multisig",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/multisig.html (interface 2)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/multisig.html (interface 2)",
+   "underscore_only": false
   },
   {
    "class": "match",
@@ -3560,7 +3599,8 @@
    ],
    "live_call": "Staking.bond",
    "page": "staking",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 1)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 1)",
+   "underscore_only": false
   },
   {
    "class": "match",
@@ -3607,7 +3647,8 @@
    ],
    "live_call": "Staking.chill_other",
    "page": "staking",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 4)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 4)",
+   "underscore_only": false
   },
   {
    "class": "call-absent",
@@ -3936,7 +3977,8 @@
    ],
    "live_call": "Staking.set_controller",
    "page": "staking",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 22)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/staking.html (interface 22)",
+   "underscore_only": false
   },
   {
    "class": "match",
@@ -4185,7 +4227,8 @@
    ],
    "live_call": "System.kill_prefix",
    "page": "system",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 4)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 4)",
+   "underscore_only": true
   },
   {
    "class": "match",
@@ -4223,7 +4266,8 @@
    ],
    "live_call": "System.remark",
    "page": "system",
-   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 6)"
+   "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/system.html (interface 6)",
+   "underscore_only": true
   },
   {
    "class": "match",
@@ -4782,6 +4826,7 @@
    "source_ref": "https://portaldot-dev.readthedocs.io/en/latest/module-interface/extrinsics/vesting.html (interface 6)"
   }
  ],
+ "signatures": 196,
  "sources": {
   "assets": {
    "bytes": 61202,
