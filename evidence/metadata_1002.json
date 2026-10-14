@@ -5,6 +5,7 @@
   "fetched_at": "2026-10-14T09:15:25+00:00",
   "genesis_hash": "0x83b5212c69f85f3996f8696bb35bf913af51b176a5f53d0a74fd3a83dc0b8a54",
   "impl_name": "substrate-node",
+  "label": "Portaldot mainnet, spec 1002 (read-only baseline)",
   "metadata_bytes": 153205,
   "metadata_sha256": "b87080f9349f936e859748df90ca7837d1e2d15cb02abba347499b8639869053",
   "metadata_version": 13,

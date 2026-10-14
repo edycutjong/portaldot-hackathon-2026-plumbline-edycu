@@ -86,3 +86,25 @@ def test_live_mainnet_runtime_matches_stored_blob():
     substrate.close()
     record = json.loads(EVIDENCE_1002.read_text())
     assert (info.spec_version, info.metadata_sha256) == (record["spec_version"], record["metadata_sha256"])
+
+
+BLOB_STANDIN = ROOT / "fixtures" / "metadata_standin_sdk.scale"
+EVIDENCE_STANDIN = ROOT / "evidence" / "metadata_standin_sdk.json"
+
+
+def test_standin_not_v3_blob_is_labelled_and_pinned_to_genesis():
+    record = json.loads(EVIDENCE_STANDIN.read_text())
+    assert "not V3" in record["label"]
+    assert record["profile"] == "interim-sdk" and record["spec_name"] == "node"
+    assert record["block_hash"] == record["genesis_hash"]
+    assert md.sha256_hex(BLOB_STANDIN.read_bytes()) == record["metadata_sha256"]
+
+
+def test_standin_not_v3_blob_decodes_v14_with_no_preset():
+    blob = BLOB_STANDIN.read_bytes()
+    assert md.metadata_version(blob) == 14
+    assert md.get_profile(f"stored:{BLOB_STANDIN}").preset is None
+    decoded = md.decode_metadata(blob, None)
+    assert "Revive" in md.pallet_names(decoded)
+    surface = md.call_surface(decoded)
+    assert [name for name, _ in surface["Balances.transfer_keep_alive"]] == ["dest", "value"]

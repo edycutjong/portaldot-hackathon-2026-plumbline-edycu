@@ -114,6 +114,7 @@ class RuntimeInfo:
     metadata_bytes: int
     genesis_hash: str | None = None
     code_hash: str | None = None
+    block_hash: str | None = None  # the block the metadata was read at (None = chain head at fetch time)
     fetched_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat(timespec="seconds"))
 
     def to_dict(self) -> dict:
@@ -170,14 +171,19 @@ def assets_instance(profile: Profile, url: str | None = None):
 
 
 def fetch_metadata_blob(substrate, block_hash: str | None = None) -> bytes:
+    """Raw metadata at a block (default: head). Metadata is not always block-invariant: on the
+    interim-sdk chain a Revive storage entry's default value changes from block to block, so a
+    stored blob from that chain is only reproducible when it is pinned to a block."""
     params = [block_hash] if block_hash else []
     return bytes.fromhex(substrate.rpc_request("state_getMetadata", params)["result"][2:])
 
 
-def runtime_info(profile: Profile, substrate, blob: bytes, endpoint: str | None = None) -> RuntimeInfo:
-    version = substrate.rpc_request("state_getRuntimeVersion", [])["result"]
+def runtime_info(profile: Profile, substrate, blob: bytes, endpoint: str | None = None,
+                 block_hash: str | None = None) -> RuntimeInfo:
+    at = [block_hash] if block_hash else []
+    version = substrate.rpc_request("state_getRuntimeVersion", at)["result"]
     genesis = substrate.rpc_request("chain_getBlockHash", [0])["result"]
-    code_hash = substrate.rpc_request("state_getStorageHash", [CODE_KEY])["result"]
+    code_hash = substrate.rpc_request("state_getStorageHash", [CODE_KEY] + at)["result"]
     return RuntimeInfo(
         profile=profile.name,
         endpoint=endpoint or profile.url,
@@ -190,6 +196,7 @@ def runtime_info(profile: Profile, substrate, blob: bytes, endpoint: str | None 
         metadata_bytes=len(blob),
         genesis_hash=genesis,
         code_hash=code_hash,
+        block_hash=block_hash,
     )
 
 
@@ -231,6 +238,6 @@ def pallet_names(metadata) -> list[str]:
 
 
 def write_evidence(path: Path, info: RuntimeInfo, blob_path: Path) -> dict:
-    record = info.to_dict() | {"blob_file": blob_path.as_posix()}
+    record = info.to_dict() | {"blob_file": blob_path.as_posix(), "label": get_profile(info.profile).label}
     path.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
     return record
