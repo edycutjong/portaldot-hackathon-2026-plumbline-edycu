@@ -114,8 +114,9 @@ def docs(cache: Path = typer.Option(Path(".cache/docs"), help="directory filled 
 def guide_cmd(guide_dir: Path = typer.Option(Path.home() / ".cache" / "plumbline-sources" / "guide",
                                              help="a checkout made by scripts/fetch_guide.py")) -> None:
     """Parse the V3 testnet guide (README tables, demo call sites by AST, FAQ modules) and count them."""
-    if not (guide_dir / "README.md").exists():
-        typer.echo(f"error: no guide checkout in {guide_dir}; run scripts/fetch_guide.py first", err=True)
+    if not all((guide_dir / part).exists() for part in ("README.md", "FAQ.md", "demo")):
+        typer.echo(f"error: no guide checkout (README.md, FAQ.md, demo/) in {guide_dir}; "
+                   "run scripts/fetch_guide.py first", err=True)
         raise typer.Exit(2)
     head, dirty = guide_mod.clone_state(guide_dir)
     res = guide_mod.parse_guide(guide_dir)
@@ -126,10 +127,12 @@ def guide_cmd(guide_dir: Path = typer.Option(Path.home() / ".cache" / "plumbline
     unresolved = [s.ref for s in res.sites if not s.resolved]
     if unresolved:
         typer.echo(f"  unresolved: {', '.join(unresolved)}")
+    if res.unaccounted:
+        typer.echo(f"  code references no site covers: {', '.join(res.unaccounted)}")
     pinned = head == guide_mod.GUIDE_COMMIT and not dirty
     typer.echo(f"guide at {head or 'unknown commit'}" + ("" if pinned else
                f" (NOT the pinned clean commit {guide_mod.GUIDE_COMMIT[:7]}; dirty: {dirty})"))
-    if not pinned or unresolved:
+    if not pinned or unresolved or res.unaccounted:
         raise typer.Exit(1)
 
 

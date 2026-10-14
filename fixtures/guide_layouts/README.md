@@ -31,3 +31,24 @@ Go to **Network → Tokens** (a UI page, not a call).
 
 1. Query **Developer → Runtime calls → gadgetApi → lookup** first.
 2. Then send **Developer → Extrinsics → Gadgets → make_gadget**.
+
+### 2.3 Widgets
+
+```text
+### Setup
+| Call | Description |
+| `not_a_call` | inside a code fence |
+```
+
+  | Function | Description |
+  |---|---|
+  | `spin` | an indented table with a Function header |
+  | spin_fast | an unticked name |
+  | `lock_it` (needs `CollectionConfig`) | extra ticks in the cell |
+  | `wobble` | see **Developer** → **Extrinsics** → **Widgets** → **wobble** inside a row |
+
+> | Call | Description |
+> |---|---|
+> | `quoted` | a quoted table |
+
+Then use Developer -> Extrinsics -> Widgets -> transferKeepAlive (ASCII arrows, camelCase name).

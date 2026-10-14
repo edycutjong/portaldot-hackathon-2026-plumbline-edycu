@@ -16,3 +16,8 @@ Bridges are **awaiting an official release**.
 | Voting | `conviction_voting` | Listed; timing not specified |
 | Mixed | `alpha` / `beta` | two names in one cell |
 | Empty | none | no module name |
+
+| Feature | Runtime module | Current status |
+|---|---|---|
+| Later | `later` | Awaiting confirmation from the team |
+| Odd | `odd` | to be decided |
