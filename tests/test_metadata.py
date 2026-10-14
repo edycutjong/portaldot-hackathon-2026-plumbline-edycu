@@ -54,6 +54,9 @@ def test_stored_unknown_blob_infers_preset_from_version_and_says_origin_unknown(
     prof = md.get_profile(f"stored:{odd}")
     assert prof.stored_file == str(odd) and prof.preset == "legacy" and prof.measured_as is None
     assert "origin not recorded" in prof.label
+    asserted = md.get_profile(f"stored:{odd}@mainnet-1002")
+    assert asserted.preset == "legacy" and "asserted mainnet-1002; origin not recorded" in asserted.label
+    assert md.recorded_origin(odd.read_bytes()) is None
 
 
 def test_assets_override_refused_outside_mainnet_1002():

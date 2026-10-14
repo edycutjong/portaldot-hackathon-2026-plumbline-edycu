@@ -91,7 +91,8 @@ PROFILES: dict[str, Profile] = {
 
 
 # Metadata blobs this repository has recorded (sha256 -> the live profile it was read from).
-# A stored blob is labelled from this table, never from free text, so a stand-in can't be relabelled.
+# A stored blob is labelled from this table. An `@profile` suffix can only choose the preset of an
+# unrecorded blob; its label then says the origin is asserted, and evidence producers refuse it.
 KNOWN_BLOBS: dict[str, str] = {
     "b87080f9349f936e859748df90ca7837d1e2d15cb02abba347499b8639869053": "mainnet-1002",  # fixtures/metadata_1002.scale
     "9732aff0f6b558576c1551596852448cdf5d1e9ac58705f0ab286d84e73728db": "interim-sdk",   # fixtures/metadata_standin_sdk.scale
@@ -114,9 +115,12 @@ def get_profile(name: str) -> Profile:
         if base and known and base != known:
             raise ProfileError(f"{path} was recorded from {known}, not {base}")
         measured_as = base or known
-        if measured_as:
-            live = PROFILES[measured_as]
+        if known:
+            live = PROFILES[known]
             preset, label = live.preset, f"{live.label}; stored blob {path}"
+        elif base:  # origin asserted on the command line, not recorded by this repository
+            preset = PROFILES[base].preset
+            label = f"stored blob {path} (asserted {base}; origin not recorded)"
         else:  # unknown origin: V13 blobs need the legacy preset, V14+ are self-describing
             preset = "legacy" if metadata_version(blob) < 14 else None
             label = f"stored blob {path} (origin not recorded)"
@@ -168,12 +172,22 @@ def connect(profile: Profile, url: str | None = None):
     except Exception as exc:  # the SDK raises several unrelated types for DNS / socket failures
         raise ChainUnreachableError(f"profile {profile.name}: cannot reach {endpoint}: {exc}") from exc
     try:
-        verify_identity(profile, substrate)  # plain RPC reads, before any type decoding
+        try:
+            verify_identity(profile, substrate)  # plain RPC reads, before any type decoding
+        except UnknownChainError:
+            raise
+        except Exception as exc:
+            raise ChainUnreachableError(f"profile {profile.name}: {endpoint} did not answer RPC: {exc}") from exc
         substrate.init_runtime()
     except Exception:
         substrate.close()
         raise
     return substrate
+
+
+def recorded_origin(blob: bytes) -> str | None:
+    """The live profile this repository recorded the blob from, or None."""
+    return KNOWN_BLOBS.get(sha256_hex(blob))
 
 
 def verify_identity(profile: Profile, substrate) -> tuple[str, str]:

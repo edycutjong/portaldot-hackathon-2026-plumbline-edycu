@@ -50,3 +50,9 @@ def test_docs_command_labels_standin_comparison_and_exits_1_on_incomplete_page(t
 def test_docs_command_without_cache_exits_2(tmp_path):
     result = CliRunner().invoke(app, ["docs", "--cache", str(tmp_path)])
     assert result.exit_code == 2
+
+
+def test_runtime_command_exits_2_when_the_endpoint_is_unreachable():
+    for url in ("ws://127.0.0.1:9", "http://127.0.0.1:9"):
+        result = CliRunner().invoke(app, ["runtime", "--profile", "interim-sdk", "--url", url])
+        assert result.exit_code == 2, (url, result.output)
