@@ -1,0 +1,1449 @@
+{
+ "commit": "d671a32758573f4d9ab00d891b2dd6a48f36bcbb",
+ "counts": {
+  "v3-demo": {
+   "compose_call_by_how": {
+    "literal": 45,
+    "local": 1
+   },
+   "compose_call_sites": 46,
+   "compose_call_unresolved": 0,
+   "distinct_calls": 46,
+   "runtime_call_sites": 1,
+   "state_call_sites": 1,
+   "text_lines_mentioning_compose_call": 47,
+   "text_lines_not_a_call_site": [
+    "demo/04_solidity_demo.py:411"
+   ]
+  },
+  "v3-faq": {
+   "awaiting_lines": 10,
+   "modules": 12,
+   "unresolved": 0
+  },
+  "v3-guide": {
+   "call_table_names": 39,
+   "explorer_paths": 3,
+   "unresolved": 0
+  }
+ },
+ "faq_awaiting_lines": [
+  26,
+  32,
+  38,
+  44,
+  52,
+  82,
+  90,
+  117,
+  132,
+  144
+ ],
+ "files": {
+  "FAQ.md": "70d2a77deb05d140da89cae6166f99d6d0e0722ba4a15323ba0b4e1d6680ab83",
+  "README.md": "d9d941cb16f99721ce809efb9e074da8a0f137fba28369a30e7b2fb01a51841d",
+  "demo/00_base_demo.py": "5a76381ebd8856258ef5acc65eda03dc136a3fbbb6884e5580cbd73a2a8e5a98",
+  "demo/01_assets_demo.py": "24543945e10f47d189052880b41b293503e1a9ad951adc96555b0b1bf0987022",
+  "demo/02_uniques_demo.py": "dfdd8d786b0afcc47e719526dcebadd3d02c685876203b4b8f6cbbc7fed543fc",
+  "demo/03_nfts_demo.py": "ac731d15f8390e97649d01f868189f80377b89e4cdc092fa6389f19117b0ad2f",
+  "demo/04_solidity_demo.py": "6ccecb07ddd79db785a1deab62d9d5a0764fac6fe63f359fdaefe01ef8f60502"
+ },
+ "note": "Names and file:line references extracted from the guide; no guide text is reproduced.",
+ "repo": "https://github.com/ItsCogumellum/portaldot-v3-testnet-guide",
+ "sites": [
+  {
+   "args": null,
+   "calls": [
+    "create"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "README.md:108",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "mint"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "README.md:109",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "burn"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "README.md:110",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "transfer"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "README.md:111",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "freeze"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "README.md:112",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "thaw"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "README.md:113",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "approve_transfer"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "README.md:114",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "transfer_approved"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "README.md:115",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "cancel_approval"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "README.md:116",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "create"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:157",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "mint"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:158",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "burn"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:159",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "transfer"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:160",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "freeze"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:161",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "thaw"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:161",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "freeze_collection"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:162",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "thaw_collection"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:162",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "approve_transfer"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:163",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "cancel_approval"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:164",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "set_metadata"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:165",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "set_attribute"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:165",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "set_price"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:166",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "buy_item"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "README.md:166",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "create"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:197",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "mint"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:198",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "burn"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:199",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "transfer"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:200",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "lock_item_transfer"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:201",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "unlock_item_transfer"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:201",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "lock_collection"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:202",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "approve_transfer"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:203",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "cancel_approval"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:204",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "clear_all_transfer_approvals"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:204",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "set_attribute"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:205",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "set_metadata"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:205",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "set_collection_metadata"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:205",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "mint_pre_signed"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:206",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "set_price"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:207",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "buy_item"
+   ],
+   "how": "call-table",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "README.md:207",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "accountId"
+   ],
+   "how": "explorer-path",
+   "kind": "runtime-api",
+   "note": "",
+   "pallet": "reviveApi",
+   "ref": "README.md:324",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "call"
+   ],
+   "how": "explorer-path",
+   "kind": "runtime-api",
+   "note": "",
+   "pallet": "reviveApi",
+   "ref": "README.md:342",
+   "source": "v3-guide"
+  },
+  {
+   "args": null,
+   "calls": [
+    "call"
+   ],
+   "how": "explorer-path",
+   "kind": "call",
+   "note": "",
+   "pallet": "Revive",
+   "ref": "README.md:352",
+   "source": "v3-guide"
+  },
+  {
+   "args": [
+    "dest",
+    "value"
+   ],
+   "calls": [
+    "transfer_keep_alive"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Balances",
+   "ref": "demo/00_base_demo.py:88",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "dest",
+    "value"
+   ],
+   "calls": [
+    "transfer_keep_alive"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Balances",
+   "ref": "demo/00_base_demo.py:118",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "id",
+    "admin",
+    "min_balance"
+   ],
+   "calls": [
+    "create"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "demo/01_assets_demo.py:85",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "id",
+    "beneficiary",
+    "amount"
+   ],
+   "calls": [
+    "mint"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "demo/01_assets_demo.py:105",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "id",
+    "who",
+    "amount"
+   ],
+   "calls": [
+    "burn"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "demo/01_assets_demo.py:125",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "id",
+    "target",
+    "amount"
+   ],
+   "calls": [
+    "transfer_keep_alive",
+    "transfer"
+   ],
+   "how": "local",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "demo/01_assets_demo.py:147",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "id",
+    "who"
+   ],
+   "calls": [
+    "freeze"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "demo/01_assets_demo.py:167",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "id",
+    "who"
+   ],
+   "calls": [
+    "thaw"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "demo/01_assets_demo.py:181",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "id"
+   ],
+   "calls": [
+    "freeze_asset"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "demo/01_assets_demo.py:195",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "id"
+   ],
+   "calls": [
+    "thaw_asset"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "demo/01_assets_demo.py:206",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "id",
+    "delegate",
+    "amount"
+   ],
+   "calls": [
+    "approve_transfer"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "demo/01_assets_demo.py:223",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "id",
+    "owner",
+    "destination",
+    "amount"
+   ],
+   "calls": [
+    "transfer_approved"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "demo/01_assets_demo.py:244",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "id",
+    "delegate"
+   ],
+   "calls": [
+    "cancel_approval"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Assets",
+   "ref": "demo/01_assets_demo.py:263",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "admin"
+   ],
+   "calls": [
+    "create"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:95",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "owner"
+   ],
+   "calls": [
+    "mint"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:116",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "check_owner"
+   ],
+   "calls": [
+    "burn"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:138",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "dest"
+   ],
+   "calls": [
+    "transfer"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:160",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item"
+   ],
+   "calls": [
+    "freeze"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:178",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item"
+   ],
+   "calls": [
+    "thaw"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:192",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection"
+   ],
+   "calls": [
+    "freeze_collection"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:209",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection"
+   ],
+   "calls": [
+    "thaw_collection"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:220",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "delegate"
+   ],
+   "calls": [
+    "approve_transfer"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:237",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "maybe_check_delegate"
+   ],
+   "calls": [
+    "cancel_approval"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:268",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "data",
+    "is_frozen"
+   ],
+   "calls": [
+    "set_metadata"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:290",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "maybe_item",
+    "key",
+    "value"
+   ],
+   "calls": [
+    "set_attribute"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:307",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "price",
+    "whitelisted_buyer"
+   ],
+   "calls": [
+    "set_price"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:333",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "bid_price"
+   ],
+   "calls": [
+    "buy_item"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Uniques",
+   "ref": "demo/02_uniques_demo.py:356",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "admin",
+    "config"
+   ],
+   "calls": [
+    "create"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:132",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "mint_to",
+    "witness_data"
+   ],
+   "calls": [
+    "mint"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:154",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item"
+   ],
+   "calls": [
+    "burn"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:173",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "dest"
+   ],
+   "calls": [
+    "transfer"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:191",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item"
+   ],
+   "calls": [
+    "lock_item_transfer"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:209",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item"
+   ],
+   "calls": [
+    "unlock_item_transfer"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:223",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "lock_metadata",
+    "lock_attributes"
+   ],
+   "calls": [
+    "lock_item_properties"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:241",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "lock_settings"
+   ],
+   "calls": [
+    "lock_collection"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:265",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "delegate",
+    "maybe_deadline"
+   ],
+   "calls": [
+    "approve_transfer"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:289",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "delegate"
+   ],
+   "calls": [
+    "cancel_approval"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:317",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item"
+   ],
+   "calls": [
+    "clear_all_transfer_approvals"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:333",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "maybe_item",
+    "namespace",
+    "key",
+    "value"
+   ],
+   "calls": [
+    "set_attribute"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:358",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "data"
+   ],
+   "calls": [
+    "set_metadata"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:376",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "data"
+   ],
+   "calls": [
+    "set_collection_metadata"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:391",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "mint_data",
+    "signature",
+    "signer"
+   ],
+   "calls": [
+    "mint_pre_signed"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:504",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "price",
+    "whitelisted_buyer"
+   ],
+   "calls": [
+    "set_price"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:530",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "collection",
+    "item",
+    "bid_price"
+   ],
+   "calls": [
+    "buy_item"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Nfts",
+   "ref": "demo/03_nfts_demo.py:553",
+   "source": "v3-demo"
+  },
+  {
+   "args": [],
+   "calls": [
+    "map_account"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Revive",
+   "ref": "demo/04_solidity_demo.py:283",
+   "source": "v3-demo"
+  },
+  {
+   "args": null,
+   "calls": [
+    "call"
+   ],
+   "how": "runtime_call",
+   "kind": "runtime-api",
+   "note": "",
+   "pallet": "ReviveApi",
+   "ref": "demo/04_solidity_demo.py:310",
+   "source": "v3-demo"
+  },
+  {
+   "args": null,
+   "calls": [
+    "call"
+   ],
+   "how": "state_call",
+   "kind": "runtime-api",
+   "note": "",
+   "pallet": "ReviveApi",
+   "ref": "demo/04_solidity_demo.py:336",
+   "source": "v3-demo"
+  },
+  {
+   "args": [
+    "dest",
+    "value",
+    "weight_limit",
+    "storage_deposit_limit",
+    "data"
+   ],
+   "calls": [
+    "call"
+   ],
+   "how": "literal",
+   "kind": "call",
+   "note": "",
+   "pallet": "Revive",
+   "ref": "demo/04_solidity_demo.py:421",
+   "source": "v3-demo"
+  },
+  {
+   "args": null,
+   "calls": [
+    ""
+   ],
+   "how": "faq-table",
+   "kind": "module",
+   "note": "Listed for V3.0; launch timing not specified",
+   "pallet": "beefy",
+   "ref": "FAQ.md:104",
+   "source": "v3-faq"
+  },
+  {
+   "args": null,
+   "calls": [
+    ""
+   ],
+   "how": "faq-table",
+   "kind": "module",
+   "note": "Listed for V3.0; launch timing not specified",
+   "pallet": "referenda",
+   "ref": "FAQ.md:105",
+   "source": "v3-faq"
+  },
+  {
+   "args": null,
+   "calls": [
+    ""
+   ],
+   "how": "faq-table",
+   "kind": "module",
+   "note": "Listed for V3.0; launch timing not specified",
+   "pallet": "conviction_voting",
+   "ref": "FAQ.md:106",
+   "source": "v3-faq"
+  },
+  {
+   "args": null,
+   "calls": [
+    ""
+   ],
+   "how": "faq-table",
+   "kind": "module",
+   "note": "Listed for V3.0; launch timing not specified",
+   "pallet": "preimage",
+   "ref": "FAQ.md:107",
+   "source": "v3-faq"
+  },
+  {
+   "args": null,
+   "calls": [
+    ""
+   ],
+   "how": "faq-table",
+   "kind": "module",
+   "note": "Listed for V3.0; launch timing not specified",
+   "pallet": "paras",
+   "ref": "FAQ.md:108",
+   "source": "v3-faq"
+  },
+  {
+   "args": null,
+   "calls": [
+    ""
+   ],
+   "how": "faq-table",
+   "kind": "module",
+   "note": "Listed for V3.0; launch timing not specified",
+   "pallet": "cumulus_parachain_system",
+   "ref": "FAQ.md:109",
+   "source": "v3-faq"
+  },
+  {
+   "args": null,
+   "calls": [
+    ""
+   ],
+   "how": "faq-table",
+   "kind": "module",
+   "note": "Listed for V3.0; launch timing not specified",
+   "pallet": "broker",
+   "ref": "FAQ.md:110",
+   "source": "v3-faq"
+  },
+  {
+   "args": null,
+   "calls": [
+    ""
+   ],
+   "how": "faq-table",
+   "kind": "module",
+   "note": "Listed for V3.0; launch timing not specified",
+   "pallet": "contracts",
+   "ref": "FAQ.md:111",
+   "source": "v3-faq"
+  },
+  {
+   "args": null,
+   "calls": [
+    ""
+   ],
+   "how": "faq-table",
+   "kind": "module",
+   "note": "Documented on testnet; mainnet launch details not specified",
+   "pallet": "revive",
+   "ref": "FAQ.md:112",
+   "source": "v3-faq"
+  },
+  {
+   "args": null,
+   "calls": [
+    ""
+   ],
+   "how": "faq-table",
+   "kind": "module",
+   "note": "Documented on testnet; mainnet launch details not specified",
+   "pallet": "nfts",
+   "ref": "FAQ.md:113",
+   "source": "v3-faq"
+  },
+  {
+   "args": null,
+   "calls": [
+    ""
+   ],
+   "how": "faq-table",
+   "kind": "module",
+   "note": "Listed for V3.0; launch timing not specified",
+   "pallet": "identity",
+   "ref": "FAQ.md:114",
+   "source": "v3-faq"
+  },
+  {
+   "args": null,
+   "calls": [
+    ""
+   ],
+   "how": "faq-table",
+   "kind": "module",
+   "note": "Listed for V3.0; launch timing not specified",
+   "pallet": "ibridge",
+   "ref": "FAQ.md:115",
+   "source": "v3-faq"
+  }
+ ]
+}
