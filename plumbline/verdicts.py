@@ -8,19 +8,22 @@ import these names; no other module spells a verdict string. Definitions:
   DRIFTED            documented, absent from the target's metadata, with an explicit rename/substitute
                      row naming the live equivalent (I3; never inferred).
   ARG_DRIFT          documented and present, but the documented arguments differ from the live ones.
-  ARGS-UNCHECKED     documented and present; the source gives no arguments to compare.
+  ARGS-UNCHECKED     documented and present; the source gives no arguments to compare; no receipt yet.
   ABSENT             documented (call or listed module) and absent from the target's metadata, with no
                      known equivalent.
-  UNDOCUMENTED       a live call that no parsed source names.
-  UNPROVEN           documented and present with matching (or no) arguments, but no receipt yet.
+  UNDOCUMENTED       a live call that no parsed source names (directly or as the live side of a rename).
+  UNPROVEN           documented and present with matching arguments (or a listed module that is present),
+                     but no receipt yet. Also the live side of a rename that no receipt proves.
   EXPECTED-REJECT    a contract artifact whose imports the target is known to reject (check, later).
   COMPAT-UNMEASURED  an artifact/target cell with no measurement behind it (check, later).
   TYPE-TRAP          a call site that passes a value of the wrong account type (check, later).
   UNSCANNED          a dApp call site the scanner could not resolve statically (check, later).
   UNKNOWN-DOC        a documented entry the ledger cannot check against this runtime: the parser could
-                     not resolve it, or it is a runtime API and the metadata version lists no APIs.
+                     not resolve it, or it is a runtime API (V13/V14 metadata lists none; reading the V15
+                     API list is not implemented yet).
 
-Per report: CACHED (metadata read from a stored blob, not live), STALE (the runtime changed since).
+Per report (stamped on the runtime): CACHED (measured from a stored metadata blob, not read live),
+STALE (the live runtime has changed since).
 """
 
 PROVEN = "PROVEN"

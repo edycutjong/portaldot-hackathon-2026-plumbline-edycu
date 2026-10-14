@@ -6,15 +6,19 @@ the schema below and a canonical `ledger.json` export: sorted keys, no whitespac
 runs over the same inputs give byte-identical files and the same blake2-256 hash.
 
 Rules (verdict names and meanings: `plumbline.verdicts`):
-  - Pallets are matched by name with case and underscores ignored (`conviction_voting` = `ConvictionVoting`);
-    calls by exact snake_case name. Nothing else is matched: a near name is ABSENT, not a guess.
-  - An absent call is DRIFTED only through an explicit row in `plumbline.renames` for the same profile (I3).
+  - Pallets are matched by name with case and underscores ignored (`conviction_voting` = `ConvictionVoting`,
+    the snake_case and CamelCase spellings of one identifier); calls by exact snake_case name. Nothing
+    else is matched: a near name is ABSENT, not a guess.
+  - An absent call or module is DRIFTED only through an explicit row in `plumbline.renames` for the same
+    profile, checked against the runtime (I3). The live side of every applied rename gets its own row:
+    PROVEN with a receipt, else UNPROVEN.
   - Arguments: the mainnet docs are positional, so names are compared in order; the demo code passes
     keyword `call_params`, so names are compared as a set. A source with no arguments is ARGS-UNCHECKED.
-  - PROVEN needs a receipt for this runtime whose read-back decoded to the same call (I1). Without one a
-    present call with matching arguments is UNPROVEN.
-  - Every verdict row is stored against a runtime row and exported with its profile, spec version and
-    metadata hash (I2, I5).
+  - PROVEN needs a receipt for this runtime with a tx hash, a block hash, success, and a read-back whose
+    decoded call is the same pallet.call (I1). Without one a present call is UNPROVEN / ARGS-UNCHECKED.
+  - A ledger holds at most one runtime per profile; every verdict row is stored against it and exported
+    with its profile, spec version and metadata hash (I2, I5). Re-measuring means rebuilding.
+  - The interim stand-in chain is test input only: `plumb` refuses it unless a test asks explicitly.
 """
 
 from __future__ import annotations
@@ -27,11 +31,13 @@ from pathlib import Path
 
 from . import docs as docs_mod
 from . import guide as guide_mod
+from . import metadata as md
 from . import verdicts as v
 from .renames import RENAMES, Rename
 
 FORMAT = "plumbline-ledger/1"
 UNRESOLVED_PREFIX = "?"  # call name of a documented entry the parser could not resolve
+STANDIN_PROFILE = "interim-sdk"
 
 
 def _in(values) -> str:
@@ -39,10 +45,10 @@ def _in(values) -> str:
 
 
 SCHEMA = f"""
-CREATE TABLE runtime   (id INTEGER PRIMARY KEY, profile TEXT NOT NULL, label TEXT NOT NULL, endpoint TEXT,
+CREATE TABLE runtime   (id INTEGER PRIMARY KEY, profile TEXT NOT NULL UNIQUE, label TEXT NOT NULL, endpoint TEXT,
                         spec_name TEXT NOT NULL, spec_version INT NOT NULL, tx_version INT, metadata_version INT NOT NULL,
                         metadata_hash TEXT NOT NULL, code_hash TEXT, block_hash TEXT, fetched_at TEXT NOT NULL,
-                        UNIQUE (profile, metadata_hash));
+                        report_state TEXT CHECK (report_state IS NULL OR report_state IN {_in(v.REPORT_STATES)}));
 CREATE TABLE live_call (runtime_id INT NOT NULL REFERENCES runtime(id), pallet TEXT NOT NULL, call TEXT NOT NULL,
                         args_json TEXT NOT NULL, PRIMARY KEY (runtime_id, pallet, call));
 CREATE TABLE live_pallet (runtime_id INT NOT NULL REFERENCES runtime(id), pallet TEXT NOT NULL,
@@ -55,7 +61,8 @@ CREATE TABLE doc_call  (source TEXT NOT NULL CHECK (source IN {_in(v.SOURCES)}),
                         PRIMARY KEY (source, kind, pallet, call_snake));
 CREATE TABLE rename    (pallet TEXT NOT NULL, doc_call TEXT NOT NULL, live_call TEXT NOT NULL, profile TEXT NOT NULL,
                         evidence TEXT NOT NULL, kind TEXT NOT NULL CHECK (kind IN {_in(v.RENAME_KINDS)}),
-                        PRIMARY KEY (profile, pallet, doc_call));
+                        module INT NOT NULL CHECK (module IN (0,1)),
+                        PRIMARY KEY (profile, module, pallet, doc_call));
 CREATE TABLE verdict   (runtime_id INT NOT NULL REFERENCES runtime(id),
                         source TEXT NOT NULL CHECK (source IN {_in(v.SOURCES + (v.RUNTIME,))}),
                         kind TEXT NOT NULL CHECK (kind IN {_in(v.DOC_KINDS)}),
@@ -74,17 +81,24 @@ CREATE TABLE compat_cell (artifact_sha256 TEXT, source TEXT, toolchain TEXT, pro
                         PRIMARY KEY (artifact_sha256, profile, kind));
 CREATE TABLE receipt   (id INTEGER PRIMARY KEY, run_id INT REFERENCES run(id),
                         runtime_id INT NOT NULL REFERENCES runtime(id), side TEXT CHECK (side IN ('substrate','eth')),
-                        pallet TEXT, call TEXT, tx_hash TEXT, block_hash TEXT, block_number INT, success INT,
-                        dispatch_error TEXT, events_json TEXT, weight_json TEXT, fee TEXT, readback_ok INT);
+                        pallet TEXT NOT NULL, call TEXT NOT NULL, tx_hash TEXT, block_hash TEXT, block_number INT,
+                        success INT CHECK (success IN (0,1)), dispatch_error TEXT, events_json TEXT, weight_json TEXT,
+                        fee TEXT, readback_ok INT CHECK (readback_ok IN (0,1)), readback_call TEXT);
 CREATE TABLE run       (id INTEGER PRIMARY KEY, started_at TEXT, runtime_id INT REFERENCES runtime(id),
                         report_hash TEXT, attest_tx TEXT);
 """
 TABLES = ("runtime", "live_call", "live_pallet", "doc_call", "rename", "verdict", "diff_row", "compat_cell",
           "receipt", "run")
+RECEIPT_FIELDS = ("side", "pallet", "call", "tx_hash", "block_hash", "block_number", "success", "dispatch_error",
+                  "events_json", "weight_json", "fee", "readback_ok", "readback_call")
+# I1 in SQL: the receipt is for this call, it succeeded, and its read-back decoded to the same call
+PROVEN_RECEIPT = ("runtime_id = ? AND success = 1 AND readback_ok = 1 AND tx_hash IS NOT NULL AND block_hash IS NOT NULL "
+                  "AND readback_call = pallet || '.' || call")
 
 
 class LedgerError(ValueError):
-    """Inputs the ledger refuses: an inconsistent runtime record or a rename row its runtime contradicts."""
+    """Inputs the ledger refuses: an inconsistent runtime record, a rename row its runtime contradicts,
+    a surface from another blob, a stand-in runtime, or a second runtime for one profile."""
 
 
 # ---------------------------------------------------------------- inputs
@@ -94,7 +108,7 @@ class DocEntry:
     source: str
     kind: str
     pallet: str                         # as documented
-    call: str                           # snake_case; '' for a module; '?<ref>' when unresolved
+    call: str                           # snake_case; '' for a module; '?<ref>#<n>' when unresolved
     args: tuple[str, ...] | None        # argument names; None = the source gives none
     ordered: bool                       # compare argument names in order (positional) or as a set (keywords)
     refs: tuple[str, ...]               # every place the source names it
@@ -119,30 +133,44 @@ class Runtime:
     code_hash: str | None
     block_hash: str | None
     fetched_at: str
+    report_state: str | None = None     # verdicts.CACHED when measured from a stored blob
 
 
 @dataclass
 class Surface:
     calls: dict[str, list[tuple[str, str]]]   # "Pallet.call" -> [(arg, type)]
     pallets: list[str] = field(default_factory=list)
+    metadata_hash: str = ""                   # sha256 of the blob the surface was decoded from
+
+
+def surface_from_blob(blob: bytes, preset: str | None) -> Surface:
+    decoded = md.decode_metadata(blob, preset)
+    return Surface(md.call_surface(decoded), md.pallet_names(decoded), md.sha256_hex(blob))
 
 
 def entries_from_guide(sites: list[guide_mod.Site]) -> list[DocEntry]:
-    """One entry per (source, kind, pallet, call); a site with two candidate calls names both. Sites of
-    one call that disagree on their argument names give no arguments (ARGS-UNCHECKED), with a note."""
+    """One entry per (source, kind, pallet, call); a site with two candidate calls names both, and says so.
+    Call names are snake_cased (an explorer path may spell `transferKeepAlive`). Sites of one call that
+    disagree on their argument names give no arguments (ARGS-UNCHECKED), with a note. Every unresolved
+    site is its own entry."""
     grouped: dict[tuple, list[guide_mod.Site]] = {}
     out: list[DocEntry] = []
+    seen_refs: dict[str, int] = {}
     for site in sites:
         if not site.resolved:
-            out.append(DocEntry(site.source, site.kind, site.pallet or "", f"{UNRESOLVED_PREFIX}{site.ref}",
-                                None, False, (site.ref,), note=f"unresolved {site.how}"))
+            n = seen_refs[site.ref] = seen_refs.get(site.ref, 0) + 1
+            names = f"; names {', '.join(c for c in site.calls if c)}" if any(site.calls) else ""
+            out.append(DocEntry(site.source, site.kind, site.pallet or "", f"{UNRESOLVED_PREFIX}{site.ref}#{n}",
+                                None, False, (site.ref,), note=f"unresolved {site.how}{names}"))
             continue
         for call in site.calls:
-            grouped.setdefault((site.source, site.kind, site.pallet, call), []).append(site)
+            name = docs_mod.snake(call) if site.kind == v.CALL else call
+            grouped.setdefault((site.source, site.kind, site.pallet, name), []).append(site)
     for (source, kind, pallet, call), group in grouped.items():
         arg_sets = {s.args for s in group}
         args = next(iter(arg_sets)) if len(arg_sets) == 1 else None
-        notes = sorted({s.note for s in group if s.note})
+        notes = sorted({f"faq status {s.status}" for s in group if s.status} |
+                       {f"one of {len(s.calls)} candidates ({s.how}) at {s.ref}" for s in group if len(s.calls) > 1})
         if len(arg_sets) > 1:
             notes.append("sites disagree on argument names")
         out.append(DocEntry(source, kind, pallet, call, args, False, tuple(s.ref for s in group),
@@ -163,7 +191,7 @@ def entries_from_mainnet_docs(rows: list[dict]) -> list[DocEntry]:
     return out
 
 
-def runtime_from_record(record: dict, blob: bytes, label: str) -> Runtime:
+def runtime_from_record(record: dict, blob: bytes, label: str, report_state: str | None = None) -> Runtime:
     """A runtime from an evidence record written by scripts/record_metadata.py, checked against the blob."""
     sha = hashlib.sha256(blob).hexdigest()
     if record.get("metadata_sha256") != sha:
@@ -172,7 +200,7 @@ def runtime_from_record(record: dict, blob: bytes, label: str) -> Runtime:
                    spec_name=record["spec_name"], spec_version=record["spec_version"],
                    tx_version=record.get("tx_version"), metadata_version=record["metadata_version"],
                    metadata_hash=sha, code_hash=record.get("code_hash"), block_hash=record.get("block_hash"),
-                   fetched_at=record["fetched_at"])
+                   fetched_at=record["fetched_at"], report_state=report_state)
 
 
 # ---------------------------------------------------------------- verdicts
@@ -181,14 +209,24 @@ def _norm(name: str) -> str:
     return name.replace("_", "").lower()
 
 
+def _live_pallet(name: str, surface: Surface) -> str | None:
+    return next((p for p in surface.pallets if _norm(p) == _norm(name)), None)
+
+
 def check_renames(renames: tuple[Rename, ...], profile: str, surface: Surface) -> list[Rename]:
-    """The rows for `profile`, each verified against the runtime: documented side absent, live side present."""
+    """The rows for `profile`, each verified against the runtime: the documented side is absent and, for a
+    rename or substitute, the live side is present. A `none` row only records that nothing replaces it."""
     rows = [r for r in renames if r.profile == profile]
     for r in rows:
-        if f"{r.pallet}.{r.doc_call}" in surface.calls:
-            raise LedgerError(f"rename {r.pallet}.{r.doc_call} -> {r.live_call}: the documented call exists in {profile}")
-        if f"{r.pallet}.{r.live_call}" not in surface.calls:
-            raise LedgerError(f"rename {r.pallet}.{r.doc_call} -> {r.live_call}: no live {r.live_call} in {profile}")
+        label = f"rename {'module ' if r.module else ''}{r.pallet}.{r.doc_call} -> {r.live_call or '-'}"
+        doc_present = _live_pallet(r.doc_call, surface) if r.module else f"{r.pallet}.{r.doc_call}" in surface.calls
+        if doc_present:
+            raise LedgerError(f"{label}: the documented {'module' if r.module else 'call'} exists in {profile}")
+        if r.kind == v.NONE:
+            continue
+        live_present = r.pallet in surface.pallets if r.module else f"{r.pallet}.{r.live_call}" in surface.calls
+        if not live_present:
+            raise LedgerError(f"{label}: no live {r.pallet if r.module else r.live_call} in {profile}")
     return rows
 
 
@@ -197,18 +235,21 @@ def classify(entry: DocEntry, rt: Runtime, surface: Surface, renames: list[Renam
     """(status, live equivalent, detail) for one documented entry on one runtime."""
     if not entry.resolved:
         return v.UNKNOWN_DOC, None, entry.note or "unresolved"
-    pallet = next((p for p in surface.pallets if _norm(p) == _norm(entry.pallet)), None)
     if entry.kind == v.RUNTIME_API:
         return v.UNKNOWN_DOC, None, (f"metadata V{rt.metadata_version} lists no runtime APIs"
                                      if rt.metadata_version < 15 else "runtime API lookup not implemented")
+    pallet = _live_pallet(entry.pallet, surface)
     if entry.kind == v.MODULE:
-        return (v.UNPROVEN, pallet, None) if pallet else (v.ABSENT, None, "pallet absent")
+        if pallet:
+            return v.UNPROVEN, pallet, entry.note or None
+        rename = next((r for r in renames if r.module and _norm(r.doc_call) == _norm(entry.pallet)), None)
+        return _absent(rename, rename.pallet if rename else None, "pallet absent")
     live_key = f"{pallet}.{entry.call}" if pallet else None
     if live_key not in surface.calls:
-        rename = next((r for r in renames if _norm(r.pallet) == _norm(entry.pallet) and r.doc_call == entry.call), None)
-        if rename and rename.kind != v.NONE:
-            return v.DRIFTED, f"{rename.pallet}.{rename.live_call}", f"{rename.kind}: {rename.evidence}"
-        return v.ABSENT, None, "pallet absent" if pallet is None else "call absent"
+        rename = next((r for r in renames if not r.module and _norm(r.pallet) == _norm(entry.pallet)
+                       and r.doc_call == entry.call), None)
+        live = f"{rename.pallet}.{rename.live_call}" if rename else None
+        return _absent(rename, live, "pallet absent" if pallet is None else "call absent")
     live_names = [name for name, _ in surface.calls[live_key]]
     if entry.args is not None:
         same = list(entry.args) == live_names if entry.ordered else sorted(entry.args) == sorted(live_names)
@@ -217,11 +258,19 @@ def classify(entry: DocEntry, rt: Runtime, surface: Surface, renames: list[Renam
             if [n.lstrip("_") for n in entry.args] == [n.lstrip("_") for n in live_names]:
                 detail["underscore_only"] = True
             return v.ARG_DRIFT, live_key, json.dumps(detail, sort_keys=True, separators=(",", ":"))
-    if live_key in proven:  # a receipt whose read-back decoded to this call (I1)
+    if live_key in proven:
         return v.PROVEN, live_key, None
     if entry.args is None:
         return v.ARGS_UNCHECKED, live_key, entry.note or None
-    return v.UNPROVEN, live_key, None
+    return v.UNPROVEN, live_key, entry.note or None
+
+
+def _absent(rename: Rename | None, live: str | None, why: str) -> tuple[str, str | None, str | None]:
+    if rename is None:
+        return v.ABSENT, None, why
+    if rename.kind == v.NONE:
+        return v.ABSENT, None, f"{why}; none: {rename.evidence}"
+    return v.DRIFTED, live, f"{rename.kind}: {rename.evidence}"
 
 
 # ---------------------------------------------------------------- the SQLite ledger
@@ -245,52 +294,69 @@ def add_entries(conn: sqlite3.Connection, entries: list[DocEntry]) -> None:
 
 def _entries(conn: sqlite3.Connection) -> list[DocEntry]:
     rows = conn.execute("SELECT source, kind, pallet, call_snake, args_json, args_ordered, refs_json, signature, note "
-                        "FROM doc_call").fetchall()
+                        "FROM doc_call ORDER BY source, kind, pallet, call_snake").fetchall()
     return [DocEntry(s, k, p, c, None if a is None else tuple(json.loads(a)), bool(o), tuple(json.loads(r)), sig, n)
             for s, k, p, c, a, o, r, sig, n in rows]
 
 
-RECEIPT_FIELDS = ("side", "pallet", "call", "tx_hash", "block_hash", "block_number", "success", "dispatch_error",
-                  "events_json", "weight_json", "fee", "readback_ok")
-
-
-def plumb(conn: sqlite3.Connection, rt: Runtime, surface: Surface,
-          renames: tuple[Rename, ...] = RENAMES, receipts: list[dict] = ()) -> int:
+def plumb(conn: sqlite3.Connection, rt: Runtime, surface: Surface, renames: tuple[Rename, ...] = RENAMES,
+          receipts: list[dict] = (), allow_standin: bool = False) -> int:
     """Store the runtime, its call surface and its canary receipts, then a verdict for every documented
-    entry and every undocumented live call. Returns the runtime id."""
+    entry, every live side of an applied rename, and every undocumented live call. Returns the runtime id."""
+    if not allow_standin and (rt.profile == STANDIN_PROFILE or md.KNOWN_BLOBS.get(rt.metadata_hash) == STANDIN_PROFILE):
+        raise LedgerError("the interim-sdk chain is a stand-in, not V3: test input only, no verdicts are computed from it")
+    if surface.metadata_hash != rt.metadata_hash:
+        raise LedgerError(f"surface is from metadata {surface.metadata_hash or '(unknown)'}, runtime is {rt.metadata_hash}")
+    if conn.execute("SELECT 1 FROM runtime WHERE profile = ?", (rt.profile,)).fetchone():
+        raise LedgerError(f"the ledger already holds a {rt.profile} runtime; rebuild it to re-measure")
     rows = check_renames(renames, rt.profile, surface)
     cur = conn.execute("INSERT INTO runtime (profile, label, endpoint, spec_name, spec_version, tx_version, "
-                       "metadata_version, metadata_hash, code_hash, block_hash, fetched_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                       "metadata_version, metadata_hash, code_hash, block_hash, fetched_at, report_state) "
+                       "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
                        (rt.profile, rt.label, rt.endpoint, rt.spec_name, rt.spec_version, rt.tx_version,
-                        rt.metadata_version, rt.metadata_hash, rt.code_hash, rt.block_hash, rt.fetched_at))
+                        rt.metadata_version, rt.metadata_hash, rt.code_hash, rt.block_hash, rt.fetched_at,
+                        rt.report_state))
     rid = cur.lastrowid
     conn.executemany("INSERT INTO live_pallet VALUES (?,?)", [(rid, p) for p in surface.pallets])
     for key, args in surface.calls.items():
         pallet, call = key.split(".", 1)
         conn.execute("INSERT INTO live_call VALUES (?,?,?,?)", (rid, pallet, call, json.dumps([list(a) for a in args])))
     for r in rows:
-        conn.execute("INSERT OR REPLACE INTO rename VALUES (?,?,?,?,?,?)",
-                     (r.pallet, r.doc_call, r.live_call, r.profile, r.evidence, r.kind))
-    for receipt in receipts:
+        conn.execute("INSERT INTO rename VALUES (?,?,?,?,?,?,?)",
+                     (r.pallet, r.doc_call, r.live_call, r.profile, r.evidence, r.kind, int(r.module)))
+    # receipts in content order, so their row ids do not depend on the order they were passed in
+    for receipt in sorted(receipts, key=lambda r: json.dumps(r, sort_keys=True, default=str)):
         conn.execute(f"INSERT INTO receipt (runtime_id, {', '.join(RECEIPT_FIELDS)}) VALUES (?{',?' * len(RECEIPT_FIELDS)})",
                      (rid, *(receipt.get(f) for f in RECEIPT_FIELDS)))
-    proven = {f"{p}.{c}" for p, c in conn.execute(
-        "SELECT pallet, call FROM receipt WHERE runtime_id = ? AND success = 1 AND readback_ok = 1", (rid,))}
+    proven = {f"{p}.{c}": i for i, p, c in conn.execute(
+        f"SELECT min(id), pallet, call FROM receipt WHERE {PROVEN_RECEIPT} GROUP BY pallet, call", (rid,))}
+
+    def insert(source, kind, pallet, call, status, live, detail):
+        receipt = proven.get(live) if status == v.PROVEN else None
+        conn.execute("INSERT INTO verdict VALUES (?,?,?,?,?,?,?,?,?)",
+                     (rid, source, kind, pallet, call, status, live, detail, receipt))
+
     covered: set[str] = set()
-    for e in _entries(conn):
-        status, live, detail = classify(e, rt, surface, rows, proven)
+    live_sides: dict[tuple[str, str], list[str]] = {}
+    entries = _entries(conn)
+    for e in entries:
+        status, live, detail = classify(e, rt, surface, rows, set(proven))
         if e.kind == v.CALL and live:
             covered.add(live)
-        receipt = None
-        if status == v.PROVEN:
-            receipt = conn.execute("SELECT min(id) FROM receipt WHERE runtime_id = ? AND pallet || '.' || call = ? "
-                                   "AND success = 1 AND readback_ok = 1", (rid, live)).fetchone()[0]
-        conn.execute("INSERT INTO verdict VALUES (?,?,?,?,?,?,?,?,?)",
-                     (rid, e.source, e.kind, e.pallet, e.call, status, live, detail, receipt))
+        if status == v.DRIFTED:
+            live_sides.setdefault((e.kind, live), []).append(f"{e.source} {e.pallet}.{e.call}" if e.call
+                                                              else f"{e.source} {e.pallet}")
+        insert(e.source, e.kind, e.pallet, e.call, status, live, detail)
+    for (kind, live), docs in sorted(live_sides.items()):  # I3: the live side of a rename has a verdict too
+        pallet, _, call = live.partition(".")
+        status = v.PROVEN if kind == v.CALL and live in proven else v.UNPROVEN
+        insert(v.RUNTIME, kind, pallet, call, status, live, f"live side of DRIFTED {'; '.join(sorted(docs))}")
+    unresolved_calls = sum(1 for e in entries if e.kind == v.CALL and not e.resolved)
+    caveat = (f"{unresolved_calls} documented call entries are unresolved; this call may be one of them"
+              if unresolved_calls else None)
     for key in sorted(set(surface.calls) - covered):
         pallet, call = key.split(".", 1)
-        conn.execute("INSERT INTO verdict VALUES (?,?,?,?,?,?,?,?,?)",
-                     (rid, v.RUNTIME, v.CALL, pallet, call, v.UNDOCUMENTED, key, None, None))
+        insert(v.RUNTIME, v.CALL, pallet, call, v.UNDOCUMENTED, key, caveat)
     conn.commit()
     return rid
 
@@ -306,20 +372,16 @@ def blake2_256(data: bytes) -> str:
     return hashlib.blake2b(data, digest_size=32).hexdigest()
 
 
-def export(conn: sqlite3.Connection, inputs: dict | None = None, profiles: list[str] | None = None) -> dict:
-    """The ledger as a plain object (row order fixed, no row ids, no wall-clock time of the export)."""
-    runtimes = conn.execute("SELECT id, profile, label, endpoint, spec_name, spec_version, tx_version, metadata_version, "
-                            "metadata_hash, code_hash, block_hash, fetched_at FROM runtime").fetchall()
-    keep = {r[0]: r for r in runtimes if profiles is None or r[1] in profiles}
+def export(conn: sqlite3.Connection, inputs: dict | None = None) -> dict:
+    """The ledger as a plain object (row order fixed, no wall-clock time of the export). Receipt ids are
+    stable: receipts are stored in content order."""
     cols = ("profile", "label", "endpoint", "spec_name", "spec_version", "tx_version", "metadata_version",
-            "metadata_hash", "code_hash", "block_hash", "fetched_at")
-    stamp = {rid: dict(zip(cols, r[1:])) for rid, r in keep.items()}
+            "metadata_hash", "code_hash", "block_hash", "fetched_at", "report_state")
+    stamp = {row[0]: dict(zip(cols, row[1:])) for row in conn.execute(f"SELECT id, {', '.join(cols)} FROM runtime")}
 
     verdicts, counts, live_calls = [], {}, {}
     for rid, source, kind, pallet, call, status, live, detail, receipt in conn.execute(
             "SELECT runtime_id, source, kind, pallet, call, status, live_equivalent, detail, receipt_id FROM verdict"):
-        if rid not in keep:
-            continue
         rt = stamp[rid]
         verdicts.append({"profile": rt["profile"], "spec_name": rt["spec_name"], "spec_version": rt["spec_version"],
                          "metadata_hash": rt["metadata_hash"], "source": source, "kind": kind, "pallet": pallet,
@@ -330,8 +392,7 @@ def export(conn: sqlite3.Connection, inputs: dict | None = None, profiles: list[
         per[status] = per.get(status, 0) + 1
     verdicts.sort(key=lambda r: (r["profile"], r["source"], r["kind"], r["pallet"].lower(), r["pallet"], r["call"]))
     for rid, pallet, call, args in conn.execute("SELECT runtime_id, pallet, call, args_json FROM live_call"):
-        if rid in keep:
-            live_calls.setdefault(stamp[rid]["profile"], {})[f"{pallet}.{call}"] = json.loads(args)
+        live_calls.setdefault(stamp[rid]["profile"], {})[f"{pallet}.{call}"] = json.loads(args)
 
     doc_calls = [{"source": s, "kind": k, "pallet": p, "call": c, "signature": sig,
                   "args": None if a is None else json.loads(a), "args_ordered": bool(o), "refs": json.loads(r),
@@ -340,17 +401,17 @@ def export(conn: sqlite3.Connection, inputs: dict | None = None, profiles: list[
                      "SELECT source, kind, pallet, call_snake, signature, args_json, args_ordered, refs_json, note "
                      "FROM doc_call")]
     doc_calls.sort(key=lambda r: (r["source"], r["kind"], r["pallet"].lower(), r["pallet"], r["call"]))
-    renames = [dict(zip(("pallet", "doc_call", "live_call", "profile", "evidence", "kind"), row))
-               for row in conn.execute("SELECT pallet, doc_call, live_call, profile, evidence, kind FROM rename")
-               if profiles is None or row[3] in profiles]
-    renames.sort(key=lambda r: (r["profile"], r["pallet"], r["doc_call"]))
-    receipts = [{"profile": stamp[row[0]]["profile"], **dict(zip(RECEIPT_FIELDS, row[2:])), "id": row[1]}
-                for row in conn.execute(f"SELECT runtime_id, id, {', '.join(RECEIPT_FIELDS)} FROM receipt ORDER BY id")
-                if row[0] in keep]
+    renames = [dict(zip(("pallet", "doc_call", "live_call", "profile", "evidence", "kind", "module"), row))
+               for row in conn.execute("SELECT pallet, doc_call, live_call, profile, evidence, kind, module FROM rename")]
+    for r in renames:
+        r["module"] = bool(r["module"])
+    renames.sort(key=lambda r: (r["profile"], r["module"], r["pallet"], r["doc_call"]))
+    receipts = [{"profile": stamp[row[0]]["profile"], "id": row[1], **dict(zip(RECEIPT_FIELDS, row[2:]))}
+                for row in conn.execute(f"SELECT runtime_id, id, {', '.join(RECEIPT_FIELDS)} FROM receipt ORDER BY id")]
     return {
         "format": FORMAT,
         "vocabulary": {"verdicts": list(v.VERDICTS), "report_states": list(v.REPORT_STATES)},
-        "runtimes": sorted(stamp.values(), key=lambda r: (r["profile"], r["metadata_hash"])),
+        "runtimes": sorted(stamp.values(), key=lambda r: r["profile"]),
         "inputs": inputs or {},
         "doc_calls": doc_calls,
         "renames": renames,
