@@ -77,13 +77,13 @@ Command: `python scripts/guide_calls.py --guide-dir ~/.cache/plumbline-sources/g
 
 Command: `plumbline check examples/mainnet-dapp --target mainnet-1002 --offline` (re-run 2026-10-14; exit code 1; output
 byte-identical to `fixtures/expected_check_1002.txt`). `examples/mainnet-dapp/` is a small engineered fixture, not a field
-sample: 8 source files with one call site each and 1 contract artifact, each call site citing its docs page or guide `file:line`.
+sample: 8 source files with one call site each and 1 contract artifact; each static call site cites its docs page or guide `file:line` (`src/router.ts` is a deliberate dynamic call).
 
 Summary line: `9 findings in 9 files scanned · DRIFTED 1, ARG_DRIFT 2, ARGS-UNCHECKED 1, ABSENT 2, UNPROVEN 2, UNSCANNED 1 · blocking 5 · exit 1`.
 
 The wasm artifact's cell (`UNPROVEN`: a seal0-only module) rests on a measurement made on 2026-10-11, before this
-repository existed, on a local spec-1002 chain running mainnet's exact runtime code; it is cited, not re-run here, and
-no receipt for it is in this repository.
+repository existed, on a local chain running spec 1002; it is cited, not re-run here, and no receipt or
+other artifact for it is in this repository.
 
 ## Tests
 

@@ -22,7 +22,7 @@
 Developers build against Portaldot from its published documentation. The documentation and the runtime can disagree:
 a page documents an extrinsic the runtime does not have, or documents arguments the runtime does not take. (The pages do
 not say which runtime spec they describe; Plumbline treats them as describing the live runtime, so a gap is either a
-documentation defect or documentation for a different runtime version, and both are worth knowing.) Today the only way to
+documentation defect or documentation for a different runtime version, and both are worth knowing.) One way to
 find out is to submit a transaction and read the error, and every runtime upgrade can move that line again.
 
 ### Solution
@@ -52,7 +52,9 @@ runtime and was read back from its block; otherwise the ledger says what it coul
 | Live calls no docs page documents | 23 |
 
 Full table with producers and dates: [`docs/BASELINE-1002.md`](docs/BASELINE-1002.md). Ledger: `evidence/ledger_1002.json`
-(320 verdict rows, blake2-256 `d067b31b…de21ee7`, reproduced byte for byte from fresh inputs).
+(320 verdict rows, blake2-256 `d067b31b…de21ee7`, reproduced byte for byte from freshly fetched inputs).
+**101 of the 320 rows come from the V3 guide's own call table, demo scripts and FAQ; their verdicts are computed against
+mainnet spec 1002 and are not V3 findings.**
 
 Other tools in the repo: `plumbline diff A B` lists every pallet, call, argument, constant and event that changes between
 two runtimes (it prints a **STAND-IN, NOT V3** banner when a side is the stand-in chain); `plumbline check <dApp dir>
@@ -79,7 +81,7 @@ flowchart LR
         APP["a dApp directory<br/>.py .ts .js + wasm artifacts"]
     end
 
-    subgraph ENG["Engine: plumbline/ (each module is a subcommand of the plumbline CLI)"]
+    subgraph ENG["Engine: plumbline/ (each box backs a plumbline subcommand; verdicts.py and renames.py are shared tables)"]
         MD["metadata.py<br/>chain profiles, identity check,<br/>pinned-block metadata read"]
         DOCS["docs.py<br/>3 page layouts to documented calls"]
         GUIDE["guide.py<br/>README table + AST call sites + FAQ modules"]
@@ -91,7 +93,8 @@ flowchart LR
 
     subgraph OUT["Outputs"]
         FIX["fixtures/*.scale<br/>stored metadata blobs"]
-        EVD["evidence/*.json<br/>docs_1002, guide_calls,<br/>ledger_1002 + blake2-256"]
+        TBL["evidence/docs_1002.json, guide_calls.json<br/>(scripts/docs_baseline.py, guide_calls.py)"]
+        EVD["evidence/ledger_1002.json<br/>+ blake2-256"]
         GOLD["fixtures/expected_check_1002.txt<br/>golden dApp-check output"]
         PROOF["evidence/canary_interim.json<br/>docs/PROOF.md<br/>interim-sdk, not V3"]
     end
@@ -101,11 +104,17 @@ flowchart LR
     MD --> FIX
     RTD -->|scripts/fetch_docs.py| DOCS
     GD -->|scripts/fetch_guide.py| GUIDE
-    DOCS --> PLUMB
-    GUIDE --> PLUMB
+    DOCS --> TBL
+    GUIDE --> TBL
+    FIX --> TBL
+    TBL -->|default inputs| PLUMB
+    DOCS -->|--docs-cache| PLUMB
+    GUIDE -->|--guide-dir| PLUMB
     FIX --> PLUMB
     PLUMB --> EVD
     FIX --> DIFF
+    MD --> DIFF
+    FIX --> CHECK
     APP --> CHECK
     PLUMB --> CHECK
     CHECK --> GOLD
@@ -194,7 +203,8 @@ plumbline docs -p stored:fixtures/metadata_1002.scale
 #   vs mainnet-1002 (155 live calls): absent 64, arg-mismatch 15, args-unknown 0, match 117, undocumented live 23
 python scripts/fetch_guide.py               # clones the guide at the pinned commit into ~/.cache/plumbline-sources/guide
 plumbline guide                             # 46 compose_call sites by AST, 12 FAQ modules
-plumbline plumb -p stored:fixtures/metadata_1002.scale --runtime-record evidence/metadata_1002.json --out ledger.json
+plumbline plumb -p stored:fixtures/metadata_1002.scale --runtime-record evidence/metadata_1002.json --out ledger.json \
+    --docs-cache .cache/docs --guide-dir ~/.cache/plumbline-sources/guide
 #   320 verdict rows; ledger.json is byte-identical to evidence/ledger_1002.json
 
 # 3. what changes between two runtimes (mainnet-1002 vs the stand-in: banner says NOT V3, no number is used)
@@ -230,7 +240,7 @@ There is nothing to compile or deploy and there is no frontend to launch.
   - `evidence/ledger_1002.json` (+ `.blake2-256`) — the drift ledger, 320 verdict rows
   - `evidence/canary_interim.json` and `docs/PROOF.md` — **interim-sdk — not V3**: run `20261014T144705Z`, node/268,
     3 extrinsics (`3040-2` `Balances.transfer_keep_alive`, `3041-2` `System.remark_with_event`, `3042-2`
-    `Revive.map_account`), all success, read back 3/3 from a new process after a node restart
+    `Revive.map_account`), all success, read back 3/3 from a new process after a node restart (`evidence/readback_interim.txt`)
 - **Tests:** 255 passed (+3 live, opt-in) on 2026-10-14.
 
 ## Roadmap
@@ -244,8 +254,8 @@ There is nothing to compile or deploy and there is no frontend to launch.
 - Canary runner with read-back on the local stand-in chain (not V3), isolated interim-node script
 
 **Next (planned)**
-- Run `plumb`, `diff` and `check` against the Portaldot V3 testnet as soon as it is reachable (V3 results: **pending**)
-- Canaries on V3 so verdicts can become PROVEN with a transaction each; V3 golden output for `check`
+- Run `runtime`, `diff` and `check --target v3` against the Portaldot V3 testnet as soon as it is reachable (V3 results: **pending**); `plumb` additionally needs a recorded V3 metadata blob registered in `plumbline/metadata.py` (`KNOWN_BLOBS`)
+- Wire canary records into `plumbline plumb` (the library already accepts receipts; the CLI does not read canary records yet), then canaries on V3 so verdicts can become PROVEN with a transaction each; V3 golden output for `check`
 - Plumbline Ledger contract (Revive) on V3
 
 ## Team

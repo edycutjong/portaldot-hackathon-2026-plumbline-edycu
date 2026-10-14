@@ -1,0 +1,7 @@
+# interim-sdk — not V3. Read-back of evidence/canary_interim.json (run 20261014T144705Z) from a new process after the interim node was restarted from its archive data dir.
+# produced by: scripts/interim_node.sh start; plumbline readback evidence/canary_interim.json; scripts/interim_node.sh stop
+# read at 2026-10-14T15:03:48Z
+     3040-2 Balances.transfer_keep_alive     decoded Balances.transfer_keep_alive  block 3040  success True  MATCH
+     3041-2 System.remark_with_event         decoded System.remark_with_event  block 3041  success True  MATCH
+     3042-2 Revive.map_account               decoded Revive.map_account  block 3042  success True  MATCH
+interim-sdk — not V3: 3/3 receipts match the chain

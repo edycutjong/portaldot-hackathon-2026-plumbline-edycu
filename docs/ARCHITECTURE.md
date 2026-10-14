@@ -15,7 +15,7 @@ flowchart LR
         APP["a dApp directory<br/>.py .ts .js + wasm artifacts"]
     end
 
-    subgraph ENG["Engine: plumbline/ (each module is a subcommand of the plumbline CLI)"]
+    subgraph ENG["Engine: plumbline/ (each box backs a plumbline subcommand; verdicts.py and renames.py are shared tables)"]
         MD["metadata.py<br/>chain profiles, identity check,<br/>pinned-block metadata read"]
         DOCS["docs.py<br/>3 page layouts to documented calls"]
         GUIDE["guide.py<br/>README table + AST call sites + FAQ modules"]
@@ -27,7 +27,8 @@ flowchart LR
 
     subgraph OUT["Outputs"]
         FIX["fixtures/*.scale<br/>stored metadata blobs"]
-        EVD["evidence/*.json<br/>docs_1002, guide_calls,<br/>ledger_1002 + blake2-256"]
+        TBL["evidence/docs_1002.json, guide_calls.json<br/>(scripts/docs_baseline.py, guide_calls.py)"]
+        EVD["evidence/ledger_1002.json<br/>+ blake2-256"]
         GOLD["fixtures/expected_check_1002.txt<br/>golden dApp-check output"]
         PROOF["evidence/canary_interim.json<br/>docs/PROOF.md<br/>interim-sdk, not V3"]
     end
@@ -37,11 +38,17 @@ flowchart LR
     MD --> FIX
     RTD -->|scripts/fetch_docs.py| DOCS
     GD -->|scripts/fetch_guide.py| GUIDE
-    DOCS --> PLUMB
-    GUIDE --> PLUMB
+    DOCS --> TBL
+    GUIDE --> TBL
+    FIX --> TBL
+    TBL -->|default inputs| PLUMB
+    DOCS -->|--docs-cache| PLUMB
+    GUIDE -->|--guide-dir| PLUMB
     FIX --> PLUMB
     PLUMB --> EVD
     FIX --> DIFF
+    MD --> DIFF
+    FIX --> CHECK
     APP --> CHECK
     PLUMB --> CHECK
     CHECK --> GOLD
@@ -85,8 +92,8 @@ flowchart LR
    profile and on any non-loopback endpoint. `plumb` refuses these receipts, so they can never become a mainnet or V3
    verdict.
 5. **Diff and check.** `diff.py` normalises V13 and V14+ metadata to one form and lists pallets, calls, arguments,
-   constants and events that change between two runtimes (it prints a banner and no public number when a side is the
-   stand-in). `check.py` scans a dApp directory (Python and JS/TS call sites, wasm import sections) against one profile and
+   constants and events that change between two runtimes (it prints a STAND-IN, NOT V3 banner at the top and bottom when a side is the
+   stand-in; no number from that output is used in any document). `check.py` scans a dApp directory (Python and JS/TS call sites, wasm import sections) against one profile and
    exits 0, 1 (blocking findings) or 2 (usage or chain error).
 
 ## Invariants the code enforces
@@ -95,7 +102,7 @@ flowchart LR
 |---|---|
 | Every verdict row carries profile, spec version and metadata hash | `plumb.py` schema and export; test in `tests/test_plumb.py` |
 | Verdict strings are defined once | `verdicts.py`; a test bans the literals elsewhere |
-| A stored blob is labelled from its sha256, never from free text | `metadata.KNOWN_BLOBS` |
+| A recorded blob is labelled from its sha256; an unrecorded one is labelled "origin not recorded" and `plumb` refuses it, so a stand-in cannot be relabelled as V3 | `metadata.KNOWN_BLOBS`, `produce.py` |
 | The stand-in chain cannot produce a verdict | `plumb.py` refuses the profile and the blob |
 | Dev keys never leave the stand-in chain | `canary.dev_keypair` |
 | Third-party guide text is not copied into the repo | `evidence/guide_calls.json` holds names and `file:line` only |
