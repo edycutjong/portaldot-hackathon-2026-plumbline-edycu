@@ -150,7 +150,7 @@ def send(substrate, keypair, pallet: str, call: str, params: dict, stamp: dict, 
 
 
 def seed_keypair(path: Path = V3_SEED_FILE):
-    """The canary signer from a seed file: a 0x… 32-byte hex seed, a mnemonic, or a `//` URI.
+    """The canary signer from a seed file: a 0x… 32-byte hex seed or a mnemonic (a `//` dev URI is refused).
 
     Refused: a file readable by group/other, a file inside this repository, an empty file. The seed is read
     here and goes nowhere else: it is never printed, returned in an error, or written to a record."""
@@ -169,16 +169,15 @@ def seed_keypair(path: Path = V3_SEED_FILE):
     text = path.read_text().strip()
     if not text:
         raise CanaryError(f"{path} is empty")
-    if text.startswith("//") and text[2:].split("//", 1)[0].strip().lower() in WELL_KNOWN_DEV_HEADS:
-        raise CanaryError(f"{path} holds a well-known dev URI: the funded V3 account must not use a public key")
+    if text.startswith("//"):  # a bare //URI derives from the public dev phrase: it carries no secret entropy
+        raise CanaryError(f"{path} holds a dev URI: the funded V3 account must not use a public key")
     try:
-        if text.startswith("0x"):
-            return Keypair.create_from_seed(text)
-        if text.startswith("//"):
-            return Keypair.create_from_uri(text)
-        return Keypair.create_from_mnemonic(text)
+        keypair = Keypair.create_from_seed(text) if text.startswith("0x") else Keypair.create_from_mnemonic(text)
     except Exception:  # never echo the SDK's message: it can quote the secret
-        raise CanaryError(f"{path} does not hold a valid seed (hex, mnemonic or // URI)") from None
+        raise CanaryError(f"{path} does not hold a valid seed (hex or mnemonic)") from None
+    if keypair.ss58_address in {Keypair.create_from_uri(f"//{n.capitalize()}").ss58_address for n in WELL_KNOWN_DEV_HEADS}:
+        raise CanaryError(f"{path} derives a well-known dev account: the funded V3 account must not use a public key")
+    return keypair
 
 
 def run_v3(url: str | None = None, run_id: str | None = None, seed_file: Path = V3_SEED_FILE) -> dict:

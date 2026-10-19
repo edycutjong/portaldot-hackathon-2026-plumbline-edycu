@@ -13,6 +13,7 @@ from plumbline import canary, plumb
 from plumbline import metadata as md
 
 ROOT = Path(__file__).resolve().parents[1]
+TEST_SEED = "0x" + "07" * 32  # a throwaway test key, never funded
 EVIDENCE = ROOT / "evidence" / "canary_interim.json"
 V3_EVIDENCE = ROOT / "evidence" / "canary_v3.json"
 PROOF = ROOT / "docs" / "PROOF.md"
@@ -45,7 +46,7 @@ def test_v3_run_reads_the_seed_before_it_connects(tmp_path, monkeypatch):
 
 def test_seed_file_must_be_private_nonempty_valid_and_outside_the_repo(tmp_path):
     seed = tmp_path / "s.seed"
-    seed.write_text("//Plumbline//test\n")
+    seed.write_text(TEST_SEED + "\n")
     seed.chmod(0o644)
     with pytest.raises(canary.CanaryError, match="chmod 600"):
         canary.seed_keypair(seed)
@@ -58,10 +59,18 @@ def test_seed_file_must_be_private_nonempty_valid_and_outside_the_repo(tmp_path)
     with pytest.raises(canary.CanaryError) as err:
         canary.seed_keypair(seed)
     assert "SECRETWORD" not in str(err.value) and "not hold a valid seed" in str(err.value)  # never echoes the seed
-    for uri in ("//Alice", "//alice//stash", "//Ferdie"):
+    for uri in ("//Alice", "//alice//stash", "//Alice/stash", "//NotAlice"):  # a bare //URI has no secret entropy
         seed.write_text(uri)
-        with pytest.raises(canary.CanaryError, match="well-known dev URI"):
+        with pytest.raises(canary.CanaryError, match="holds a dev URI") as err:
             canary.seed_keypair(seed)
+        assert uri not in str(err.value)
+    from substrateinterface import Keypair
+
+    seed.write_text("0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a")  # //Alice's published seed
+    with pytest.raises(canary.CanaryError, match="well-known dev account"):
+        canary.seed_keypair(seed)
+    seed.write_text(Keypair.generate_mnemonic())
+    assert canary.seed_keypair(seed).ss58_address.startswith("5")
     inside = ROOT / "evidence" / "tmp.seed"
     with pytest.raises(canary.CanaryError, match="outside this repository"):
         canary.seed_keypair(inside)
@@ -74,7 +83,7 @@ class _Acct:
 
 def test_v3_run_refuses_an_unfunded_signer_before_sending(tmp_path, monkeypatch):
     seed = tmp_path / "s.seed"
-    seed.write_text("//Plumbline//test")
+    seed.write_text(TEST_SEED)
     seed.chmod(0o600)
 
     class Chain:
@@ -99,7 +108,7 @@ def test_v3_run_refuses_an_unfunded_signer_before_sending(tmp_path, monkeypatch)
 
 def test_v3_run_reads_the_balance_after_at_the_last_receipts_block(tmp_path, monkeypatch):
     seed = tmp_path / "s.seed"
-    seed.write_text("//Plumbline//test")
+    seed.write_text(TEST_SEED)
     seed.chmod(0o600)
     last, queried = "0x" + "22" * 32, []
 
@@ -123,6 +132,21 @@ def test_v3_run_reads_the_balance_after_at_the_last_receipts_block(tmp_path, mon
     monkeypatch.setattr(canary, "send", lambda *a, **k: {"block_hash": last})
     record = canary.run_v3(seed_file=seed)
     assert queried == ["0x" + "11" * 32, last] and record["free_after"] == str(10**20)
+
+
+def test_cli_canary_matches_the_canonical_record_by_file_not_spelling(tmp_path, monkeypatch):
+    from typer.testing import CliRunner
+
+    from plumbline.cli import app
+
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "evidence").mkdir()
+    monkeypatch.chdir(tmp_path)
+    record = json.loads((ROOT / "evidence" / "canary_interim.json").read_text())
+    monkeypatch.setattr(canary, "run", lambda *a, **k: record)
+    absolute = tmp_path / "evidence" / ".." / "evidence" / "canary_interim.json"
+    result = CliRunner().invoke(app, ["canary", "--profile", "interim-sdk", "--out", str(absolute)])
+    assert (tmp_path / "docs" / "PROOF.md").exists() and not list(tmp_path.glob("evidence/*.PROOF.md")), result.output
 
 
 def test_cli_canary_with_a_custom_out_never_rewrites_the_canonical_proof(tmp_path, monkeypatch):
