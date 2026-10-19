@@ -3,7 +3,7 @@
 **Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof.** Today it gives a verdict for every documented call on the Portaldot V3 testnet (spec 3002) and on mainnet (spec 1002), diffs the two runtimes, checks a dApp against either, and has sent 3 canary transactions to V3 and read them back from their blocks. Every other documented entry on V3 is at most UNPROVEN (present, no transaction sent), or ARGS-UNCHECKED / UNKNOWN-DOC (nothing to compare), or carries a drift verdict (ABSENT, ARG_DRIFT).
 
 ![status](https://img.shields.io/badge/status-prototype-orange)
-![tests](https://img.shields.io/badge/tests-260%20passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-262%20passing-brightgreen)
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![python](https://img.shields.io/badge/python-3.10%2B-blue)
 
@@ -230,7 +230,7 @@ cd portaldot-hackathon-2026-plumbline-edycu
 python3 -m venv .venv && . .venv/bin/activate
 pip install -e '.[dev]'
 
-pytest -q                                   # 260 passed, 3 deselected (live tests are opt-in: pytest -m live)
+pytest -q                                   # 262 passed, 3 deselected (live tests are opt-in: pytest -m live)
 
 # 1. identify the runtime: stored mainnet spec 1002 (offline), then the live one (read-only RPC)
 plumbline runtime -p stored:fixtures/metadata_1002.scale
@@ -295,7 +295,7 @@ There is nothing to compile or deploy and there is no frontend to launch.
   - `evidence/canary_interim.json` and `docs/PROOF.md` (second section) — **interim-sdk — not V3**: run `20261014T144705Z`, node/268,
     3 extrinsics (`3040-2` `Balances.transfer_keep_alive`, `3041-2` `System.remark_with_event`, `3042-2`
     `Revive.map_account`), all success, read back 3/3 from a new process after a node restart (`evidence/readback_interim.txt`)
-- **Tests:** 260 passed (+3 live, opt-in) on 2026-10-20.
+- **Tests:** 262 passed (+3 live, opt-in) on 2026-10-20.
 
 ## Roadmap
 
