@@ -1,0 +1,5 @@
+# plumbline readback evidence/canary_v3.json — profile v3, run 2026-10-19T18:24:33Z, new process, new connection
+   106424-1 System.remark_with_event         decoded System.remark_with_event  block 106424  success True  MATCH
+   106425-1 Balances.transfer_keep_alive     decoded Balances.transfer_keep_alive  block 106425  success True  MATCH
+   106426-1 Utility.batch_all                decoded Utility.batch_all  block 106426  success True  MATCH
+profile v3 — Portaldot V3 testnet: 3/3 receipts match the chain
