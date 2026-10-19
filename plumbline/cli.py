@@ -324,7 +324,9 @@ def canary_cmd(profile: str = typer.Option(..., "--profile", "-p", help="v3 (fun
     interim-sdk: Balances.transfer_keep_alive, System.remark_with_event, Revive.map_account (labelled not V3)."""
     out = out or CANARY_RECORDS.get(profile, Path(f"evidence/canary_{profile}.json"))
     # a custom --out never silently rewrites docs/PROOF.md (the canonical table holds both chains' sections)
-    proof = proof or (Path("docs/PROOF.md") if out == CANARY_RECORDS.get(profile) else out.with_suffix(".PROOF.md"))
+    canonical = CANARY_RECORDS.get(profile)
+    is_canonical = canonical is not None and out.expanduser().resolve() == canonical.resolve()  # same file, any spelling
+    proof = proof or (Path("docs/PROOF.md") if is_canonical else out.with_suffix(".PROOF.md"))
     existing = [p for p in (out, proof) if p.exists()]
     if existing and not replace:  # the proof table is guarded too: --out elsewhere must not overwrite PROOF.md
         typer.echo(f"error: {', '.join(map(str, existing))} exists; pass --replace to overwrite with a new run",
@@ -346,7 +348,7 @@ def canary_cmd(profile: str = typer.Option(..., "--profile", "-p", help="v3 (fun
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
     proof.parent.mkdir(parents=True, exist_ok=True)
-    if out == CANARY_RECORDS.get(profile):  # the canonical records feed one proof table: V3 section, then interim
+    if is_canonical:  # the canonical records feed one proof table: V3 section, then interim
         records = {p: json.loads(path.read_text()) if path.exists() else None for p, path in CANARY_RECORDS.items()}
         proof.write_text(canary_mod.proof_document(records["v3"], records["interim-sdk"]))
     else:
