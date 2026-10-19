@@ -1,6 +1,6 @@
 # Plumbline
 
-**Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof.** Today it gives a verdict for every documented call on the Portaldot V3 testnet (spec 3002) and on mainnet (spec 1002), diffs the two runtimes, checks a dApp against either, and has sent 3 canary transactions to V3 and read them back from their blocks. Everything else on V3 is UNPROVEN: a name and argument match, not a transaction.
+**Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof.** Today it gives a verdict for every documented call on the Portaldot V3 testnet (spec 3002) and on mainnet (spec 1002), diffs the two runtimes, checks a dApp against either, and has sent 3 canary transactions to V3 and read them back from their blocks. Every other documented entry on V3 is at most UNPROVEN (the name, or the listed module, is present and no transaction was sent) or carries a drift verdict.
 
 ![status](https://img.shields.io/badge/status-prototype-orange)
 ![tests](https://img.shields.io/badge/tests-260%20passing-brightgreen)
@@ -41,7 +41,7 @@ runtime and was read back from its block; otherwise the ledger says what it coul
 |---|---|---|
 | 1. Documented call | Parses the 22 mainnet extrinsic docs pages (196 calls) and the V3 guide at commit `d671a32` (46 sample-code `compose_call` sites, 12 FAQ modules) | shipped |
 | 2. Verdict | Joins each entry to one runtime's metadata and writes exactly one verdict, stamped with profile, spec version and metadata hash | shipped on `v3` and `mainnet-1002` |
-| 3. Proof | Signs a canary extrinsic, keeps the receipt, re-reads it from its block by hash | shipped: 3 calls PROVEN on `v3` (`docs/PROOF.md`); a local stand-in run (`interim-sdk`, **not V3**) is kept beside it. The other 191 mainnet-docs calls are UNPROVEN on V3 |
+| 3. Proof | Signs a canary extrinsic, keeps the receipt, re-reads it from its block by hash | shipped: 3 calls PROVEN on `v3` (`docs/PROOF.md`); a local stand-in run (`interim-sdk`, **not V3**) is kept beside it. Of the other 193 mainnet-docs calls, 191 are UNPROVEN on V3 (present, no transaction) and 2 disagree with the V3 runtime |
 
 **Measured on the Portaldot mainnet runtime (spec 1002, read-only), 2026-10-14:**
 
@@ -67,8 +67,8 @@ mainnet spec 1002 and are not V3 findings.**
 | Runtime | 69 pallets, 480 calls (mainnet-1002: 31 / 155); metadata V14, sha256 `38101435…394c` |
 | Diff `mainnet-1002` → `v3` | 516 rows: 40 pallets added, 2 removed (`Gilt`, `RandomnessCollectiveFlip`), 12 calls removed, 2 renamed (`Proxy.anonymous` → `create_pure`) |
 | Mainnet docs vs the runtime | the 79 calls whose docs and runtime disagree on spec 1002 become **2** on V3 (`Balances.transfer` absent, `ElectionProviderMultiPhase.governance_fallback` arguments) |
-| V3 guide's sample code | all 46 `compose_call` sites name a call that exists on V3 |
-| V3 guide FAQ | 5 of 12 listed modules are not on the V3 testnet: `conviction_voting`, `cumulus_parachain_system`, `ibridge`, `paras`, `referenda` (by pallet name) |
+| V3 guide's sample code | all 46 `compose_call` sites (46 distinct calls; one site is dynamic and resolves to two) name calls that exist on V3 |
+| V3 guide FAQ | 5 of the 12 modules the guide's FAQ lists for V3.0 are not on the V3 testnet: `conviction_voting`, `cumulus_parachain_system`, `ibridge`, `paras`, `referenda` (by pallet name) |
 | `plumbline check examples/mainnet-dapp --target v3` | 9 findings, blocking 0 (on mainnet-1002: blocking 5) |
 | Canaries | `System.remark_with_event`, `Balances.transfer_keep_alive` (to itself), `Utility.batch_all`: 3 transactions, blocks 106424–106426, all success, read back 3/3 |
 
@@ -242,7 +242,7 @@ plumbline plumb -p stored:fixtures/metadata_1002.scale --runtime-record evidence
 # 3. what changes between two runtimes (mainnet-1002 vs the stand-in: banner says NOT V3, no number is used)
 plumbline diff mainnet-1002 stored:fixtures/metadata_standin_sdk.scale --kind arg-changed
 
-# 4. what in a dApp will not work on a runtime (exit code 1 = blocking findings)
+# 4. which of a dApp's calls the runtime does not list, or lists differently (exit code 1 = blocking findings)
 plumbline check examples/mainnet-dapp --target mainnet-1002 --offline   # = fixtures/expected_check_1002.txt
 
 # 5. proof runner on the stand-in chain (NOT V3): start, send 3 canaries, read them back, stop
@@ -301,7 +301,7 @@ There is nothing to compile or deploy and there is no frontend to launch.
 - V3 profile pinned to the live testnet (2026-10-20); `runtime`, `diff`, `plumb` and `check` run against it; V3 metadata stored; 3 canary transactions on V3 read back from their blocks; canary receipts feed the ledger (`plumb --receipts`)
 
 **Next (planned)**
-- A canary per documented call (3 of 196 mainnet-docs calls are PROVEN on V3; the rest are UNPROVEN)
+- A canary per documented call (3 of 196 mainnet-docs calls are PROVEN on V3, 191 are UNPROVEN, 2 disagree with the V3 runtime)
 - Plumbline Ledger contract (Revive) on V3
 
 ## Team
