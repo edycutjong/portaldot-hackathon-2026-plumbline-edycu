@@ -14,6 +14,7 @@ from plumbline import metadata as md
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / "evidence" / "canary_interim.json"
+V3_EVIDENCE = ROOT / "evidence" / "canary_v3.json"
 PROOF = ROOT / "docs" / "PROOF.md"
 
 
@@ -29,11 +30,67 @@ def test_dev_keypair_needs_a_dev_uri():
     assert canary.dev_keypair("interim-sdk", "//Alice").ss58_address.startswith("5GrwvaEF")
 
 
-@pytest.mark.parametrize("profile, why", [("mainnet-1002", "read-only"), ("v3", "not implemented yet")])
-def test_run_refuses_every_profile_but_the_interim_one(profile, why, monkeypatch):
+@pytest.mark.parametrize("profile, why", [("mainnet-1002", "read-only"), ("stored:fixtures/metadata_v3.scale", "read-only")])
+def test_run_refuses_every_profile_but_v3_and_the_interim_one(profile, why, monkeypatch):
     monkeypatch.setattr(md, "connect", lambda *a, **k: pytest.fail("must refuse before connecting"))
     with pytest.raises(canary.CanaryError, match=why):
         canary.run(profile)
+
+
+def test_v3_run_reads_the_seed_before_it_connects(tmp_path, monkeypatch):
+    monkeypatch.setattr(md, "connect", lambda *a, **k: pytest.fail("must refuse before connecting"))
+    with pytest.raises(canary.CanaryError, match="cannot read the seed file"):
+        canary.run_v3(seed_file=tmp_path / "missing.seed")
+
+
+def test_seed_file_must_be_private_nonempty_valid_and_outside_the_repo(tmp_path):
+    seed = tmp_path / "s.seed"
+    seed.write_text("//Plumbline//test\n")
+    seed.chmod(0o644)
+    with pytest.raises(canary.CanaryError, match="chmod 600"):
+        canary.seed_keypair(seed)
+    seed.chmod(0o600)
+    assert canary.seed_keypair(seed).ss58_address.startswith("5")
+    seed.write_text("  \n")
+    with pytest.raises(canary.CanaryError, match="is empty"):
+        canary.seed_keypair(seed)
+    seed.write_text("0xnot-a-seed-SECRETWORD")
+    with pytest.raises(canary.CanaryError) as err:
+        canary.seed_keypair(seed)
+    assert "SECRETWORD" not in str(err.value) and "not hold a valid seed" in str(err.value)  # never echoes the seed
+    inside = ROOT / "evidence" / "tmp.seed"
+    with pytest.raises(canary.CanaryError, match="outside this repository"):
+        canary.seed_keypair(inside)
+
+
+class _Acct:
+    def __init__(self, free):
+        self.value = {"data": {"free": free}}
+
+
+def test_v3_run_refuses_an_unfunded_signer_before_sending(tmp_path, monkeypatch):
+    seed = tmp_path / "s.seed"
+    seed.write_text("//Plumbline//test")
+    seed.chmod(0o600)
+
+    class Chain:
+        def rpc_request(self, method, params):
+            return {"result": {"specName": "portaldot-v3", "specVersion": 3002}}
+
+        def query(self, *a, **k):
+            return _Acct(5)
+
+        def close(self):
+            pass
+
+        def create_signed_extrinsic(self, **k):
+            pytest.fail("must not sign when unfunded")
+
+    monkeypatch.setattr(md, "connect", lambda *a, **k: Chain())
+    monkeypatch.setattr(md, "pinned_head", lambda s: "0x" + "11" * 32)
+    monkeypatch.setattr(md, "fetch_metadata_blob", lambda s, h: b"meta\x0e")
+    with pytest.raises(canary.CanaryError, match="fund it"):
+        canary.run_v3(seed_file=seed)
 
 
 class FakeScale:
@@ -99,12 +156,29 @@ def test_committed_record_is_labelled_and_read_back_on_every_row():
 
 def test_proof_md_is_generated_from_the_record_and_labels_every_row():
     record = json.loads(EVIDENCE.read_text())
-    assert PROOF.read_text() == canary.proof_markdown(record)
+    v3 = json.loads(V3_EVIDENCE.read_text()) if V3_EVIDENCE.exists() else None
+    assert PROOF.read_text() == canary.proof_document(v3, record)
     rows = [line for line in PROOF.read_text().splitlines() if line.startswith("| ") and "`" in line]
-    assert len(rows) == len(record["receipts"])
-    assert all(line.startswith(f"| {canary.LABEL} |") for line in rows)
-    for r in record["receipts"]:
+    interim_rows = [line for line in rows if line.startswith(f"| {canary.LABEL} |")]
+    assert len(interim_rows) == len(record["receipts"])
+    v3_rows = [line for line in rows if line.startswith(f"| {canary.LABEL_V3} |")]
+    assert len(v3_rows) == (len(v3["receipts"]) if v3 else 0) and len(rows) == len(interim_rows) + len(v3_rows)
+    for r in record["receipts"] + (v3["receipts"] if v3 else []):
         assert r["tx_hash"] in PROOF.read_text() and r["block_hash"] in PROOF.read_text()
+
+
+@pytest.mark.skipif(not V3_EVIDENCE.exists(), reason="no V3 canary run recorded yet")
+def test_committed_v3_record_is_labelled_stamped_and_read_back_on_every_row():
+    record = json.loads(V3_EVIDENCE.read_text())
+    assert record["profile"] == "v3" and record["label"] == canary.LABEL_V3 and record["spec_version"] == 3002
+    assert record["signer"] == "5EhP3KWtUkaRuFUoejCfmYHfi54d2fomNFoyVjNFFsRUzDsb"
+    assert [f"{r['pallet']}.{r['call']}" for r in record["receipts"]] == [
+        "System.remark_with_event", "Balances.transfer_keep_alive", "Utility.batch_all"]
+    for r in record["receipts"]:
+        assert r["label"] == canary.LABEL_V3 and (r["profile"], r["spec_version"]) == ("v3", 3002)
+        assert r["readback_ok"] == 1 and r["success"] == 1 and r["dispatch_error"] is None
+        assert len(r["tx_hash"]) == 66 and len(r["block_hash"]) == 66
+    assert "seed" not in json.dumps(record).lower().replace("seed file", "")
 
 
 def test_interim_receipts_never_become_ledger_verdicts():
