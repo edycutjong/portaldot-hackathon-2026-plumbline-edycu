@@ -83,11 +83,18 @@ def test_interim_profile_rejects_another_dev_chain():
         md.check_identity(prof, "node", "0x" + "22" * 32, 268)
 
 
-def test_v3_profile_is_not_pinned_to_a_genesis_yet():
+def test_v3_profile_is_pinned_to_the_live_testnet_identity():
     prof = md.get_profile("v3")
-    assert prof.genesis_hash is None
+    assert prof.url == "wss://test-node-v3.portaldot.dev"
+    assert prof.genesis_hash == "0xd4f9acbcf7f52388d8b095abe3c198d19fc510e0343e643e87cfbccb155283bd"
+    assert prof.spec_names == ("portaldot-v3",) and prof.spec_versions == (3002,)
+    md.check_identity(prof, "portaldot-v3", prof.genesis_hash, 3002)
     with pytest.raises(md.UnknownChainError):
-        md.check_identity(prof, "portaldot", "0x" + "11" * 32)
+        md.check_identity(prof, "portaldot-v3", "0x" + "11" * 32, 3002)
+    with pytest.raises(md.UnknownChainError):  # the name the tree expected before V3 came back
+        md.check_identity(prof, "portaldotV3", prof.genesis_hash, 3002)
+    with pytest.raises(md.UnknownChainError):  # the spec version the tree expected
+        md.check_identity(prof, "portaldot-v3", prof.genesis_hash, 3000)
 
 
 def test_metadata_version_reads_magic():

@@ -6,6 +6,7 @@ whose origin, sha256 and fetch time are recorded in `../evidence/`.
 | File | What | Origin |
 |---|---|---|
 | `metadata_1002.scale` | Portaldot mainnet runtime metadata, spec 1002, V13 | `wss://mainnet.portaldot.io`, read-only; record in `../evidence/metadata_1002.json` |
+| `metadata_v3.scale` | Portaldot **V3 testnet** runtime metadata, `portaldot-v3`/3002, V14 (69 pallets, 480 calls) | `wss://test-node-v3.portaldot.dev`, read-only, fetched 2026-10-19T18:15:54Z; record in `../evidence/metadata_v3.json` |
 | `metadata_standin_sdk.scale` | **stand-in, not V3 — test input only.** Metadata V14 of an upstream polkadot-sdk `substrate-node --dev` (node/268) | local interim chain (`../scripts/interim_node.sh`); record in `../evidence/metadata_standin_sdk.json` |
 | `docs_layouts/` | **hand-written** miniatures of the three mainnet readthedocs extrinsic-page layouts for `tests/test_docs.py`. Not copied from the docs | hand-written |
 | `guide_layouts/` | **hand-written** miniature of the V3 guide's three layouts (README call tables + Node Explorer paths, `demo/*.py` call sites, FAQ module table) for `tests/test_guide.py`. Not copied from the guide; `demo/a_calls.py` writes a marker file if it is ever executed | hand-written |

@@ -1,0 +1,17 @@
+{
+  "blob_file": "fixtures/metadata_v3.scale",
+  "block_hash": "0x80f9dc0b4a2d666ca5bc69845fe41b6096134fbaec0f77f292fc544147884892",
+  "code_hash": "0xedc03c9dc81d39fea5c02893cc34cf2ec898d55d7ee8f8e89eb27597a724c7c2",
+  "endpoint": "wss://test-node-v3.portaldot.dev",
+  "fetched_at": "2026-10-19T18:15:54+00:00",
+  "genesis_hash": "0xd4f9acbcf7f52388d8b095abe3c198d19fc510e0343e643e87cfbccb155283bd",
+  "impl_name": "portaldot-v3-node",
+  "label": "Portaldot V3 testnet, spec 3002 (the judged target)",
+  "metadata_bytes": 561916,
+  "metadata_sha256": "381014358cc17ba6274f4de8e54846534f0986f311e27ac696cbd8af5696394c",
+  "metadata_version": 14,
+  "profile": "v3",
+  "spec_name": "portaldot-v3",
+  "spec_version": 3002,
+  "tx_version": 2
+}

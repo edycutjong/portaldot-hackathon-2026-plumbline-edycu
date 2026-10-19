@@ -8,8 +8,8 @@ Profiles:
   mainnet-1002  Portaldot mainnet, spec 1002, metadata V13. Read-only. Needs the SDK's `legacy` type
                 preset; Assets amounts are u64 under the same V13 name `Balance` that Balances uses as
                 u128, so Assets calls need a dedicated SDK instance (see `assets_instance`).
-  v3            Portaldot V3 testnet (the judged target). Built with no type preset. Its identity is
-                not pinned yet: the endpoint did not resolve when this profile was written.
+  v3            Portaldot V3 testnet (the judged target). Built with no type preset. Identity pinned from the
+                live endpoint on 2026-10-20: spec `portaldot-v3`/3002, genesis 0xd4f9acbc…5283bd.
   interim-sdk   Local upstream polkadot-sdk `substrate-node --dev` used while V3 is down.
                 A stand-in, not V3. No type preset.
   stored:<file> A metadata blob on disk, decoded offline with the preset of the profile it came from.
@@ -69,13 +69,15 @@ PROFILES: dict[str, Profile] = {
     ),
     "v3": Profile(
         name="v3",
-        url="wss://testnetv3-node.feso-apps.xyz",
+        url="wss://test-node-v3.portaldot.dev",
         preset=None,
-        # spec name as measured by a third party, not yet confirmed by this tool; genesis not pinned
-        # until the endpoint has been reached once
-        spec_names=("portaldotV3",),
+        # observed via state_getRuntimeVersion / chain_getBlockHash(0) on 2026-10-20 (matches the organiser's
+        # 2026-10-19 announcement); the tree had expected `portaldotV3`/3000/`tPOTv3` on the retired feso-apps.xyz
+        spec_names=("portaldot-v3",),
+        genesis_hash="0xd4f9acbcf7f52388d8b095abe3c198d19fc510e0343e643e87cfbccb155283bd",
+        spec_versions=(3002,),
         writes_txs=True,
-        label="Portaldot V3 testnet",
+        label="Portaldot V3 testnet, spec 3002 (the judged target)",
     ),
     "interim-sdk": Profile(
         name="interim-sdk",
@@ -97,6 +99,7 @@ PROFILES: dict[str, Profile] = {
 KNOWN_BLOBS: dict[str, str] = {
     "b87080f9349f936e859748df90ca7837d1e2d15cb02abba347499b8639869053": "mainnet-1002",  # fixtures/metadata_1002.scale
     "9732aff0f6b558576c1551596852448cdf5d1e9ac58705f0ab286d84e73728db": "interim-sdk",   # fixtures/metadata_standin_sdk.scale
+    "381014358cc17ba6274f4de8e54846534f0986f311e27ac696cbd8af5696394c": "v3",            # fixtures/metadata_v3.scale
 }
 
 
