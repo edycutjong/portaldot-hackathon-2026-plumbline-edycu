@@ -1,0 +1,118 @@
+{
+  "balances_1002": [
+    "force_transfer",
+    "set_balance",
+    "transfer",
+    "transfer_all",
+    "transfer_keep_alive"
+  ],
+  "balances_v3": [
+    "burn",
+    "force_adjust_total_issuance",
+    "force_set_balance",
+    "force_transfer",
+    "force_unreserve",
+    "transfer_all",
+    "transfer_allow_death",
+    "transfer_keep_alive",
+    "upgrade_accounts"
+  ],
+  "calls_removed": [
+    "Assets.destroy",
+    "Authorship.set_uncles",
+    "Balances.set_balance",
+    "Balances.transfer",
+    "Contracts.claim_surcharge",
+    "Staking.set_history_depth",
+    "Staking.update_staking_limits",
+    "System.fill_block",
+    "System.set_changes_trie_config",
+    "Treasury.approve_proposal",
+    "Treasury.propose_spend",
+    "Treasury.reject_proposal"
+  ],
+  "calls_renamed": [
+    "Proxy.anonymous -> create_pure",
+    "Proxy.kill_anonymous -> kill_pure"
+  ],
+  "diff_rows": 516,
+  "diff_summary": {
+    "added call": 73,
+    "added pallet": 40,
+    "arg-changed": 99,
+    "arg-changed (names equal)": 84,
+    "const-changed": 119,
+    "const-changed (type only)": 14,
+    "event-changed": 169,
+    "removed call": 12,
+    "removed pallet": 2,
+    "renamed": 2
+  },
+  "pallets_added": [
+    "AssetConversion",
+    "AssetConversionMigration",
+    "AssetConversionTxPayment",
+    "AssetRate",
+    "AssetsFreezer",
+    "AssetsPrecompiles",
+    "AssetsPrecompilesPermit",
+    "Beefy",
+    "Broker",
+    "ChildBounties",
+    "DelegatedStaking",
+    "FastUnstake",
+    "MessageQueue",
+    "MetaTx",
+    "Mixnet",
+    "MmrLeaf",
+    "MultiAssetBounties",
+    "MultiBlockMigrations",
+    "NftFractionalization",
+    "Nfts",
+    "NominationPools",
+    "Oracle",
+    "Parameters",
+    "PoolAssets",
+    "Preimage",
+    "Recovery",
+    "RegistrarPara",
+    "RegistrarRelay",
+    "Remark",
+    "Revive",
+    "SafeMode",
+    "SkipFeelessPayment",
+    "Statement",
+    "TechnicalCommittee",
+    "TechnicalMembership",
+    "TxPause",
+    "Uniques",
+    "VerifySignature",
+    "VestingPrecompiles",
+    "VoterList"
+  ],
+  "pallets_removed": [
+    "Gilt",
+    "RandomnessCollectiveFlip"
+  ],
+  "pallets_shared": 29,
+  "sides": {
+    "mainnet-1002": {
+      "calls": 155,
+      "constants": 69,
+      "events": 119,
+      "fixture": "fixtures/metadata_1002.scale",
+      "metadata_sha256": "b87080f9349f936e859748df90ca7837d1e2d15cb02abba347499b8639869053",
+      "metadata_version": 13,
+      "pallets": 31
+    },
+    "v3": {
+      "calls": 480,
+      "constants": 228,
+      "events": 494,
+      "fixture": "fixtures/metadata_v3.scale",
+      "metadata_sha256": "381014358cc17ba6274f4de8e54846534f0986f311e27ac696cbd8af5696394c",
+      "metadata_version": 14,
+      "pallets": 69
+    }
+  }
+}
