@@ -1,17 +1,18 @@
 # Plumbline
 
-**Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof.** Today it gives a verdict for every documented call (measured on mainnet spec 1002) and has a proof runner that works end to end on a local stand-in chain (not V3). Its proofs on Portaldot V3 are **pending**: the V3 testnet endpoint did not resolve on 2026-10-14.
+**Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof.** Today it gives a verdict for every documented call on the Portaldot V3 testnet (spec 3002) and on mainnet (spec 1002), diffs the two runtimes, checks a dApp against either, and has sent 3 canary transactions to V3 and read them back from their blocks. Everything else on V3 is UNPROVEN: a name and argument match, not a transaction.
 
 ![status](https://img.shields.io/badge/status-prototype-orange)
-![tests](https://img.shields.io/badge/tests-255%20passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-260%20passing-brightgreen)
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![python](https://img.shields.io/badge/python-3.10%2B-blue)
 
-> Check-in README (v1, 2026-10-14). It describes what exists in this repository today; planned parts are marked
-> **planned**. No claim is made about Portaldot V3 behaviour anywhere in this file: every chain measurement is either
-> the Portaldot mainnet runtime (spec 1002, read-only) or a local stand-in chain (`interim-sdk`, **not V3**). One cited
-> exception: the two wasm cells inside `plumbline check` rest on a 2026-10-11 measurement on a local spec-1002 chain, made
-> before this repository existed and not re-run here (see `docs/BASELINE-1002.md`).
+> Check-in README (v1, refreshed 2026-10-20 with the first Portaldot V3 measurements). It describes what exists in this
+> repository today; planned parts are marked **planned**. Chain measurements are labelled with their profile: `v3` (the
+> V3 testnet, spec 3002, measured 2026-10-19), `mainnet-1002` (read-only baseline, 2026-10-14) or `interim-sdk` (a local
+> stand-in chain, **not V3**, kept as test input). One cited exception: the two wasm cells inside `plumbline check` rest on
+> a 2026-10-11 measurement on a local spec-1002 chain, made before this repository existed and not re-run here (see
+> `docs/BASELINE-1002.md`).
 
 ## Project Name
 
@@ -39,8 +40,8 @@ runtime and was read back from its block; otherwise the ledger says what it coul
 | Step | What Plumbline does | Status |
 |---|---|---|
 | 1. Documented call | Parses the 22 mainnet extrinsic docs pages (196 calls) and the V3 guide at commit `d671a32` (46 sample-code `compose_call` sites, 12 FAQ modules) | shipped |
-| 2. Verdict | Joins each entry to one runtime's metadata and writes exactly one verdict, stamped with profile, spec version and metadata hash | shipped on `mainnet-1002`; V3 **pending** |
-| 3. Proof | Signs a canary extrinsic, keeps the receipt, re-reads it from its block by hash | shipped on a local stand-in chain (`interim-sdk`, **not V3**); no proof on a Portaldot chain yet, so the shipped ledger has **no PROVEN row** |
+| 2. Verdict | Joins each entry to one runtime's metadata and writes exactly one verdict, stamped with profile, spec version and metadata hash | shipped on `v3` and `mainnet-1002` |
+| 3. Proof | Signs a canary extrinsic, keeps the receipt, re-reads it from its block by hash | shipped: 3 calls PROVEN on `v3` (`docs/PROOF.md`); a local stand-in run (`interim-sdk`, **not V3**) is kept beside it. The other 191 mainnet-docs calls are UNPROVEN on V3 |
 
 **Measured on the Portaldot mainnet runtime (spec 1002, read-only), 2026-10-14:**
 
@@ -55,23 +56,38 @@ runtime and was read back from its block; otherwise the ledger says what it coul
 
 Full table with producers and dates: [`docs/BASELINE-1002.md`](docs/BASELINE-1002.md). Ledger: `evidence/ledger_1002.json`
 (320 verdict rows, blake2-256 `d067b31b…de21ee7`, reproduced byte for byte from freshly fetched inputs).
-**101 of the 320 rows come from the V3 guide's own call table, demo scripts and FAQ; their verdicts are computed against
+**101 of the 320 rows come from the V3 guide's own call table, demo scripts and FAQ; their verdicts there are computed against
 mainnet spec 1002 and are not V3 findings.**
+
+**Measured on the Portaldot V3 testnet (profile `v3`, spec `portaldot-v3`/3002), 2026-10-19:**
+
+| `v3` finding | Value |
+|---|---|
+| Identity the sources gave → what the chain reports | spec `portaldotV3`/3000, symbol `tPOTv3`, 70 pallets → `portaldot-v3`/**3002**, **`tPOT`**, **69** pallets |
+| Runtime | 69 pallets, 480 calls (mainnet-1002: 31 / 155); metadata V14, sha256 `38101435…394c` |
+| Diff `mainnet-1002` → `v3` | 516 rows: 40 pallets added, 2 removed (`Gilt`, `RandomnessCollectiveFlip`), 12 calls removed, 2 renamed (`Proxy.anonymous` → `create_pure`) |
+| Mainnet docs vs the runtime | the 79 calls whose docs and runtime disagree on spec 1002 become **2** on V3 (`Balances.transfer` absent, `ElectionProviderMultiPhase.governance_fallback` arguments) |
+| V3 guide's sample code | all 46 `compose_call` sites name a call that exists on V3 |
+| V3 guide FAQ | 5 of 12 listed modules are not on the V3 testnet: `conviction_voting`, `cumulus_parachain_system`, `ibridge`, `paras`, `referenda` (by pallet name) |
+| `plumbline check examples/mainnet-dapp --target v3` | 9 findings, blocking 0 (on mainnet-1002: blocking 5) |
+| Canaries | `System.remark_with_event`, `Balances.transfer_keep_alive` (to itself), `Utility.batch_all`: 3 transactions, blocks 106424–106426, all success, read back 3/3 |
+
+Full tables, producers and dates: [`docs/BASELINE-V3.md`](docs/BASELINE-V3.md); every transaction hash: [`docs/PROOF.md`](docs/PROOF.md).
+V3 ledger: `evidence/ledger_v3.json` (549 verdict rows, blake2-256 `dc808404…1e34`).
 
 Other tools in the repo: `plumbline diff A B` lists the pallets, calls, arguments, constants and events that differ between
 two runtimes (an argument row with equal names but different types is flagged `names_equal`: spelling only or a real change,
 the diff cannot tell; type aliases are not resolved, so a same-named alias whose width changes yields no row; it prints a **STAND-IN, NOT V3** banner when a side is the stand-in chain); `plumbline check <dApp dir>
 --target <profile>` classifies each call site and wasm import set in a dApp against a runtime (blocking: ABSENT, DRIFTED, ARG_DRIFT,
 EXPECTED-REJECT; TYPE-TRAP is not detected yet; wasm verdicts cover two measured cases only), with exit codes 0 / 1 / 2.
-A golden `check` output on the mainnet-1002 profile is committed (`fixtures/expected_check_1002.txt`).
+Golden `check` outputs are committed for `mainnet-1002` (`fixtures/expected_check_1002.txt`) and `v3` (`fixtures/expected_check_v3.txt`).
 
 ### Blockchain Relevance
 
 Plumbline works on Portaldot's own surface: Substrate runtime metadata, the extrinsics the official docs describe, and the
-V3 testnet guide. It is meant to be re-run against each runtime Portaldot ships. The target is **Portaldot V3**; the V3
-run is **pending**. Until the testnet is reachable, the only Portaldot chain measured is the mainnet runtime (spec 1002,
-read-only), as a baseline; a local upstream polkadot-sdk dev chain (`interim-sdk`, a stand-in, **not V3**) is used as test
-input and to exercise the canary runner.
+V3 testnet guide. It is meant to be re-run against each runtime Portaldot ships. The target is **Portaldot V3**, measured
+on 2026-10-19 (spec 3002); mainnet spec 1002 (read-only) is the baseline it is compared with; a local upstream
+polkadot-sdk dev chain (`interim-sdk`, a stand-in, **not V3**) is kept as test input and for the canary runner's first run.
 
 ## Technical Architecture
 
@@ -81,6 +97,7 @@ flowchart LR
         RTD["Portaldot mainnet docs<br/>readthedocs, 22 extrinsic pages"]
         GD["V3 testnet guide @ d671a32<br/>README, 5 demo scripts, FAQ<br/>(cloned outside the tree, read by AST only)"]
         MAIN["mainnet RPC<br/>wss://mainnet.portaldot.io<br/>read-only"]
+        V3N["Portaldot V3 testnet<br/>wss://test-node-v3.portaldot.dev<br/>spec 3002: read + 3 canary txs"]
         INT["interim-sdk node<br/>local polkadot-sdk --dev<br/>stand-in, not V3"]
         APP["a dApp directory<br/>.py .ts .js + wasm artifacts"]
     end
@@ -98,12 +115,14 @@ flowchart LR
     subgraph OUT["Outputs"]
         FIX["fixtures/*.scale<br/>stored metadata blobs"]
         TBL["evidence/docs_1002.json, guide_calls.json<br/>(scripts/docs_baseline.py, guide_calls.py)"]
-        EVD["evidence/ledger_1002.json<br/>+ blake2-256"]
-        GOLD["fixtures/expected_check_1002.txt<br/>golden dApp-check output"]
-        PROOF["evidence/canary_interim.json<br/>docs/PROOF.md<br/>interim-sdk, not V3"]
+        EVD["evidence/ledger_1002.json, ledger_v3.json<br/>+ blake2-256"]
+        GOLD["fixtures/expected_check_1002.txt, expected_check_v3.txt<br/>golden dApp-check output"]
+        PROOF["evidence/canary_v3.json<br/>docs/PROOF.md"]
+        PROOFI["evidence/canary_interim.json<br/>interim-sdk, not V3"]
     end
 
     MAIN --> MD
+    V3N --> MD
     INT --> MD
     MD --> FIX
     RTD -->|scripts/fetch_docs.py| DOCS
@@ -125,41 +144,38 @@ flowchart LR
     GUIDE --> CHECK
     PLUMB --> CHECK
     CHECK --> GOLD
+    V3N --> CANARY
     INT --> CANARY
     MD --> CANARY
     CANARY -->|receipts + read-back| PROOF
+    CANARY -->|receipts + read-back| PROOFI
+    PROOF -->|--receipts: PROVEN needs a receipt| PLUMB
 
-    V3["Portaldot V3 testnet<br/>PLANNED: endpoint did not resolve"]
     LEDGER["Plumbline Ledger contract (Revive)<br/>PLANNED: attests report hashes on V3"]
-    V3CAN["V3 canaries, tx per verdict<br/>PLANNED: needs V3, tPOTv3 funds and a funded-seed signer (not implemented)"]
-    V3 -.-> MD
-    CANARY -.-> V3CAN
-    V3CAN -.-> V3
-    V3CAN -.->|PROVEN needs a receipt| PLUMB
-    LEDGER -.-> V3
+    LEDGER -.-> V3N
 
     classDef planned stroke-dasharray: 5 5,fill:#fff,stroke:#999,color:#555
     classDef standin fill:#fff3cd,stroke:#b8860b
-    class V3,LEDGER,V3CAN planned
-    class INT,PROOF standin
+    class LEDGER planned
+    class INT,PROOFI standin
 ```
 
 Solid boxes exist in this repository; dashed boxes are **planned**; yellow boxes are the stand-in chain and what it
-produced (**not V3**). Drawn from the code; explained step by step in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+produced (**not V3**); the V3 testnet is a solid box. Drawn from the code; explained step by step in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 **Core tech stack**
 
 | Part | Choice |
 |---|---|
-| Blockchain platform | Measured on: Portaldot mainnet, spec 1002, read-only. Target: **Portaldot V3** (**pending**, not yet run). Interim stand-in: upstream polkadot-sdk `substrate-node --dev` (profile `interim-sdk`), **not V3** |
+| Blockchain platform | **Portaldot V3 testnet** (profile `v3`, `portaldot-v3`/3002): read-only metadata plus 3 canary transactions. Baseline: Portaldot mainnet, spec 1002, read-only. Test input only: upstream polkadot-sdk `substrate-node --dev` (profile `interim-sdk`), **not V3** |
 | Contract language | none yet (see Smart Contracts) |
 | Frontend framework | none (command-line tool) |
 | Other components | Python 3.10+, [`substrate-interface`](https://github.com/polkascan/py-substrate-interface) 1.8.1 + `scalecodec` 1.2.12 (the SDK Portaldot's docs point to), `typer`, `pytest`, SQLite (the ledger) |
 
 **Chain profiles** (`plumbline/metadata.py`): `mainnet-1002` (legacy type-registry preset, Assets u64 override),
-`v3` (no preset; a stub until the testnet is reachable), `interim-sdk` (no preset), `stored:<file>` (offline blob). Live
-profiles check the chain's identity before decoding and fail loudly on a mismatch: `mainnet-1002` and `interim-sdk` pin
-`spec_name`, genesis hash and `spec_version`; `v3` pins only the spec name until the testnet has been observed; `stored:`
+`v3` (no preset), `interim-sdk` (no preset), `stored:<file>` (offline blob). Live
+profiles check the chain's identity before decoding and fail loudly on a mismatch: `mainnet-1002`, `v3` and `interim-sdk` pin
+`spec_name`, genesis hash and `spec_version` (`v3`: `portaldot-v3`, genesis `0xd4f9acbc…5283bd`, 3002); `stored:`
 profiles are offline and are labelled from the blob's recorded sha256. Every `runtime`, `plumb`, `diff` and `check` result
 carries its profile label.
 
@@ -171,26 +187,33 @@ references only (two short FAQ status phrases appear in the tree snapshots of ei
 
 There is **no contract yet**. The Plumbline Ledger (a Revive Solidity contract that would record verdict-report hashes
 on-chain) is **planned** for V3; no directory, address or deployment exists for it. Plumbline is pallet-native today: it
-reads chain metadata and sends transactions only to the local stand-in chain.
+reads chain metadata and sends transactions only with `plumbline canary`.
 
 RPC and SDK calls used, read-only: `state_getRuntimeVersion`, `chain_getBlockHash`, `chain_getFinalizedHead`,
-`state_getMetadata`, `state_getStorageHash` (for `:code`), block and extrinsic reads for read-back, and the SDK's own
-initialisation calls. `scripts/interim_node.sh` also calls `system_health` with `curl` (isolation check). Extrinsics are
-sent only by `plumbline canary`, only to the local `interim-sdk` chain (**not V3**), signed with dev keys:
-`Balances.transfer_keep_alive`, `System.remark_with_event` and `Revive.map_account`; each is read back from its block
-(`docs/PROOF.md`). Nothing is sent to mainnet or to any Portaldot testnet and nothing is deployed, so there are no
-contract, asset or account IDs to list.
+`state_getMetadata`, `state_getStorageHash` (for `:code`), `System.Account` and `Balances.ExistentialDeposit` reads, block and
+extrinsic reads for read-back, and the SDK's own initialisation calls. `scripts/interim_node.sh` also calls `system_health`
+with `curl` (isolation check). Extrinsics are sent only by `plumbline canary`:
+
+- **profile `v3`** (Portaldot V3 testnet): `System.remark_with_event`, `Balances.transfer_keep_alive` to the signing account
+  itself, and `Utility.batch_all` of one remark, signed by one funded canary account
+  `5EhP3KWtUkaRuFUoejCfmYHfi54d2fomNFoyVjNFFsRUzDsb` whose seed is read from a mode-600 file outside the repository
+  (never printed or recorded). Blocks 106424–106426; each receipt is read back from its block (`docs/PROOF.md`,
+  `evidence/canary_v3.json`, `evidence/readback_v3.txt`).
+- **profile `interim-sdk`** (a local stand-in chain, **not V3**), dev keys: `Balances.transfer_keep_alive`,
+  `System.remark_with_event` and `Revive.map_account`.
+
+Nothing is sent to mainnet and nothing is deployed, so there are no contract or asset IDs to list.
 
 ## Installation & Setup
 
-**Requirements:** Python 3.10+ (tested on 3.11.1), git, network access to `mainnet.portaldot.io`,
+**Requirements:** Python 3.10+ (tested on 3.11.1), git, network access to `test-node-v3.portaldot.dev`, `mainnet.portaldot.io`,
 `portaldot-dev.readthedocs.io` and github.com for the live steps. The interim-node step additionally needs macOS arm64
 and the polkadot-sdk `substrate-node` binary (release `polkadot-stable2606-3`, sha256
 `e687db4993973bd83922cfa9f01e29bb549af16560511b1fd51ff883b996207f`) at
 `~/.cache/plumbline-interim/substrate-node-aarch64-apple-darwin`, or set `PLUMBLINE_INTERIM_BIN` (the script checks the hash and refuses any other file;
 see its header for the default lookup).
 
-**Steps** (every command below was run on 2026-10-14):
+**Steps** (every command below was run on 2026-10-14, except steps 6–7 on 2026-10-19/20):
 
 ```bash
 # (the repository is private until the organisers' public flip; this URL works once it is public)
@@ -199,7 +222,7 @@ cd portaldot-hackathon-2026-plumbline-edycu
 python3 -m venv .venv && . .venv/bin/activate
 pip install -e '.[dev]'
 
-pytest -q                                   # 255 passed, 3 deselected (live tests are opt-in: pytest -m live)
+pytest -q                                   # 260 passed, 3 deselected (live tests are opt-in: pytest -m live)
 
 # 1. identify the runtime: stored mainnet spec 1002 (offline), then the live one (read-only RPC)
 plumbline runtime -p stored:fixtures/metadata_1002.scale
@@ -227,6 +250,18 @@ scripts/interim_node.sh start               # ws://127.0.0.1:39944, archive mode
 plumbline canary -p interim-sdk --replace   # rewrites evidence/canary_interim.json and docs/PROOF.md
 plumbline readback evidence/canary_interim.json
 scripts/interim_node.sh stop
+
+# 6. the Portaldot V3 testnet (profile v3, read-only): identify, diff against mainnet, check a dApp
+plumbline runtime -p stored:fixtures/metadata_v3.scale     # V14, sha256 38101435…394c, 69 pallets, 480 calls
+plumbline runtime -p v3                                    # portaldot-v3/3002, live (the sha256 can differ by one byte at a later block: see docs/BASELINE-V3.md)
+plumbline diff stored:fixtures/metadata_1002.scale stored:fixtures/metadata_v3.scale    # 516 rows (evidence/diff_1002_v3.json)
+plumbline check examples/mainnet-dapp --target v3                                       # blocking 0 (evidence/check_v3.txt)
+python scripts/build_ledger.py --profile stored:fixtures/metadata_v3.scale --runtime-record evidence/metadata_v3.json \
+    --receipts evidence/canary_v3.json --out /tmp/ledger_v3.json     # 549 rows; byte-identical to evidence/ledger_v3.json
+
+# 7. V3 canaries: needs a funded seed file (see Smart Contracts); sends 3 transactions
+plumbline canary -p v3 --replace            # rewrites evidence/canary_v3.json and docs/PROOF.md
+plumbline readback evidence/canary_v3.json  # 3/3 receipts match the chain
 ```
 
 To regenerate the docs baseline evidence: `python scripts/docs_baseline.py --profile stored:fixtures/metadata_1002.scale --out evidence/docs_1002.json`.
@@ -236,7 +271,7 @@ There is nothing to compile or deploy and there is no frontend to launch.
 
 - **Video:** not yet recorded (planned for the check-in; the link will be added here).
 - **Live demo:** none; Plumbline is a command-line tool.
-- **Test accounts / test data:** no accounts are needed for steps 1–4. The stand-in chain uses the well-known dev keys
+- **Test accounts / test data:** no accounts are needed for steps 1–4 and 6 (read-only); step 7 needs one funded V3 account. The stand-in chain uses the well-known dev keys
   (`//Alice` and per-run `//Plumbline//<run id>` accounts), which are refused on every other profile. Inputs are
   `fixtures/metadata_1002.scale` (mainnet spec 1002, read-only fetch), the fetched docs pages, and
   `examples/mainnet-dapp/` (an engineered fixture written for `check`, never run).
@@ -247,24 +282,26 @@ There is nothing to compile or deploy and there is no frontend to launch.
   - `evidence/docs_1002.json` — 196 documented calls vs the runtime (117 / 64 / 15)
   - `evidence/guide_calls.json` — the V3 guide's call table at `d671a32` (names and `file:line` only)
   - `evidence/ledger_1002.json` (+ `.blake2-256`) — the drift ledger, 320 verdict rows
-  - `evidence/canary_interim.json` and `docs/PROOF.md` — **interim-sdk — not V3**: run `20261014T144705Z`, node/268,
+  - `docs/BASELINE-V3.md`, `evidence/metadata_v3.json`, `evidence/diff_1002_v3.json`, `evidence/baseline_v3.json`, `evidence/ledger_v3.json`, `evidence/check_v3.txt` — the V3 findings above, with producers and dates
+  - `evidence/canary_v3.json`, `evidence/readback_v3.txt` and `docs/PROOF.md` — 3 transactions on the V3 testnet (`106424-1`, `106425-1`, `106426-1`), all success, 3/3 read back
+  - `evidence/canary_interim.json` and `docs/PROOF.md` (second section) — **interim-sdk — not V3**: run `20261014T144705Z`, node/268,
     3 extrinsics (`3040-2` `Balances.transfer_keep_alive`, `3041-2` `System.remark_with_event`, `3042-2`
     `Revive.map_account`), all success, read back 3/3 from a new process after a node restart (`evidence/readback_interim.txt`)
-- **Tests:** 255 passed (+3 live, opt-in) on 2026-10-14.
+- **Tests:** 260 passed (+3 live, opt-in) on 2026-10-20.
 
 ## Roadmap
 
-**Completed (2026-10-14)**
+**Completed (2026-10-14 to 2026-10-20)**
 - Chain profiles with identity checks; `plumbline runtime`; mainnet spec 1002 metadata stored with sha256 and fetch time
 - Docs parser for the 22 extrinsic pages (three layouts), `plumbline docs`, baseline of 196 / 64 / 15
 - V3 guide and FAQ parser (`plumbline guide`): 46 `compose_call` sites by AST, 12 FAQ modules
 - Drift ledger on mainnet-1002 (`plumbline plumb`): 320 verdict rows, deterministic export
 - Runtime diff (`plumbline diff`), offline dApp check (`plumbline check`) with a golden output for mainnet-1002
 - Canary runner with read-back on the local stand-in chain (not V3), isolated interim-node script
+- V3 profile pinned to the live testnet (2026-10-20); `runtime`, `diff`, `plumb` and `check` run against it; V3 metadata stored; 3 canary transactions on V3 read back from their blocks; canary receipts feed the ledger (`plumb --receipts`)
 
 **Next (planned)**
-- Run `runtime`, `diff` and `check --target v3` against the Portaldot V3 testnet as soon as it is reachable (V3 results: **pending**); `plumb` additionally needs a recorded V3 metadata blob registered in `plumbline/metadata.py` (`KNOWN_BLOBS`)
-- Wire canary records into `plumbline plumb` (the library already accepts receipts; the CLI does not read canary records yet), then canaries on V3 so verdicts can become PROVEN with a transaction each; V3 golden output for `check`
+- A canary per documented call (3 of 196 mainnet-docs calls are PROVEN on V3; the rest are UNPROVEN)
 - Plumbline Ledger contract (Revive) on V3
 
 ## Team

@@ -30,6 +30,12 @@ re-launched; Plumbline does not know which. The V3 profile now pins what the cha
 | Metadata | V14, 561916 bytes, sha256 `381014358cc17ba6274f4de8e54846534f0986f311e27ac696cbd8af5696394c`, fetched 2026-10-19T18:15:54+00:00 at block `0x80f9dc0b…4892` | same · `fixtures/metadata_v3.scale` |
 | Size | 69 pallets, 480 calls, 228 constants, 494 events | `scripts/baseline_counts.py` · `evidence/baseline_v3.json` |
 
+**The metadata hash moves between blocks.** Read at block 106485 (2026-10-19 ~18:30 UTC) the same runtime (same `:code`
+hash, same length 561916) hashes to `963152285a7f94083ed20f938126cb65c325a9717156e4d5b6561b9e9f2f3456`: one byte differs, at
+offset 549822, inside the default value of the storage item `Revive.EthBlockBuilderIR`. Re-reading the stored block
+returns the stored blob exactly. So a stamp on any V3 row means "metadata read at that block"; the stored blob is the one
+at `0x80f9dc0b…4892`, and the `:code` hash is the stable identity. The same behaviour was seen on the interim stand-in chain.
+
 The mainnet side of the comparison: spec 1002, metadata V13, 31 pallets, 155 calls, 69 constants, 119 events
 (`docs/BASELINE-1002.md`; same `evidence/baseline_v3.json`).
 
