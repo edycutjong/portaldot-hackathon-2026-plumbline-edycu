@@ -12,6 +12,7 @@ from .test_plumb import LEDGER, ROOT
 
 EXAMPLE = ROOT / "examples" / "mainnet-dapp"
 GOLDEN = ROOT / "fixtures" / "expected_check_1002.txt"
+GOLDEN_V3 = ROOT / "fixtures" / "expected_check_v3.txt"
 
 
 def fresh(args, cwd):
@@ -53,8 +54,8 @@ def test_check_json_and_exit_codes():
     assert result.exit_code == data["exit"] == 1
     assert len(data["findings"]) == 9 and data["target"] == "mainnet-1002"
     assert CliRunner().invoke(app, ["check", str(EXAMPLE / "README.md"), "--target", "mainnet-1002"]).exit_code == 2
-    no_v3 = CliRunner().invoke(app, ["check", str(EXAMPLE), "--target", "v3", "--offline"])
-    assert no_v3.exit_code == 2 and "no stored metadata for v3" in no_v3.output
+    v3 = CliRunner().invoke(app, ["check", str(EXAMPLE), "--target", "v3", "--offline"])
+    assert v3.exit_code == 0 and v3.output == GOLDEN_V3.read_text()  # V3 has no blocking finding for this example
     stored = CliRunner().invoke(app, ["check", str(EXAMPLE), "--target", f"stored:{GOLDEN}", "--offline"])
     assert stored.exit_code == 2
 

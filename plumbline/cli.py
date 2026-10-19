@@ -244,6 +244,7 @@ REPO = Path(__file__).resolve().parents[1]
 STORED_TARGETS = {
     "mainnet-1002": ("fixtures/metadata_1002.scale", "evidence/metadata_1002.json"),
     "interim-sdk": ("fixtures/metadata_standin_sdk.scale", "evidence/metadata_standin_sdk.json"),
+    "v3": ("fixtures/metadata_v3.scale", "evidence/metadata_v3.json"),
 }
 
 
@@ -307,14 +308,19 @@ def check_cmd(path: Path = typer.Argument(..., help="the dApp directory to scan"
     raise typer.Exit(check_mod.exit_code(findings))
 
 
+CANARY_RECORDS = {"v3": Path("evidence/canary_v3.json"), "interim-sdk": Path("evidence/canary_interim.json")}
+
+
 @app.command("canary")
-def canary_cmd(profile: str = typer.Option(..., "--profile", "-p", help="interim-sdk (v0: dev keys, local chain only)"),
-               out: Path = typer.Option(Path("evidence/canary_interim.json"), help="the receipts record"),
-               proof: Path = typer.Option(Path("docs/PROOF.md"), help="the proof table generated from it"),
+def canary_cmd(profile: str = typer.Option(..., "--profile", "-p", help="v3 (funded seed file) | interim-sdk (dev keys, local chain only)"),
+               out: Path = typer.Option(None, help="the receipts record (default evidence/canary_<profile>.json)"),
+               proof: Path = typer.Option(Path("docs/PROOF.md"), help="the proof table generated from the records"),
                url: str = typer.Option(None, help="override the profile endpoint (loopback only for dev keys)"),
                replace: bool = typer.Option(False, "--replace", help="overwrite an existing receipts record")) -> None:
-    """Send the canary calls (Balances.transfer_keep_alive, System.remark_with_event, Revive.map_account),
-    keep each receipt, read each back from its block. v0: interim-sdk only, labelled not V3."""
+    """Send the canary calls, keep each receipt, read each back from its block.
+    v3: System.remark_with_event, Balances.transfer_keep_alive (to itself), Utility.batch_all.
+    interim-sdk: Balances.transfer_keep_alive, System.remark_with_event, Revive.map_account (labelled not V3)."""
+    out = out or CANARY_RECORDS.get(profile, Path(f"evidence/canary_{profile}.json"))
     existing = [p for p in (out, proof) if p.exists()]
     if existing and not replace:  # the proof table is guarded too: --out elsewhere must not overwrite PROOF.md
         typer.echo(f"error: {', '.join(map(str, existing))} exists; pass --replace to overwrite with a new run",
@@ -336,7 +342,11 @@ def canary_cmd(profile: str = typer.Option(..., "--profile", "-p", help="interim
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
     proof.parent.mkdir(parents=True, exist_ok=True)
-    proof.write_text(canary_mod.proof_markdown(record))
+    if out == CANARY_RECORDS.get(profile):  # the canonical records feed one proof table: V3 section, then interim
+        records = {p: json.loads(path.read_text()) if path.exists() else None for p, path in CANARY_RECORDS.items()}
+        proof.write_text(canary_mod.proof_document(records["v3"], records["interim-sdk"]))
+    else:
+        proof.write_text(canary_mod.proof_markdown(record))
     for r in record["receipts"]:
         outcome = ("success" if r["success"] else "outcome not read back" if r["success"] is None
                    else f"failed {r['dispatch_error']}")

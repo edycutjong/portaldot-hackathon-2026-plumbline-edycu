@@ -1,0 +1,22 @@
+PLUMBLINE check · target v3 · portaldot-v3/3002 · metadata V14 sha256 381014358cc1… · live wss://test-node-v3.portaldot.dev at 0xa6715efbbf67daa7bb7cfbb152366e0f19a303c7a52aa968a98ae389c4ef0e6b
+  Portaldot V3 testnet, spec 3002 (the judged target)
+  not checked yet: TYPE-TRAP (a raw H160 passed where an SS58 account is needed)
+contract/minimal_seal0.wasm  imports env/seal0 (3 functions), seal0 only  COMPAT-UNMEASURED
+                               no measurement of seal0 modules on v3 yet
+src/escrow.py:8              Contracts.instantiate_with_code              UNPROVEN
+                               present on v3; no receipt
+src/evm.py:8                 Revive.call                                  UNPROVEN
+                               present on v3; no receipt
+src/nft.py:8                 Nfts.mint                                    UNPROVEN
+                               present on v3; no receipt
+src/notes.py:7               System.remark                                UNPROVEN
+                               present on v3; no receipt
+src/router.ts:5              dynamic api.tx[...]                          UNSCANNED
+                               names are not static
+src/send.ts:6                balances.transferKeepAlive                   ARGS-UNCHECKED
+                               2 positional arguments, as Balances.transfer_keep_alive takes; names are not in the source
+src/token.py:7               Assets.transfer                              UNPROVEN
+                               present on v3; no receipt
+src/vault.ts:6               proxy.createPure                             ARGS-UNCHECKED
+                               3 positional arguments, as Proxy.create_pure takes; names are not in the source
+summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-UNMEASURED 1, UNSCANNED 1 · blocking 0 · exit 0
