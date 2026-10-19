@@ -74,7 +74,7 @@ mainnet spec 1002 and are not V3 findings.**
 | `plumbline check examples/mainnet-dapp --target v3` | 9 findings, blocking 0 (on mainnet-1002: blocking 5) |
 | Canaries | `System.remark_with_event`, `Balances.transfer_keep_alive` (to itself), `Utility.batch_all`: 3 transactions, blocks 106424–106426, all success, read back 3/3 |
 
-V3 canary transactions (signer `5EhP3KWtUkaRuFUoejCfmYHfi54d2fomNFoyVjNFFsRUzDsb`, each re-read from its block; the same table, with block hashes, is in [`docs/PROOF.md`](docs/PROOF.md); look any of them up in the official console, https://node-console.portaldot.dev/):
+V3 canary transactions (signer `5EhP3KWtUkaRuFUoejCfmYHfi54d2fomNFoyVjNFFsRUzDsb`, each re-read from its block; the same table, with block hashes, is in [`docs/PROOF.md`](docs/PROOF.md); look them up by block number or block hash in the Portaldot-hosted V3 console, https://node-console.portaldot.dev/ , which has no tx-hash search):
 
 | Call | Extrinsic | Tx hash |
 |---|---|---|

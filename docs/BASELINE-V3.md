@@ -34,7 +34,7 @@ re-launched; Plumbline does not know which. The V3 profile now pins what the cha
 hash, same length 561916) hashes to `963152285a7f94083ed20f938126cb65c325a9717156e4d5b6561b9e9f2f3456`: one byte differs, at
 offset 549822, inside the default value of the storage item `Revive.EthBlockBuilderIR`. Re-reading the stored block
 returns the stored blob exactly. So a stamp on any V3 row means "metadata read at that block"; the stored blob is the one
-at `0x80f9dc0b…4892`, and the `:code` hash is the stable identity. A third value (`c64385ba…`) appears at blocks 106422–106473, which include the three canary blocks. The same behaviour was seen on the interim stand-in chain.
+at `0x80f9dc0b…4892`, and the `:code` hash is the stable identity. A third value (`c64385ba…`) appears at blocks 106422–106473, which include the three canary blocks; `docs/PROOF.md` stamps the hash read at the run's start block, and its verdicts rest on the read-back receipts, not on any of these hashes. (The byte-level comparison above was done for the `3810…`/`9631…` pair only, not for `c64385ba…`.) The same behaviour was seen on the interim stand-in chain.
 
 The mainnet side of the comparison: spec 1002, metadata V13, 31 pallets, 155 calls, 69 constants, 119 events
 (`docs/BASELINE-1002.md`; same `evidence/baseline_v3.json`).

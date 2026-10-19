@@ -7,8 +7,8 @@ testnet, profile v3** (`portaldot-v3`/3002, genesis pinned in the profile), sign
 by one funded canary account (`5EhP3KWtUkaRuFUoejCfmYHfi54d2fomNFoyVjNFFsRUzDsb`), the cheapest documented calls, each sent once.
 
 - Run `20261019T182014Z`, endpoint `wss://test-node-v3.portaldot.dev`, metadata sha256 `381014358cc17ba6…` read at block `0x3c8df58010b6ae144b4157fd5c81a64d78735fb3c113b0759225cf8d2fee9868`
-- The stamped sha256 is the metadata read at the run's start block. `BASELINE-V3.md` records a third metadata hash (`c64385ba…`) observed at blocks 106422–106473, a range that contains these canary blocks; `BASELINE-V3.md` measured the one differing byte for the 3810… vs 9631… pair (inside the default value of `Revive.EthBlockBuilderIR`, same `:code` hash, which is the stable identity); it did not byte-compare `c64385ba…`. Call verdicts here rest on the receipts read back from their blocks, not on the metadata hash.
-- Explorer: look any row up in the official console, https://node-console.portaldot.dev/ (paste the block hash or the tx hash from the table).
+- The metadata sha256 above is the read at the run's start block; the V3 metadata hash varies between blocks, see `BASELINE-V3.md` ("The metadata hash moves between blocks"). Call verdicts rest on the read-back receipts below, not on that hash.
+- Explorer: the Portaldot-hosted V3 console, https://node-console.portaldot.dev/ , takes a block number or block hash (no tx-hash search); use the block number from the Extrinsic column or the block hash from the table.
 - Free balance before the run 3000000000000000 base units, after 2995558364584806 (14 decimals; the self-transfer returns to the same account, the difference is fees)
 - Source: `evidence/canary_v3.json` (full receipts: events, weight, fee)
 - Read-back: the block is fetched by hash, the extrinsic at the receipt's index must have the tx hash and

@@ -321,6 +321,8 @@ def _v3_section(record: dict, heading: str) -> list[str]:
         "",
         f"- Run `{record['run_id']}`, endpoint `{record['endpoint']}`, metadata sha256 "
         f"`{record['metadata_sha256'][:16]}…` read at block `{record['started_at_block']}`",
+        "- The metadata sha256 above is the read at the run's start block; the V3 metadata hash varies between blocks, see `BASELINE-V3.md` (\"The metadata hash moves between blocks\"). Call verdicts rest on the read-back receipts below, not on that hash.",
+        "- Explorer: the Portaldot-hosted V3 console, https://node-console.portaldot.dev/ , takes a block number or block hash (no tx-hash search); use the block number from the Extrinsic column or the block hash from the table.",
         f"- Free balance before the run {record['free_before']} base units, after {record.get('free_after', 'not read')} "
         "(14 decimals; the self-transfer returns to the same account, the difference is fees)",
         "- Source: `evidence/canary_v3.json` (full receipts: events, weight, fee)",
