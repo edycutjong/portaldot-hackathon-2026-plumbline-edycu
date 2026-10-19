@@ -67,14 +67,14 @@ mainnet spec 1002 and are not V3 findings.**
 |---|---|
 | Identity the sources gave → what the chain reports | spec `portaldotV3`/3000, symbol `tPOTv3`, 70 pallets → `portaldot-v3`/**3002**, **`tPOT`**, **69** pallets |
 | Runtime | 69 pallets, 480 calls (mainnet-1002: 31 / 155); metadata V14, sha256 `38101435…394c` |
-| Diff `mainnet-1002` → `v3` | 516 rows: 40 pallets added, 2 removed (`Gilt`, `RandomnessCollectiveFlip`), 12 calls removed, 2 renamed (`Proxy.anonymous` → `create_pure`) |
+| Diff `mainnet-1002` → `v3` | 516 rows: 40 pallets added, 2 removed (`Gilt`, `RandomnessCollectiveFlip`), 73 calls added, 12 removed, 2 renamed (`Proxy.anonymous` → `create_pure`, `Proxy.kill_anonymous` → `kill_pure`), 99 argument changes, 119 constant changes, 169 event changes (`docs/BASELINE-V3.md`) |
 | Mainnet docs vs the runtime | the 79 calls whose docs and runtime disagree on spec 1002 become **2** on V3 (`Balances.transfer` absent, `ElectionProviderMultiPhase.governance_fallback` arguments) |
 | V3 guide's sample code | all 46 `compose_call` sites (46 distinct calls; one site is dynamic and resolves to two) name calls that exist on V3 |
 | V3 guide FAQ | 5 of the 12 modules the guide's FAQ lists for V3.0 are not on the V3 testnet: `conviction_voting`, `cumulus_parachain_system`, `ibridge`, `paras`, `referenda` (by pallet name) |
 | `plumbline check examples/mainnet-dapp --target v3` | 9 findings, blocking 0 (on mainnet-1002: blocking 5) |
 | Canaries | `System.remark_with_event`, `Balances.transfer_keep_alive` (to itself), `Utility.batch_all`: 3 transactions, blocks 106424–106426, all success, read back 3/3 |
 
-V3 canary transactions (signer `5EhP3KWtUkaRuFUoejCfmYHfi54d2fomNFoyVjNFFsRUzDsb`, each re-read from its block; the same table, with block hashes, is in [`docs/PROOF.md`](docs/PROOF.md)):
+V3 canary transactions (signer `5EhP3KWtUkaRuFUoejCfmYHfi54d2fomNFoyVjNFFsRUzDsb`, each re-read from its block; the same table, with block hashes, is in [`docs/PROOF.md`](docs/PROOF.md); look any of them up in the official console, https://node-console.portaldot.dev/):
 
 | Call | Extrinsic | Tx hash |
 |---|---|---|
