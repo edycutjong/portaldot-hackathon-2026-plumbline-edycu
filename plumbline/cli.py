@@ -40,7 +40,7 @@ def runtime(profile: str = typer.Option(..., "--profile", "-p", help="mainnet-10
     try:
         prof = md.get_profile(profile)
         if prof.stored_file:
-            blob = open(prof.stored_file, "rb").read()
+            blob = Path(prof.stored_file).read_bytes()
             decoded = md.decode_metadata(blob, prof.preset)
             record = {"profile": prof.name, "label": prof.label, "measured_as": prof.measured_as,
                       "metadata_version": md.metadata_version(blob),
@@ -315,13 +315,16 @@ CANARY_RECORDS = {"v3": Path("evidence/canary_v3.json"), "interim-sdk": Path("ev
 @app.command("canary")
 def canary_cmd(profile: str = typer.Option(..., "--profile", "-p", help="v3 (funded seed file) | interim-sdk (dev keys, local chain only)"),
                out: Path = typer.Option(None, help="the receipts record (default evidence/canary_<profile>.json)"),
-               proof: Path = typer.Option(Path("docs/PROOF.md"), help="the proof table generated from the records"),
+               proof: Path = typer.Option(None, help="the proof table (default docs/PROOF.md for the canonical record; "
+                                                      "else <out>.PROOF.md beside a custom --out)"),
                url: str = typer.Option(None, help="override the profile endpoint (loopback only for dev keys)"),
                replace: bool = typer.Option(False, "--replace", help="overwrite an existing receipts record")) -> None:
     """Send the canary calls, keep each receipt, read each back from its block.
     v3: System.remark_with_event, Balances.transfer_keep_alive (to itself), Utility.batch_all.
     interim-sdk: Balances.transfer_keep_alive, System.remark_with_event, Revive.map_account (labelled not V3)."""
     out = out or CANARY_RECORDS.get(profile, Path(f"evidence/canary_{profile}.json"))
+    # a custom --out never silently rewrites docs/PROOF.md (the canonical table holds both chains' sections)
+    proof = proof or (Path("docs/PROOF.md") if out == CANARY_RECORDS.get(profile) else out.with_suffix(".PROOF.md"))
     existing = [p for p in (out, proof) if p.exists()]
     if existing and not replace:  # the proof table is guarded too: --out elsewhere must not overwrite PROOF.md
         typer.echo(f"error: {', '.join(map(str, existing))} exists; pass --replace to overwrite with a new run",

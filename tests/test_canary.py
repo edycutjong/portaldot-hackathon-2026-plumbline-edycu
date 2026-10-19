@@ -58,6 +58,10 @@ def test_seed_file_must_be_private_nonempty_valid_and_outside_the_repo(tmp_path)
     with pytest.raises(canary.CanaryError) as err:
         canary.seed_keypair(seed)
     assert "SECRETWORD" not in str(err.value) and "not hold a valid seed" in str(err.value)  # never echoes the seed
+    for uri in ("//Alice", "//alice//stash", "//Ferdie"):
+        seed.write_text(uri)
+        with pytest.raises(canary.CanaryError, match="well-known dev URI"):
+            canary.seed_keypair(seed)
     inside = ROOT / "evidence" / "tmp.seed"
     with pytest.raises(canary.CanaryError, match="outside this repository"):
         canary.seed_keypair(inside)
@@ -91,6 +95,48 @@ def test_v3_run_refuses_an_unfunded_signer_before_sending(tmp_path, monkeypatch)
     monkeypatch.setattr(md, "fetch_metadata_blob", lambda s, h: b"meta\x0e")
     with pytest.raises(canary.CanaryError, match="fund it"):
         canary.run_v3(seed_file=seed)
+
+
+def test_v3_run_reads_the_balance_after_at_the_last_receipts_block(tmp_path, monkeypatch):
+    seed = tmp_path / "s.seed"
+    seed.write_text("//Plumbline//test")
+    seed.chmod(0o600)
+    last, queried = "0x" + "22" * 32, []
+
+    class Chain:
+        def rpc_request(self, method, params):
+            return {"result": {"specName": "portaldot-v3", "specVersion": 3002}}
+
+        def query(self, *a, **k):
+            queried.append(k.get("block_hash"))
+            return _Acct(10**20)
+
+        def compose_call(self, *a, **k):
+            return None
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(md, "connect", lambda *a, **k: Chain())
+    monkeypatch.setattr(md, "pinned_head", lambda s: "0x" + "11" * 32)
+    monkeypatch.setattr(md, "fetch_metadata_blob", lambda s, h: b"meta\x0e")
+    monkeypatch.setattr(canary, "send", lambda *a, **k: {"block_hash": last})
+    record = canary.run_v3(seed_file=seed)
+    assert queried == ["0x" + "11" * 32, last] and record["free_after"] == str(10**20)
+
+
+def test_cli_canary_with_a_custom_out_never_rewrites_the_canonical_proof(tmp_path, monkeypatch):
+    from typer.testing import CliRunner
+
+    from plumbline.cli import app
+
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs" / "PROOF.md").write_text("kept")
+    monkeypatch.chdir(tmp_path)
+    record = json.loads((ROOT / "evidence" / "canary_interim.json").read_text())
+    monkeypatch.setattr(canary, "run", lambda *a, **k: record)
+    result = CliRunner().invoke(app, ["canary", "--profile", "interim-sdk", "--out", str(tmp_path / "x.json")])
+    assert (tmp_path / "docs" / "PROOF.md").read_text() == "kept" and (tmp_path / "x.PROOF.md").exists(), result.output
 
 
 class FakeScale:
