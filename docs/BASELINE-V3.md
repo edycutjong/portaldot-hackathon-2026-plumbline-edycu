@@ -75,7 +75,7 @@ Removed calls: `Assets.destroy`, `Authorship.set_uncles`, `Balances.set_balance`
    and `RegistrarRelay` exist, `Referenda` and `ConvictionVoting` do not.
 4. **The mainnet docs match the V3 runtime far better than the mainnet one** (194 of 196 documented calls match by name and arguments on V3, against 117 of 196 on spec 1002). Joining the two ledgers on the 196 documented calls
    (`evidence/ledger_1002.json` vs `evidence/ledger_v3.json`, source `mainnet-docs`): the 79 calls whose docs and runtime
-   disagree on spec 1002 (64 absent, 15 with different arguments) become 2 on V3. All 64 absent calls exist on V3 (the six
+   disagree on spec 1002 (64 not found by name: 62 ABSENT and 2 DRIFTED, i.e. the Proxy renames; 15 with different arguments) become 2 on V3. All 64 exist on V3, the 2 Proxy ones under their new names (the six
    `Treasury` calls the docs list, `spend`, `payout`, … among them); 14 of the 15 argument mismatches now match. The two that
    disagree on V3 are `Balances.transfer` (absent) and `ElectionProviderMultiPhase.governance_fallback` (arguments).
    Plumbline cannot say which runtime the docs were written for.

@@ -2,7 +2,7 @@
 
 **Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof.** Today it gives a verdict for every documented call on the Portaldot V3 testnet (spec 3002) and on mainnet (spec 1002), diffs the two runtimes, checks a dApp against either, and has sent 3 canary transactions to V3 and read them back from their blocks. Every other documented entry on V3 is at most UNPROVEN (present, no transaction sent), or ARGS-UNCHECKED / UNKNOWN-DOC (nothing to compare), or carries a drift verdict (ABSENT, ARG_DRIFT).
 
-**First V3 findings (measured 2026-10-19, spec 3002; details in [`docs/BASELINE-V3.md`](docs/BASELINE-V3.md)):** `Balances.transfer`, which the mainnet docs list, does not exist on V3 (verdict ABSENT); 5 of the 12 modules the V3 guide's FAQ lists for V3.0 are not on the testnet (by pallet name); the 79 mainnet-docs calls that disagree with the runtime on spec 1002 become 2 on V3; the chain reports `portaldot-v3`/3002/`tPOT`/69 pallets where the written sources said `portaldotV3`/3000/`tPOTv3`/70.
+**First V3 findings (measured 2026-10-19, spec 3002; details in [`docs/BASELINE-V3.md`](docs/BASELINE-V3.md)):** `Balances.transfer`, which the mainnet docs list, does not exist on V3 (verdict ABSENT); 5 of the 12 modules the V3 guide's FAQ lists for V3.0 are not on the testnet (by pallet name); the 79 mainnet-docs calls that disagree with the runtime on spec 1002 become 2 on V3; the chain reports `portaldot-v3`/3002/`tPOT`/69 pallets where the V3 guide said `tPOTv3` and a third-party measurement (see `docs/BASELINE-V3.md`) said `portaldotV3`/3000/70.
 
 ![status](https://img.shields.io/badge/status-prototype-orange)
 ![tests](https://img.shields.io/badge/tests-263%20passing-brightgreen)
