@@ -72,6 +72,14 @@ mainnet spec 1002 and are not V3 findings.**
 | `plumbline check examples/mainnet-dapp --target v3` | 9 findings, blocking 0 (on mainnet-1002: blocking 5) |
 | Canaries | `System.remark_with_event`, `Balances.transfer_keep_alive` (to itself), `Utility.batch_all`: 3 transactions, blocks 106424–106426, all success, read back 3/3 |
 
+V3 canary transactions (signer `5EhP3KWtUkaRuFUoejCfmYHfi54d2fomNFoyVjNFFsRUzDsb`, each re-read from its block; the same table, with block hashes, is in [`docs/PROOF.md`](docs/PROOF.md)):
+
+| Call | Extrinsic | Tx hash |
+|---|---|---|
+| `System.remark_with_event` | `106424-1` | `0xf54430571069e41bfe629c6c77609a279d0ad82fa2a83e45b0c3575bc941e6f5` |
+| `Balances.transfer_keep_alive` (to itself) | `106425-1` | `0xa7effe5d5ab7d7c512690d285065fd83919f8b83dc04de1630e1e4ddff91d90b` |
+| `Utility.batch_all` | `106426-1` | `0x25e0352284f3a2455e03c7c02c625b8bd1ff692e244bafbc51d1adf20f5dfaa8` |
+
 Full tables, producers and dates: [`docs/BASELINE-V3.md`](docs/BASELINE-V3.md); every transaction hash: [`docs/PROOF.md`](docs/PROOF.md).
 V3 ledger: `evidence/ledger_v3.json` (549 verdict rows, blake2-256 `dc808404…1e34`).
 
