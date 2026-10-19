@@ -33,6 +33,7 @@ def main() -> int:
     ap.add_argument("--docs-table", type=Path, default=Path("evidence/docs_1002.json"))
     ap.add_argument("--docs-cache", type=Path, help="parse fetched pages instead of the committed table")
     ap.add_argument("--db", type=Path, default=Path(".cache/ledger.db"))
+    ap.add_argument("--receipts", type=Path, help="a canary record for this profile (its receipts become PROVEN verdicts)")
     ap.add_argument("--out", type=Path, required=True)
     return produce.ledger(produce.Args(**vars(ap.parse_args())))
 

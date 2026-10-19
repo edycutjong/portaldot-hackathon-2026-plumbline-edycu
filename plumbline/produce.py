@@ -22,6 +22,7 @@ class Args:
     docs_table: Path = Path("evidence/docs_1002.json")
     docs_cache: Path | None = None
     db: Path = Path(".cache/ledger.db")
+    receipts: Path | None = None  # a canary record (evidence/canary_v3.json) whose receipts become PROVEN verdicts
 
 
 BASELINE_NOTE = ("mainnet-1002 is the read-only baseline: verdicts of the V3 guide's entries (v3-guide, v3-demo, "
@@ -86,6 +87,13 @@ def ledger(args: Args, say=print, warn=None) -> int:
         if doubled:
             return fail(f"{args.docs_table} documents these calls twice: {doubled}")
 
+    receipts: list[dict] = []
+    if args.receipts:
+        canary_record = json.loads(args.receipts.read_text())
+        if canary_record.get("profile") != runtime.profile:
+            return fail(f"{args.receipts} is a {canary_record.get('profile')} canary record, the ledger is {runtime.profile}")
+        receipts = canary_record["receipts"]
+
     entries = plumb.entries_from_guide(sites) + plumb.entries_from_mainnet_docs(rows)
     inputs = {
         "guide": {"repo": guide.GUIDE_REPO, "commit": guide.GUIDE_COMMIT, "files": files,
@@ -98,7 +106,7 @@ def ledger(args: Args, say=print, warn=None) -> int:
     tmp_db = args.db.with_name(args.db.name + ".tmp")
     tmp_db.unlink(missing_ok=True)
     try:
-        data, conn = plumb.build(entries, [(runtime, surface)], inputs, db=tmp_db)
+        data, conn = plumb.build(entries, [(runtime, surface)], inputs, db=tmp_db, receipts={runtime.profile: receipts})
         conn.close()
     except (plumb.LedgerError, sqlite3.Error) as exc:  # e.g. a malformed table colliding on a primary key
         tmp_db.unlink(missing_ok=True)

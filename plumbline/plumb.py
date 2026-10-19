@@ -449,12 +449,14 @@ def export(conn: sqlite3.Connection, inputs: dict | None = None) -> dict:
 
 
 def build(entries: list[DocEntry], runtimes: list[tuple[Runtime, Surface]], inputs: dict | None = None,
-          db: str | Path = ":memory:", renames: tuple[Rename, ...] = RENAMES) -> tuple[bytes, sqlite3.Connection]:
-    """Entries × runtimes -> (canonical ledger.json bytes, the open ledger). `db` must not exist yet."""
+          db: str | Path = ":memory:", renames: tuple[Rename, ...] = RENAMES,
+          receipts: dict[str, list[dict]] | None = None) -> tuple[bytes, sqlite3.Connection]:
+    """Entries × runtimes -> (canonical ledger.json bytes, the open ledger). `db` must not exist yet.
+    `receipts` maps a profile name to the canary receipts sent to it; each is checked against its runtime."""
     if str(db) != ":memory:" and Path(db).exists():
         raise LedgerError(f"{db} exists; the ledger is rebuilt from its inputs, never patched in place")
     conn = open_ledger(db)
     add_entries(conn, entries)
     for rt, surface in runtimes:
-        plumb(conn, rt, surface, renames)
+        plumb(conn, rt, surface, renames, receipts=(receipts or {}).get(rt.profile, []))
     return canonical(export(conn, inputs)), conn

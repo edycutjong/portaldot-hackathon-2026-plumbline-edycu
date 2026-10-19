@@ -231,9 +231,10 @@ def plumb_cmd(profile: str = typer.Option(..., "--profile", "-p", help="stored:<
               guide_dir: Path = typer.Option(None, help="parse a clean guide clone instead of the committed table"),
               docs_table: Path = typer.Option(Path("evidence/docs_1002.json")),
               docs_cache: Path = typer.Option(None, help="parse fetched docs pages instead of the committed table"),
-              db: Path = typer.Option(Path(".cache/ledger.db"))) -> None:
+              db: Path = typer.Option(Path(".cache/ledger.db")),
+              receipts: Path = typer.Option(None, help="a canary record for this profile, e.g. evidence/canary_v3.json")) -> None:
     """Build the drift ledger: one verdict per documented call, module or runtime API on one runtime."""
-    code = produce.ledger(produce.Args(profile, runtime_record, out, guide_table, guide_dir, docs_table, docs_cache, db),
+    code = produce.ledger(produce.Args(profile, runtime_record, out, guide_table, guide_dir, docs_table, docs_cache, db, receipts),
                           say=typer.echo, warn=lambda m: typer.echo(m, err=True))
     if code:
         raise typer.Exit(code)

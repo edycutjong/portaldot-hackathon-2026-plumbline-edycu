@@ -85,3 +85,20 @@ def test_a_stored_profile_that_is_not_metadata_is_a_usage_error():
     for args in (["runtime", "--profile", f"stored:{GOLDEN}"], ["diff", f"stored:{GOLDEN}", f"stored:{GOLDEN}"]):
         result = CliRunner().invoke(app, args)
         assert result.exit_code == 2 and "missing 'meta' magic" in result.output, args
+
+
+def test_plumb_cli_rebuilds_the_committed_v3_ledger_with_its_canary_receipts(tmp_path):
+    out = tmp_path / "ledger.json"
+    result = fresh(["plumb", "--profile", "stored:fixtures/metadata_v3.scale",
+                    "--runtime-record", "evidence/metadata_v3.json", "--receipts", "evidence/canary_v3.json",
+                    "--out", str(out), "--db", str(tmp_path / "ledger.db")], ROOT)
+    assert result.returncode == 0, result.stderr
+    assert out.read_bytes() == (ROOT / "evidence" / "ledger_v3.json").read_bytes()
+    ledger = json.loads(out.read_text())
+    proven = {(r["pallet"].lower(), r["call"]) for r in ledger["verdicts"] if r["status"] == "PROVEN"}
+    assert proven == {("system", "remark_with_event"), ("balances", "transfer_keep_alive"), ("utility", "batch_all")}
+    # a receipt record for another profile is refused
+    bad = fresh(["plumb", "--profile", "stored:fixtures/metadata_v3.scale", "--runtime-record", "evidence/metadata_v3.json",
+                 "--receipts", "evidence/canary_interim.json", "--out", str(tmp_path / "x.json"),
+                 "--db", str(tmp_path / "x.db")], ROOT)
+    assert bad.returncode == 1 and "canary record" in bad.stderr
