@@ -34,7 +34,7 @@ re-launched; Plumbline does not know which. The V3 profile now pins what the cha
 hash, same length 561916) hashes to `963152285a7f94083ed20f938126cb65c325a9717156e4d5b6561b9e9f2f3456`: one byte differs, at
 offset 549822, inside the default value of the storage item `Revive.EthBlockBuilderIR`. Re-reading the stored block
 returns the stored blob exactly. So a stamp on any V3 row means "metadata read at that block"; the stored blob is the one
-at `0x80f9dc0b…4892`, and the `:code` hash is the stable identity. A third value (`c64385ba…`) appears at blocks 106422–106450, which include the three canary blocks. The same behaviour was seen on the interim stand-in chain.
+at `0x80f9dc0b…4892`, and the `:code` hash is the stable identity. A third value (`c64385ba…`) appears at blocks 106422–106473, which include the three canary blocks. The same behaviour was seen on the interim stand-in chain.
 
 The mainnet side of the comparison: spec 1002, metadata V13, 31 pallets, 155 calls, 69 constants, 119 events
 (`docs/BASELINE-1002.md`; same `evidence/baseline_v3.json`).
@@ -99,7 +99,7 @@ Command: `python scripts/build_ledger.py --profile stored:fixtures/metadata_v3.s
 | `runtime` (live calls no source names) | UNDOCUMENTED 252 |
 
 - All 46 `compose_call` sites in the V3 guide's demo scripts name a call that exists on V3: 46 distinct calls (one site is
-  dynamic and resolves to two candidates), 45 UNPROVEN and 1 PROVEN by the canary below: the guide's sample code does not call anything V3 lacks.
+  dynamic and resolves to two candidates), 45 UNPROVEN and 1 PROVEN by the canary below: the guide's `compose_call` sample code does not call anything V3 lacks (its one runtime-API call, `ReviveApi.call`, cannot be checked from V14 metadata).
 - 195 of the 196 calls the mainnet docs list exist on V3 (the one absent is `Balances.transfer`); 194 of them also match the
   documented arguments. The one that exists with different arguments is `ElectionProviderMultiPhase.governance_fallback` (documented `maybe_max_voters, maybe_max_targets`; live: none).
 - The three `UNKNOWN-DOC` rows are the `ReviveApi` runtime API: V14 metadata as Plumbline reads it lists no runtime

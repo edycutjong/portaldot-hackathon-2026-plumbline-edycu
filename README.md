@@ -1,6 +1,6 @@
 # Plumbline
 
-**Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof.** Today it gives a verdict for every documented call on the Portaldot V3 testnet (spec 3002) and on mainnet (spec 1002), diffs the two runtimes, checks a dApp against either, and has sent 3 canary transactions to V3 and read them back from their blocks. Every other documented entry on V3 is at most UNPROVEN (the name, or the listed module, is present and no transaction was sent) or carries a drift verdict.
+**Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof.** Today it gives a verdict for every documented call on the Portaldot V3 testnet (spec 3002) and on mainnet (spec 1002), diffs the two runtimes, checks a dApp against either, and has sent 3 canary transactions to V3 and read them back from their blocks. Every other documented entry on V3 is at most UNPROVEN (present, no transaction sent), or ARGS-UNCHECKED / UNKNOWN-DOC (nothing to compare), or carries a drift verdict (ABSENT, ARG_DRIFT).
 
 ![status](https://img.shields.io/badge/status-prototype-orange)
 ![tests](https://img.shields.io/badge/tests-260%20passing-brightgreen)
@@ -84,7 +84,7 @@ Golden `check` outputs are committed for `mainnet-1002` (`fixtures/expected_chec
 
 ### Blockchain Relevance
 
-Plumbline works on Portaldot's own surface: Substrate runtime metadata, the extrinsics the official docs describe, and the
+Plumbline works on Portaldot's own surface: Substrate runtime metadata, the extrinsics the published mainnet docs (portaldot-dev.readthedocs.io) describe, and the
 V3 testnet guide. It is meant to be re-run against each runtime Portaldot ships. The target is **Portaldot V3**, measured
 on 2026-10-19 (spec 3002); mainnet spec 1002 (read-only) is the baseline it is compared with; a local upstream
 polkadot-sdk dev chain (`interim-sdk`, a stand-in, **not V3**) is kept as test input and for the canary runner's first run.
