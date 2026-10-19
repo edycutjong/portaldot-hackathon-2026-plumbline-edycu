@@ -37,6 +37,7 @@ from urllib.parse import urlparse
 from . import metadata as md
 
 DEV_PROFILES = ("interim-sdk",)
+WELL_KNOWN_DEV_HEADS = ("alice", "bob", "charlie", "dave", "eve", "ferdie")  # public keys, never a funded V3 signer
 LABEL = "interim-sdk — not V3"
 LABEL_V3 = "profile v3 — Portaldot V3 testnet"
 V3_SEED_FILE = Path("~/.config/plumbline/v3-funder.seed")
@@ -168,6 +169,8 @@ def seed_keypair(path: Path = V3_SEED_FILE):
     text = path.read_text().strip()
     if not text:
         raise CanaryError(f"{path} is empty")
+    if text.startswith("//") and text[2:].split("//", 1)[0].strip().lower() in WELL_KNOWN_DEV_HEADS:
+        raise CanaryError(f"{path} holds a well-known dev URI: the funded V3 account must not use a public key")
     try:
         if text.startswith("0x"):
             return Keypair.create_from_seed(text)
@@ -213,7 +216,9 @@ def run_v3(url: str | None = None, run_id: str | None = None, seed_file: Path = 
             except Exception as exc:  # keep what was already sent: those receipts are real
                 raise CanaryError(f"{pallet}.{call} failed before inclusion was confirmed: {type(exc).__name__}: {exc}",
                                   partial=record) from exc
-        record["free_after"] = str(substrate.query("System", "Account", [signer.ss58_address]).value["data"]["free"])
+        bound = record["receipts"][-1]["block_hash"] if record["receipts"] else head  # the last measured block
+        record["free_after"] = str(
+            substrate.query("System", "Account", [signer.ss58_address], block_hash=bound).value["data"]["free"])
     finally:
         substrate.close()
     return record
