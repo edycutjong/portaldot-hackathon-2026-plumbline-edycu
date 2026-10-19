@@ -98,6 +98,6 @@ repository.
 
 ## Not in this file
 
-- Anything on Portaldot V3: **pending** (V3 testnet unreachable on 2026-10-14).
-- Canary receipts: all on a stand-in chain, not V3 — see `PROOF.md`. `plumbline diff` against the stand-in prints a
+- Anything on Portaldot V3: this file was written on 2026-10-14, when the V3 testnet was unreachable; the V3 measurements (2026-10-19) are in `BASELINE-V3.md`.
+- Canary receipts: the 2026-10-14 ones are on a stand-in chain, not V3; the V3 ones are in `PROOF.md`. `plumbline diff` against the stand-in prints a
   "STAND-IN, NOT V3" banner and no number from it is used anywhere.
