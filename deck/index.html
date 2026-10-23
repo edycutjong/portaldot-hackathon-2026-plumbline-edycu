@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plumbline: Portaldot's documented calls, plumbed against V3 (pitch deck)</title>
+<meta name="description" content="Plumbline pitch deck, Portaldot Hacker House 2026, Modular Cloud & Middleware. Documented call → verdict → proof on the Portaldot V3 testnet (spec 3002).">
+<!--
+  Plumbline pitch deck. One file, 10 slides on a fixed 1920x1080 stage (scaled to fit, letterboxed).
+  Keys:   Right / Space / PageDown = next · Left / PageUp = previous · Home / End · 1-9, 0 = jump to slide
+          Esc = overview grid (click a sheet to open it) · F = fullscreen · P = presenter notes · C = contrast debug
+          index.html#4 opens slide 4. Click the right half of the screen for next, the left half for previous.
+  PDF:    print (Cmd/Ctrl+P), margins none, background graphics on: one slide per page.
+          docs/pitch-deck.pdf is printed from this file by headless Chromium.
+  Images: none. The mark, the architecture drawing and the QR code are inline SVG. The terminal text on slide 5 is
+          evidence/readback_v3.txt with column padding collapsed. Every figure is from README.md, docs/PROOF.md,
+          docs/BASELINE-V3.md or evidence/ at build 7fd4192.
+  Fonts:  Barlow Condensed, IBM Plex Sans, IBM Plex Mono (Google Fonts); tokens = the project's design tokens.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #F1EEE4;  /* drafting vellum: warm off-white, reads as paper, not screen-white */
+  --ink:     #1C2530;  /* graphite drafting ink, blue-black */
+  --muted:   #6E6B60;  /* pencil grey for grid, secondary labels, title-block rules */
+  --before:  #2F64A0;  /* state: documented / as-designed (cyanotype blueprint line) */
+  --after:   #C0341C;  /* state: drifted — redlined correction; fires ONLY where plumb finds drift */
+  --proven:  #1C2530;  /* state: proven — ink tick + stamped tx hash (deliberately ink, not green) */
+  --bob:     #9C7630;  /* the plumb bob only (brass) — never text. Amended 2026-09-27 from #B08A3E: the v2 icon makes the bob an essential shape, and 3.58:1 on vellum clears the 3:1 floor */
+  --rule:    #D9D3C3;  /* vellum grid + table rules */
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;  /* title-block lettering of engineering drawings */
+  --font-body:    "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-data:    "IBM Plex Mono", ui-monospace, monospace;  /* ONLY call paths (pallet.call), tx/block hashes, spec numbers, CLI output */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--ink); overflow: hidden;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { font-family: var(--font-body); color: var(--ink); -webkit-font-smoothing: antialiased; }
+body.idle { cursor: none; }
+.viewport { position: fixed; inset: 0; }
+.stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 50% 50%; }
+
+/* the sheet: vellum, a faint grid, a drawing border */
+.slide { position: absolute; inset: 0; display: none; overflow: hidden; background-color: var(--bg);
+  background-image: linear-gradient(var(--rule) 1px, transparent 1px), linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 48px 48px; background-position: 23px 23px;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.slide.active { display: block; }
+.slide::before { content: ""; position: absolute; inset: 28px; border: 2px solid var(--ink); pointer-events: none; z-index: 3; }
+
+/* the signature: a datum hung from the top border, a brass bob at its foot */
+.datum { position: absolute; left: 118px; top: 30px; width: 2px; height: 912px; background: var(--ink); z-index: 1; }
+.datum::before { content: ""; position: absolute; left: -7px; top: 14px; width: 16px; height: 16px; border-radius: 50%; background: var(--ink); }
+.datum::after { content: ""; position: absolute; left: -21px; top: 100%; width: 44px; height: 64px; background: var(--bob);
+  clip-path: polygon(50% 100%, 0 40%, 10% 8%, 28% 0, 72% 0, 90% 8%, 100% 40%); }
+
+/* type */
+.h { font: 700 88px/0.98 var(--font-display); text-transform: uppercase; letter-spacing: .04em; color: var(--ink); }
+.sub { font: 400 27px/1.45 var(--font-body); color: var(--ink); }
+.cap { font: 400 20px/1.45 var(--font-body); color: var(--muted); }
+.lab { font: 600 22px/1.1 var(--font-display); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+.lab.blue { color: var(--before); }
+code, .mono { font-family: var(--font-data); font-weight: 500; }
+a { color: inherit; text-decoration: underline; text-decoration-color: var(--before); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.blue { color: var(--before); }
+.red { color: var(--after); }
+.struck { color: var(--before); text-decoration: line-through; text-decoration-color: var(--after); text-decoration-thickness: 4px; }
+.note { font: italic 400 23px/1.35 var(--font-data); color: var(--after); }
+.content { position: absolute; left: 200px; right: 100px; top: 92px; }
+
+/* stamps: ink for proven, vermilion only where plumb found drift */
+.stamp { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 176px;
+  border: 3px solid var(--ink); padding: 7px 14px 6px; color: var(--ink); white-space: nowrap; background: var(--bg);
+  font: 700 21px/1 var(--font-display); text-transform: uppercase; letter-spacing: .14em; }
+.stamp .id { font: 600 21px/1 var(--font-data); letter-spacing: 0; text-transform: none; }
+.stamp.redline { color: var(--after); border-color: var(--after); transform: rotate(-2.5deg); font-size: 25px; padding: 11px 14px 9px; }
+.stamp.soft { color: var(--muted); border-color: var(--muted); border-style: dashed; }
+
+/* title block (every sheet) */
+.tb { position: absolute; right: 30px; bottom: 30px; height: 56px; display: flex; z-index: 4; background: var(--bg);
+  border-top: 2px solid var(--ink); border-left: 2px solid var(--ink);
+  font: 600 19px/1 var(--font-display); text-transform: uppercase; letter-spacing: .1em; }
+.tb > span { display: flex; align-items: center; padding: 0 20px; border-right: 1.5px solid var(--ink); }
+.tb > span:last-child { border-right: 0; }
+.tb .name { font-weight: 700; letter-spacing: .14em; }
+.tb .sheetno { font-family: var(--font-data); font-weight: 500; letter-spacing: 0; }
+.tb .ver { font-family: var(--font-data); font-weight: 500; text-transform: none; letter-spacing: 0; }
+.fl { position: absolute; left: 200px; bottom: 48px; z-index: 4; font: 600 18px/1 var(--font-display); text-transform: uppercase;
+  letter-spacing: .1em; color: var(--muted); }
+
+/* terminal excerpt (CLI output keeps a terminal look) */
+.term { background: var(--ink); color: var(--bg); border-radius: 10px; overflow: hidden; }
+.term .bar { display: flex; align-items: center; gap: 10px; padding: 14px 22px; border-bottom: 1px solid rgba(241,238,228,.18); }
+.term .bar i { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid rgba(241,238,228,.55); }
+.term .bar span { margin-left: 14px; font: 400 18px var(--font-data); opacity: .7; }
+.term pre { font: 400 21px/1.6 var(--font-data); padding: 20px 28px 24px; white-space: pre; }
+.term .dim { opacity: .62; }
+.term b { font-weight: 600; }
+
+/* ---------- 1 cover ---------- */
+.s1 .dno { position: absolute; left: 120px; top: 110px; font: 500 21px var(--font-data); color: var(--muted); letter-spacing: .02em; }
+.s1 .wm { position: absolute; left: 112px; top: 182px; font: 700 248px/0.86 var(--font-display); letter-spacing: -.005em; color: var(--ink); }
+.s1 .wm span { color: var(--before); }
+.s1 .tag { position: absolute; left: 120px; top: 456px; width: 820px; font: 600 54px/1.08 var(--font-display); color: var(--ink); }
+.s1 .lede { position: absolute; left: 120px; top: 668px; width: 800px; font: 400 27px/1.45 var(--font-body); }
+.s1 .chips { position: absolute; left: 120px; top: 868px; display: flex; border: 2px solid var(--ink); background: var(--bg);
+  font: 600 21px/1 var(--font-display); text-transform: uppercase; letter-spacing: .1em; }
+.s1 .chips span { padding: 15px 20px 13px; border-right: 1.5px solid var(--ink); }
+.s1 .chips span:last-child { border-right: 0; font-family: var(--font-data); font-weight: 500; text-transform: none; letter-spacing: 0; }
+.s1 .hero { position: absolute; left: 1010px; top: 128px; width: 820px; height: 800px; }
+.s1 .hero text { font-family: var(--font-data); }
+.swing { transform-box: view-box; transform-origin: 60px 40px; animation: swing 3.4s cubic-bezier(.3,.7,.4,1) .2s backwards; }
+@keyframes swing { 0% { transform: rotate(7deg); } 28% { transform: rotate(-4.5deg); } 52% { transform: rotate(2.4deg); }
+  72% { transform: rotate(-1.1deg); } 88% { transform: rotate(.4deg); } 100% { transform: rotate(0deg); } }
+.draw { stroke-dasharray: 330; stroke-dashoffset: 0; animation: draw .7s ease-out 3.5s backwards; }
+@keyframes draw { from { stroke-dashoffset: 330; } }
+.appear { animation: appear .5s ease-out 4.1s backwards; }
+@keyframes appear { from { opacity: 0; } }
+
+/* ---------- 2 problem ---------- */
+.s2 .scene { position: absolute; left: 200px; top: 262px; width: 640px; }
+.s2 .scene p { font: 400 29px/1.45 var(--font-body); }
+.s2 .scene p + p { margin-top: 26px; }
+.s2 .ids { position: absolute; left: 880px; top: 248px; width: 940px; border-collapse: collapse; }
+.s2 .ids th { text-align: left; padding: 0 16px 14px 0; border-bottom: 2px solid var(--ink); }
+.s2 .ids td { padding: 20px 16px 18px 0; border-bottom: 1.5px solid var(--rule); vertical-align: top; }
+.s2 .ids td.k { font: 600 23px/1.2 var(--font-display); text-transform: uppercase; letter-spacing: .08em; width: 120px; }
+.s2 .ids td.was { font: 500 24px/1.3 var(--font-data); width: 430px; white-space: nowrap; }
+.s2 .ids td.was small { white-space: normal; }
+.s2 .ids td.now { font: 600 23px/1.3 var(--font-data); white-space: nowrap; }
+.s2 .ids td small { display: block; margin-top: 6px; font: 400 17px/1.3 var(--font-body); color: var(--muted); }
+.s2 .band { position: absolute; left: 200px; right: 100px; top: 800px; display: grid; grid-template-columns: 1.35fr 1fr; gap: 60px;
+  border-top: 2px solid var(--ink); padding-top: 24px; }
+.s2 .band > div { display: flex; align-items: baseline; gap: 22px; }
+.s2 .band b { font: 700 64px/1 var(--font-display); }
+.s2 .band b.red { color: var(--after); }
+.s2 .band span { font: 400 25px/1.35 var(--font-body); }
+
+/* ---------- 3 what it does ---------- */
+.s3 .steps { position: absolute; left: 200px; right: 100px; top: 270px; display: grid; grid-template-columns: 1fr 64px 1fr 64px 1fr; }
+.s3 .step { border-top: 3px solid var(--ink); padding-top: 22px; }
+.s3 .step.one { border-top-color: var(--before); }
+.s3 .num { font: 700 30px/1 var(--font-display); letter-spacing: .1em; }
+.s3 .step h3 { font: 700 46px/1 var(--font-display); text-transform: uppercase; letter-spacing: .04em; margin: 12px 0 18px; }
+.s3 .step p { font: 400 24px/1.45 var(--font-body); min-height: 210px; }
+.s3 .step .cmd { margin-top: 16px; font: 500 23px/1.5 var(--font-data); }
+.s3 .arrow { align-self: start; padding-top: 72px; text-align: center; font: 600 46px/1 var(--font-display); color: var(--muted); }
+.s3 .vocab { position: absolute; left: 200px; right: 100px; top: 770px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.s3 .vocab .stamp { min-width: 0; font-size: 21px; }
+.s3 .vocab .stamp.redline { transform: none; font-size: 21px; padding: 7px 14px 6px; }
+.s3 .vocab .cap { margin-left: 8px; }
+.s3 .tools { position: absolute; left: 200px; right: 100px; top: 862px; font: 400 22px/1.4 var(--font-body); color: var(--ink); }
+
+/* ---------- 4 the V3 sheet (frozen) ---------- */
+.s4 .head { position: absolute; left: 200px; top: 92px; }
+.s4 .head .cap { margin-top: 12px; font-size: 22px; }
+.s4 .sheet { position: absolute; left: 119px; top: 266px; width: 1240px; }
+.s4 .cols { display: grid; grid-template-columns: 1fr 230px; padding: 0 0 10px 60px; border-bottom: 2px solid var(--ink); }
+.s4 .cols .lab:last-child { text-align: right; }
+.s4 .row { position: relative; display: grid; grid-template-columns: 1fr 230px; align-items: center; min-height: 84px;
+  padding: 12px 0; border-bottom: 1.5px solid var(--rule); }
+.s4 .row::before { content: ""; position: absolute; left: 0; top: 41px; width: 40px; height: 3px; background: var(--ink); }
+.s4 .row .call { padding-left: 60px; font: 500 28px/1.25 var(--font-data); }
+.s4 .row .call .note { display: block; margin-top: 6px; font-size: 22px; }
+.s4 .row .call .ok { display: block; margin-top: 6px; font: 400 20px/1.3 var(--font-body); color: var(--muted); }
+.s4 .row .st { text-align: right; }
+.s4 .row.off .call { padding-left: 122px; }
+.s4 .row.off::before { width: 100px; background: var(--after); }
+.s4 .row.off::after { content: ""; position: absolute; left: 99px; top: 29px; width: 3px; height: 27px; background: var(--after); }
+.s4 .tally { position: absolute; left: 1430px; top: 266px; width: 390px; }
+.s4 .tally table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.s4 .tally td { padding: 11px 0; border-bottom: 1.5px solid var(--rule); font: 500 23px/1.2 var(--font-data); }
+.s4 .tally td.n { text-align: right; font: 700 34px/1 var(--font-display); }
+.s4 .tally tr.tot td { border-bottom: 0; border-top: 2px solid var(--ink); }
+.s4 .tally p { margin-top: 20px; font: 400 20px/1.45 var(--font-body); }
+.s4 .tally p code { font-size: 18px; }
+
+/* ---------- 5 proof ---------- */
+.s5 .head .cap { margin-top: 12px; font-size: 22px; }
+.s5 .tx { position: absolute; left: 200px; right: 100px; top: 278px; border-collapse: collapse; width: 1620px; }
+.s5 .tx th { text-align: left; padding: 0 18px 12px 0; border-bottom: 2px solid var(--ink); }
+.s5 .tx td { padding: 18px 18px 16px 0; border-bottom: 1.5px solid var(--rule); font: 500 22px/1.25 var(--font-data); vertical-align: middle; }
+.s5 .tx td.hash { font-size: 19.5px; font-weight: 400; }
+.s5 .tx td, .s5 .tx th { white-space: nowrap; }
+.s5 .tx td .tick { display: inline-block; width: 28px; font-weight: 600; }
+.s5 .term { position: absolute; left: 200px; right: 100px; top: 556px; }
+.s5 .foot { position: absolute; left: 200px; right: 100px; top: 852px; }
+
+/* ---------- 6 architecture ---------- */
+.s6 .legend { position: absolute; right: 100px; top: 104px; display: flex; gap: 30px; font: 400 20px/1 var(--font-body); color: var(--muted); }
+.s6 .legend i { display: inline-block; width: 40px; height: 0; margin-right: 10px; vertical-align: middle; border-top: 2.5px solid var(--ink); }
+.s6 .legend i.p { border-top: 2.5px dashed var(--muted); }
+.s6 .legend i.s { border-top: 2.5px dotted var(--muted); }
+.s6 svg.arch { position: absolute; left: 200px; top: 214px; width: 1560px; height: auto; }
+.s6 svg.arch .m { font-family: var(--font-data); font-weight: 500; }
+.s6 svg.arch .s { font-family: var(--font-body); }
+.s6 svg.arch .d { font-family: var(--font-display); font-weight: 700; letter-spacing: .1em; }
+
+/* ---------- 7 why new ---------- */
+.s7 .alone { position: absolute; left: 200px; top: 262px; width: 760px; }
+.s7 .alone .r { display: grid; grid-template-columns: 250px 1fr; gap: 18px; padding: 24px 0; border-bottom: 1.5px solid var(--rule); }
+.s7 .alone .r b { font: 700 26px/1.15 var(--font-display); text-transform: uppercase; letter-spacing: .06em; }
+.s7 .alone .r span { font: 400 25px/1.4 var(--font-body); }
+.s7 .alone .r.us { border-top: 3px solid var(--ink); border-bottom: 0; margin-top: 18px; padding-top: 20px; }
+.s7 .alone .r.us span { font-weight: 500; }
+.s7 .chart { position: absolute; left: 1060px; top: 262px; width: 760px; }
+.s7 .bars { margin-top: 18px; }
+.s7 .bar { display: grid; grid-template-columns: 250px 1fr; align-items: center; height: 54px; }
+.s7 .bar span { font: 500 21px var(--font-data); }
+.s7 .bar div { display: flex; align-items: center; gap: 12px; font: 700 26px/1 var(--font-display); }
+.s7 .bar div i { display: block; height: 26px; background: var(--ink); }
+.s7 .chart .tot { margin-top: 12px; padding-top: 12px; border-top: 2px solid var(--ink); font: 400 21px/1.4 var(--font-body); }
+.s7 .chart .chk { margin-top: 26px; display: flex; align-items: center; gap: 22px; font: 400 22px/1.35 var(--font-body); }
+.s7 .chart .chk b { font: 700 50px/1 var(--font-display); white-space: nowrap; }
+
+/* ---------- 8 ecosystem ---------- */
+.s8 .stack { position: absolute; left: 200px; top: 262px; width: 1000px; }
+.s8 .layer { position: relative; padding: 20px 28px 20px 92px; border: 2px solid var(--ink); background: var(--bg); }
+.s8 .layer + .layer { margin-top: 18px; }
+.s8 .layer .lab { display: block; margin-bottom: 10px; color: var(--ink); }
+.s8 .layer p { font: 400 22px/1.45 var(--font-body); }
+.s8 .layer.docs { border-color: var(--before); border-style: dashed; }
+.s8 .layer.docs .lab { color: var(--before); }
+.s8 .layer.us { background: var(--ink); color: var(--bg); }
+.s8 .layer.us .lab { color: var(--bg); }
+.s8 .layer.us p code { font-size: 26px; }
+.s8 .line { position: absolute; left: 46px; top: -14px; width: 3px; bottom: -38px; background: var(--ink); z-index: 2; }
+.s8 .line::after { content: ""; position: absolute; left: -17px; top: 100%; width: 37px; height: 52px; background: var(--bob);
+  clip-path: polygon(50% 100%, 0 40%, 10% 8%, 28% 0, 72% 0, 90% 8%, 100% 40%); }
+.s8 .layer.us::before { content: ""; position: absolute; left: 44px; top: 0; bottom: 0; width: 7px; background: var(--bg); }
+.s8 .notes { position: absolute; left: 1270px; top: 262px; width: 550px; }
+.s8 .notes div { padding: 0 0 22px; margin-bottom: 22px; border-bottom: 1.5px solid var(--rule); }
+.s8 .notes div:last-child { border-bottom: 0; }
+.s8 .notes b { display: block; margin-bottom: 8px; font: 700 26px/1.1 var(--font-display); text-transform: uppercase; letter-spacing: .06em; }
+.s8 .notes span { font: 400 22px/1.45 var(--font-body); }
+
+/* ---------- 9 users ---------- */
+.s9 .who { position: absolute; left: 200px; right: 100px; top: 262px; width: 1620px; border-collapse: collapse; }
+.s9 .who th { text-align: left; padding: 0 22px 12px 0; border-bottom: 2px solid var(--ink); }
+.s9 .who td { padding: 18px 22px 18px 0; border-bottom: 1.5px solid var(--rule); font: 400 22px/1.4 var(--font-body); vertical-align: top; }
+.s9 .who td:first-child { font: 700 26px/1.15 var(--font-display); text-transform: uppercase; letter-spacing: .05em; width: 330px; }
+.s9 .who td:first-child small { display: block; margin-top: 6px; font: 600 18px/1 var(--font-display); color: var(--muted); }
+.s9 .who td:last-child { width: 150px; padding-right: 0; text-align: right; }
+.s9 .who .stamp { min-width: 0; font-size: 18px; padding: 6px 10px 5px; }
+.s9 .biz { position: absolute; left: 200px; right: 100px; top: 800px; display: grid; grid-template-columns: 1fr 1fr; gap: 50px;
+  border-top: 3px solid var(--ink); padding-top: 20px; }
+.s9 .biz b { display: block; font: 700 26px/1.1 var(--font-display); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+.s9 .biz span { font: 400 22px/1.45 var(--font-body); }
+
+/* ---------- 10 status + links ---------- */
+.s10 .cols { position: absolute; left: 200px; top: 262px; width: 1080px; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+.s10 .cols h3 { font: 700 30px/1.1 var(--font-display); text-transform: uppercase; letter-spacing: .06em; padding-bottom: 12px; border-bottom: 3px solid var(--ink); }
+.s10 .cols .plan h3 { border-bottom: 3px dashed var(--muted); }
+.s10 .cols ul { list-style: none; }
+.s10 .cols li { position: relative; padding: 15px 0 15px 34px; border-bottom: 1.5px solid var(--rule); font: 400 22px/1.4 var(--font-body); }
+.s10 .cols li::before { content: ""; position: absolute; left: 0; top: 29px; width: 20px; height: 3px; background: var(--ink); }
+.s10 .cols .plan li::before { background: none; border-top: 3px dashed var(--muted); height: 0; }
+.s10 .run { position: absolute; left: 200px; top: 790px; width: 1080px; }
+.s10 .run .term pre { font-size: 22px; padding: 16px 26px 18px; }
+.s10 .links { position: absolute; left: 1360px; top: 262px; width: 460px; }
+.s10 .qr { width: 300px; height: 300px; padding: 16px; border: 2px solid var(--ink); background: var(--bg); }
+.s10 .qr svg { width: 100%; height: 100%; display: block; }
+.s10 .links .cap { margin-top: 10px; }
+.s10 .links ul { list-style: none; margin-top: 22px; }
+.s10 .links li { padding: 9px 0; border-bottom: 1.5px solid var(--rule); font: 400 20px/1.35 var(--font-body); }
+.s10 .links li b { display: block; font: 600 18px/1 var(--font-display); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 4px; }
+.s10 .links li code { font-size: 18px; word-break: break-all; }
+.s10 .ai { position: absolute; left: 1360px; top: 862px; width: 460px; font: 400 17px/1.4 var(--font-body); color: var(--muted); }
+
+/* overview (Esc) */
+body.overview .slide { display: block; cursor: pointer; transform-origin: 0 0; }
+body.overview .slide .speaker-notes { display: none !important; }
+
+/* presenter notes (P) */
+.speaker-notes { display: none; }
+body.presenter .slide.active .speaker-notes { display: block; position: absolute; left: 0; right: 0; bottom: 0; height: 216px;
+  background: rgba(28,37,48,.96); color: var(--bg); border-top: 3px solid var(--before); padding: 26px 120px;
+  font: 400 26px/1.45 var(--font-body); z-index: 6; }
+body.presenter .tb, body.presenter .fl { opacity: .35; }
+
+/* Press C to toggle contrast debug mode */
+body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, p, td, th, li, pre, span, code) {
+  outline: 1px dashed rgba(192, 52, 28, .8); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+/* print: one slide per page, final state, no chrome */
+@page { size: 20in 11.25in; margin: 0; }
+@media print {
+  html, body { height: auto; overflow: visible; background: var(--bg); }
+  .viewport { position: static; overflow: visible; }
+  .stage { position: static; transform: none !important; width: 1920px; height: auto; }
+  .slide { position: relative; display: block !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid; transform: none !important; }
+  .speaker-notes { display: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="viewport">
+<div class="stage">
+
+<!-- 1 · COVER: the frozen moment, re-aimed at V3 (design.md §2) -->
+<section class="slide s1" data-title="Cover" data-nodatum>
+  <div class="dno">PL-3002 &nbsp;│&nbsp; RUNTIME PORTALDOT-V3 / SPEC 3002 · METADATA V14</div>
+  <h1 class="wm">Plumb<span>line</span></h1>
+  <p class="tag">Portaldot's documented calls, plumbed against the V3 runtime and proven by real transactions.</p>
+  <p class="lede">One verdict per documented entry on the V3 testnet: 549 verdict rows, and 3 canary transactions read back from their blocks.</p>
+  <div class="chips"><span>Built for Portaldot Hacker House 2026</span><span>Modular Cloud &amp; Middleware</span><span class="ver">v0.0.1</span></div>
+
+  <svg class="hero" viewBox="0 0 820 800" role="img" aria-label="Plumbline — a plumb line hung against the V3 call sheet: Balances.transfer struck as absent on spec 3002, Balances.transfer_keep_alive stamped with V3 extrinsic 106425-1">
+    <text x="110" y="44" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="600" font-size="22" letter-spacing="2.4" fill="#2F64A0">DOCUMENTED CALL</text>
+    <text x="800" y="44" text-anchor="end" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="600" font-size="22" letter-spacing="2.4" fill="#6E6B60">ON V3 · SPEC 3002</text>
+    <line x1="100" y1="62" x2="800" y2="62" stroke="#1C2530" stroke-width="2"/>
+    <!-- rows that sit true on the line: ink tick + stamped extrinsic id -->
+    <g>
+      <line x1="60" y1="140" x2="94" y2="140" stroke="#1C2530" stroke-width="3"/>
+      <text x="110" y="150" font-size="28" font-weight="500" fill="#1C2530">System.remark_with_event</text>
+      <rect x="636" y="112" width="164" height="60" fill="#F1EEE4" stroke="#1C2530" stroke-width="3"/>
+      <text x="718" y="135" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="17" letter-spacing="3" fill="#1C2530">PROVEN</text>
+      <text x="718" y="161" text-anchor="middle" font-size="21" font-weight="600" fill="#1C2530">106424-1</text>
+    </g>
+    <!-- the row off the line: measured from the datum, struck, live name in the margin -->
+    <g>
+      <line x1="60" y1="262" x2="132" y2="262" stroke="#C0341C" stroke-width="3"/>
+      <line x1="132" y1="248" x2="132" y2="276" stroke="#C0341C" stroke-width="3"/>
+      <text x="150" y="272" font-size="28" font-weight="500" fill="#2F64A0">Balances.transfer</text>
+      <line class="draw" x1="146" y1="262" x2="440" y2="262" stroke="#C0341C" stroke-width="4"/>
+      <text class="appear" x="150" y="316" font-size="22" font-style="italic" fill="#C0341C">absent on 3002 → transfer_keep_alive</text>
+      <g class="appear" transform="rotate(-3 718 262)">
+        <rect x="636" y="234" width="164" height="56" fill="#F1EEE4" stroke="#C0341C" stroke-width="3"/>
+        <text x="718" y="272" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="27" letter-spacing="3.5" fill="#C0341C">ABSENT</text>
+      </g>
+    </g>
+    <g>
+      <line x1="60" y1="420" x2="94" y2="420" stroke="#1C2530" stroke-width="3"/>
+      <text x="110" y="430" font-size="28" font-weight="500" fill="#1C2530">Balances.transfer_keep_alive</text>
+      <rect x="636" y="392" width="164" height="60" fill="#F1EEE4" stroke="#1C2530" stroke-width="3"/>
+      <text x="718" y="415" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="17" letter-spacing="3" fill="#1C2530">PROVEN</text>
+      <text x="718" y="441" text-anchor="middle" font-size="21" font-weight="600" fill="#1C2530">106425-1</text>
+    </g>
+    <g>
+      <line x1="60" y1="540" x2="94" y2="540" stroke="#1C2530" stroke-width="3"/>
+      <text x="110" y="550" font-size="28" font-weight="500" fill="#1C2530">Utility.batch_all</text>
+      <rect x="636" y="512" width="164" height="60" fill="#F1EEE4" stroke="#1C2530" stroke-width="3"/>
+      <text x="718" y="535" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="17" letter-spacing="3" fill="#1C2530">PROVEN</text>
+      <text x="718" y="561" text-anchor="middle" font-size="21" font-weight="600" fill="#1C2530">106426-1</text>
+    </g>
+    <line x1="100" y1="610" x2="800" y2="610" stroke="#D9D3C3" stroke-width="2"/>
+    <!-- the plumb line: swings, settles true -->
+    <circle cx="60" cy="40" r="9" fill="#1C2530"/>
+    <g class="swing">
+      <line x1="60" y1="40" x2="60" y2="652" stroke="#1C2530" stroke-width="3"/>
+      <rect x="52" y="648" width="16" height="16" fill="#1C2530"/>
+      <path d="M60 746 L28 682 Q28 666 43 664 L77 664 Q92 666 92 682 Z" fill="#9C7630"/>
+    </g>
+    <text x="110" y="652" font-size="18" fill="#6E6B60">evidence/ledger_v3.json · docs/PROOF.md</text>
+  </svg>
+  <aside class="speaker-notes">Plumbline checks every call Portaldot documents against the runtime it claims to describe. On the V3 testnet it found that Balances.transfer is gone; the call that replaces it is proven by a real transaction, 106425-1. That is the whole product in one picture: documented call, verdict, proof.</aside>
+</section>
+
+<!-- 2 · PROBLEM -->
+<section class="slide s2" data-title="Problem">
+  <div class="content"><h2 class="h">Docs and chain disagree</h2></div>
+  <div class="scene">
+    <p>A builder at the Hacker House copies <code>Balances.transfer</code> from the Portaldot docs. On the V3 testnet that call does not exist, and the page does not say which runtime it describes.</p>
+    <p>Today the way to find out is to submit a transaction and read the error. The next runtime upgrade moves the line again.</p>
+  </div>
+  <table class="ids">
+    <thead><tr><th class="lab"></th><th class="lab blue">What the sources said</th><th class="lab">What V3 reports</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Endpoint</td><td class="was"><span class="struck">testnetv3-node.feso-apps.xyz</span><small>V3 testnet guide §1.1 · no DNS on 2026-10-14</small></td><td class="now">test-node-v3.portaldot.dev</td></tr>
+      <tr><td class="k">Spec</td><td class="was"><span class="struck">portaldotV3 / 3000</span><small>a third-party README</small></td><td class="now">portaldot-v3 / 3002</td></tr>
+      <tr><td class="k">Symbol</td><td class="was"><span class="struck">tPOTv3</span><small>V3 testnet guide §1.1, §3.1</small></td><td class="now">tPOT</td></tr>
+      <tr><td class="k">Pallets</td><td class="was"><span class="struck">70</span><small>the same third-party README</small></td><td class="now">69</td></tr>
+    </tbody>
+  </table>
+  <div class="band">
+    <div><b>79</b><span>of the 196 calls in Portaldot's mainnet docs disagree with mainnet spec 1002 (64 absent, 15 with other arguments).</span></div>
+    <div><b class="red">2</b><span>of the same 196 disagree with the V3 runtime, spec 3002.</span></div>
+  </div>
+  <aside class="speaker-notes">The written sources and the live chain disagree on the basics: the endpoint, the spec version, the token symbol, the pallet count. The mainnet docs are worse against mainnet itself: 79 of 196 calls are wrong there. Nobody can re-check that by hand on every runtime upgrade.</aside>
+</section>
+
+<!-- 3 · WHAT IT DOES -->
+<section class="slide s3" data-title="What it does">
+  <div class="content"><h2 class="h">Call, verdict, proof</h2></div>
+  <div class="steps">
+    <div class="step one">
+      <div class="num blue">STA. 01</div>
+      <h3 class="blue">Documented call</h3>
+      <p>22 mainnet extrinsic pages give 196 calls. The V3 testnet guide at <code>d671a32</code> gives 46 <code>compose_call</code> sites and 12 FAQ modules, read by AST and never executed.</p>
+      <div class="cmd">$ plumbline docs<br>$ plumbline guide</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="num">STA. 02</div>
+      <h3>Verdict</h3>
+      <p>Each entry is joined to one runtime's metadata and gets exactly one verdict, stamped with profile, spec version and metadata hash. Same inputs, byte-identical ledger.</p>
+      <div class="cmd">$ plumbline plumb</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="num">STA. 03</div>
+      <h3>Proof</h3>
+      <p>A canary extrinsic is signed and sent, its receipt kept, then re-read from its block by hash in a new process. PROVEN needs that receipt.</p>
+      <div class="cmd">$ plumbline canary<br>$ plumbline readback</div>
+    </div>
+  </div>
+  <div class="vocab">
+    <span class="stamp">PROVEN</span><span class="stamp soft">UNPROVEN</span><span class="stamp soft">ARGS-UNCHECKED</span>
+    <span class="stamp redline">ARG_DRIFT</span><span class="stamp redline">DRIFTED</span><span class="stamp redline">ABSENT</span>
+    <span class="cap">verdicts from <code>plumbline/verdicts.py</code></span>
+  </div>
+  <p class="tools">Beside the flow: <code>plumbline diff A B</code> lists what moved between two runtimes; <code>plumbline check &lt;dApp&gt; --target v3</code> classifies a dApp's call sites against one, with exit codes 0 / 1 / 2.</p>
+  <aside class="speaker-notes">Three steps. Read what the docs and the V3 guide say exists. Join each entry to the runtime's own metadata and write exactly one verdict. Only a transaction that went through and was read back from its block can turn a verdict into PROVEN.</aside>
+</section>
+
+<!-- 4 · THE V3 SHEET, REDLINED (frozen slide) -->
+<section class="slide s4" data-title="V3 findings">
+  <div class="head">
+    <h2 class="h">The V3 sheet, redlined</h2>
+    <p class="cap">Mainnet docs and the V3 guide's FAQ, plumbed against <code>portaldot-v3</code> / spec 3002 on 2026-10-19.</p>
+  </div>
+  <div class="sheet">
+    <div class="cols"><span class="lab blue">Documented</span><span class="lab">Verdict on V3</span></div>
+    <div class="row off">
+      <div class="call"><span class="struck">Balances.transfer</span>
+        <span class="note">absent on 3002 · live: transfer_keep_alive, transfer_allow_death</span></div>
+      <div class="st"><span class="stamp redline">ABSENT</span></div>
+    </div>
+    <div class="row">
+      <div class="call">Balances.transfer_keep_alive<span class="ok">canary sent to itself, read back from block 106425: MATCH</span></div>
+      <div class="st"><span class="stamp">PROVEN<span class="id">106425-1</span></span></div>
+    </div>
+    <div class="row off">
+      <div class="call"><span class="blue">ElectionProviderMultiPhase.governance_fallback</span><br><span class="struck">(maybe_max_voters, maybe_max_targets)</span>
+        <span class="note">takes no arguments on 3002</span></div>
+      <div class="st"><span class="stamp redline">ARG_DRIFT</span></div>
+    </div>
+    <div class="row off">
+      <div class="call"><span class="struck">conviction_voting · cumulus_parachain_system</span><br><span class="struck">ibridge · paras · referenda</span>
+        <span class="note">FAQ lists them for V3.0 · no pallet by that name</span></div>
+      <div class="st"><span class="stamp redline">ABSENT ×5</span></div>
+    </div>
+    <div class="row">
+      <div class="call">System.remark_with_event</div>
+      <div class="st"><span class="stamp">PROVEN<span class="id">106424-1</span></span></div>
+    </div>
+    <div class="row">
+      <div class="call">Utility.batch_all</div>
+      <div class="st"><span class="stamp">PROVEN<span class="id">106426-1</span></span></div>
+    </div>
+  </div>
+  <div class="tally">
+    <span class="lab">Mainnet docs on V3</span>
+    <table>
+      <tr><td>PROVEN</td><td class="n">3</td></tr>
+      <tr><td>UNPROVEN <small class="cap">present, no tx yet</small></td><td class="n">191</td></tr>
+      <tr><td class="red">ARG_DRIFT</td><td class="n red">1</td></tr>
+      <tr><td class="red">ABSENT</td><td class="n red">1</td></tr>
+      <tr class="tot"><td>documented calls</td><td class="n">196</td></tr>
+    </table>
+    <p>549 verdict rows in all, each stamped profile <code>v3</code> · spec 3002 · metadata hash. <code>evidence/ledger_v3.json</code>, blake2-256 <code>dc808404…1e34</code>, byte-identical on re-run.</p>
+  </div>
+  <aside class="speaker-notes">This is the sheet after the plumb. Balances.transfer is in the docs and not on V3; the call that replaces it is proven by our own transaction. One call takes different arguments, five FAQ modules have no pallet. Everything else that exists is UNPROVEN until a transaction proves it: that is the honest state.</aside>
+</section>
+
+<!-- 5 · PROVEN ON V3 -->
+<section class="slide s5" data-title="On-chain proof">
+  <div class="content head">
+    <h2 class="h">Three transactions, read back</h2>
+    <p class="cap">Portaldot V3 testnet, <code>portaldot-v3</code> / spec 3002 · signer <code>5EhP3KWt…RUzDsb</code> · run <code>20261019T182014Z</code></p>
+  </div>
+  <table class="tx">
+    <thead><tr><th class="lab">Call</th><th class="lab">Extrinsic</th><th class="lab">Tx hash</th><th class="lab">node-console</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tick">✓</span>System.remark_with_event</td><td>106424-1</td><td class="hash">0xf54430571069e41bfe629c6c77609a279d0ad82fa2a83e45b0c3575bc941e6f5</td>
+        <td><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xac1f0030783d7470925fb39b691046d58418ac138c4d603916506cb345353ec2">#106424 ↗</a></td></tr>
+      <tr><td><span class="tick">✓</span>Balances.transfer_keep_alive</td><td>106425-1</td><td class="hash">0xa7effe5d5ab7d7c512690d285065fd83919f8b83dc04de1630e1e4ddff91d90b</td>
+        <td><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xf71728583059750fbdb8095730835eae53955148675b11cae98c90d3374b4c1d">#106425 ↗</a></td></tr>
+      <tr><td><span class="tick">✓</span>Utility.batch_all</td><td>106426-1</td><td class="hash">0x25e0352284f3a2455e03c7c02c625b8bd1ff692e244bafbc51d1adf20f5dfaa8</td>
+        <td><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0x06a069139c6457bdcd841dd7cb274d986b621538befea8ecb0471988764319ab">#106426 ↗</a></td></tr>
+    </tbody>
+  </table>
+  <div class="term">
+    <div class="bar"><i></i><i></i><i></i><span>evidence/readback_v3.txt</span></div>
+<pre><span class="dim"># plumbline readback evidence/canary_v3.json — profile v3, run 2026-10-19T18:24:33Z, new process, new connection</span>
+106424-1 System.remark_with_event      decoded System.remark_with_event      block 106424  success True  <b>MATCH</b>
+106425-1 Balances.transfer_keep_alive  decoded Balances.transfer_keep_alive  block 106425  success True  <b>MATCH</b>
+106426-1 Utility.batch_all             decoded Utility.batch_all             block 106426  success True  <b>MATCH</b>
+<b>profile v3 — Portaldot V3 testnet: 3/3 receipts match the chain</b></pre>
+  </div>
+  <p class="foot cap">The block is fetched by hash; the extrinsic at the receipt's index must carry the tx hash and decode to the same call. node-console looks blocks up by number or hash (no tx-hash search). A local stand-in run is kept as test input and labelled <i>interim-sdk, not V3</i>. Receipts: <code>evidence/canary_v3.json</code>, <code>docs/PROOF.md</code>.</p>
+  <aside class="speaker-notes">These are the three transactions behind the PROVEN stamps, on the real V3 testnet. Each one was re-read from its block from a new process and decoded back to the same call: three out of three match. Every block link opens in Portaldot's own node console.</aside>
+</section>
+
+<!-- 6 · ARCHITECTURE (redrawn from README's diagram) -->
+<section class="slide s6" data-title="Architecture">
+  <div class="content"><h2 class="h">Sources, engine, evidence</h2></div>
+  <div class="legend"><span><i></i>in the repo</span><span><i class="p"></i>planned</span><span><i class="s"></i>stand-in, not V3</span></div>
+  <svg class="arch" viewBox="0 0 1620 800" role="img" aria-label="Plumbline architecture — Portaldot runtimes, docs and a dApp feed six engine modules, each writing committed evidence; canary receipts feed the ledger">
+    <defs>
+      <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#1C2530"/></marker>
+    </defs>
+    <!-- column heads -->
+    <text class="d" x="0" y="26" font-size="25" fill="#6E6B60">SOURCES</text>
+    <text class="d" x="520" y="26" font-size="25" fill="#6E6B60">ENGINE · plumbline/</text>
+    <text class="d" x="1220" y="26" font-size="25" fill="#6E6B60">EVIDENCE, COMMITTED</text>
+    <!-- sources: runtimes -->
+    <rect x="0" y="60" width="400" height="300" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
+    <text class="d" x="20" y="94" font-size="20" fill="#1C2530">PORTALDOT RUNTIMES</text>
+    <text class="m" x="20" y="140" font-size="21" fill="#1C2530">V3 testnet · spec 3002</text>
+    <text class="s" x="20" y="166" font-size="16" fill="#6E6B60">read-only metadata + 3 canary txs</text>
+    <text class="m" x="20" y="214" font-size="21" fill="#1C2530">mainnet · spec 1002</text>
+    <text class="s" x="20" y="240" font-size="16" fill="#6E6B60">read-only baseline, never a tx</text>
+    <rect x="12" y="266" width="376" height="80" fill="none" stroke="#6E6B60" stroke-width="2" stroke-dasharray="2 5"/>
+    <text class="m" x="28" y="300" font-size="21" fill="#6E6B60">interim-sdk</text>
+    <text class="s" x="28" y="326" font-size="16" fill="#6E6B60">local polkadot-sdk --dev, test input</text>
+    <!-- sources: documented surface -->
+    <rect x="0" y="396" width="400" height="198" fill="#F1EEE4" stroke="#2F64A0" stroke-width="2" stroke-dasharray="8 5"/>
+    <text class="d" x="20" y="430" font-size="20" fill="#2F64A0">DOCUMENTED SURFACE</text>
+    <text class="m" x="20" y="476" font-size="20" fill="#2F64A0">portaldot-dev.readthedocs.io</text>
+    <text class="s" x="20" y="502" font-size="16" fill="#6E6B60">22 extrinsic pages, fetched at run time</text>
+    <text class="m" x="20" y="550" font-size="20" fill="#2F64A0">V3 guide @ d671a32</text>
+    <text class="s" x="20" y="576" font-size="16" fill="#6E6B60">cloned outside the repo, AST only</text>
+    <!-- sources: dApp -->
+    <rect x="0" y="620" width="400" height="86" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
+    <text class="m" x="20" y="656" font-size="21" fill="#1C2530">a dApp directory</text>
+    <text class="s" x="20" y="684" font-size="16" fill="#6E6B60">.py .ts .js call sites + wasm imports</text>
+
+    <!-- engine -->
+    <g font-size="16">
+      <rect x="520" y="60" width="580" height="86" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
+      <text class="m" x="542" y="96" font-size="23" fill="#1C2530">metadata.py</text>
+      <text class="s" x="542" y="124" fill="#6E6B60">chain profiles · identity check · pinned-block read</text>
+      <rect x="520" y="172" width="580" height="86" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
+      <text class="m" x="542" y="208" font-size="23" fill="#1C2530">canary.py</text>
+      <text class="s" x="542" y="236" fill="#6E6B60">sign · submit · keep the receipt · re-read by block hash</text>
+      <rect x="520" y="284" width="580" height="86" fill="#F1EEE4" stroke="#1C2530" stroke-width="4"/>
+      <text class="m" x="542" y="320" font-size="23" font-weight="600" fill="#1C2530">plumb.py</text>
+      <text class="s" x="542" y="348" fill="#6E6B60">SQLite drift ledger · one verdict per entry · canonical export</text>
+      <rect x="520" y="396" width="580" height="86" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
+      <text class="m" x="542" y="432" font-size="23" fill="#1C2530">docs.py · guide.py</text>
+      <text class="s" x="542" y="460" fill="#6E6B60">three page layouts · README table · AST call sites · FAQ</text>
+      <rect x="520" y="508" width="580" height="86" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
+      <text class="m" x="542" y="544" font-size="23" fill="#1C2530">diff.py</text>
+      <text class="s" x="542" y="572" fill="#6E6B60">two runtimes · normalise V13 / V14+ · six diff kinds</text>
+      <rect x="520" y="620" width="580" height="86" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
+      <text class="m" x="542" y="656" font-size="23" fill="#1C2530">check.py</text>
+      <text class="s" x="542" y="684" fill="#6E6B60">a dApp against a runtime · exit codes 0 / 1 / 2</text>
+    </g>
+    <!-- planned -->
+    <rect x="520" y="734" width="580" height="60" fill="none" stroke="#6E6B60" stroke-width="2" stroke-dasharray="10 7"/>
+    <text class="s" x="542" y="771" font-size="18" fill="#6E6B60"><tspan font-weight="600">PLANNED</tspan> · Plumbline Ledger contract (Revive) on V3</text>
+
+    <!-- evidence -->
+    <g font-size="16">
+      <rect x="1220" y="60" width="400" height="86" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
+      <text class="m" x="1238" y="96" font-size="19" fill="#1C2530">fixtures/metadata_v3.scale</text>
+      <text class="s" x="1238" y="124" fill="#6E6B60">+ metadata_1002.scale, sha256 recorded</text>
+      <rect x="1220" y="172" width="400" height="86" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
+      <text class="m" x="1238" y="208" font-size="19" fill="#1C2530">evidence/canary_v3.json</text>
+      <text class="s" x="1238" y="236" fill="#6E6B60">+ docs/PROOF.md · 3 txs, read back 3/3</text>
+      <rect x="1220" y="284" width="400" height="86" fill="#F1EEE4" stroke="#1C2530" stroke-width="4"/>
+      <text class="m" x="1238" y="320" font-size="19" font-weight="600" fill="#1C2530">evidence/ledger_v3.json</text>
+      <text class="s" x="1238" y="348" fill="#6E6B60">549 verdict rows + blake2-256</text>
+      <rect x="1220" y="396" width="400" height="86" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
+      <text class="m" x="1238" y="432" font-size="19" fill="#1C2530">evidence/guide_calls.json</text>
+      <text class="s" x="1238" y="460" fill="#6E6B60">+ docs_1002.json · names + file:line only</text>
+      <rect x="1220" y="508" width="400" height="86" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
+      <text class="m" x="1238" y="544" font-size="19" fill="#1C2530">evidence/diff_1002_v3.json</text>
+      <text class="s" x="1238" y="572" fill="#6E6B60">516 rows, mainnet 1002 → V3</text>
+      <rect x="1220" y="620" width="400" height="86" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
+      <text class="m" x="1238" y="656" font-size="19" fill="#1C2530">fixtures/expected_check_v3.txt</text>
+      <text class="s" x="1238" y="684" fill="#6E6B60">golden check output</text>
+    </g>
+
+    <!-- arrows: sources -> engine -->
+    <g stroke="#1C2530" stroke-width="2.5" fill="none" marker-end="url(#ah)">
+      <path d="M400 103 H514"/>
+      <path d="M400 215 H514"/>
+      <path d="M400 439 H514"/>
+      <path d="M400 663 H514"/>
+    </g>
+    <!-- engine -> evidence -->
+    <g stroke="#1C2530" stroke-width="2.5" fill="none" marker-end="url(#ah)">
+      <path d="M1100 103 H1214"/>
+      <path d="M1100 215 H1214"/>
+      <path d="M1100 327 H1214"/>
+      <path d="M1100 439 H1214"/>
+      <path d="M1100 551 H1214"/>
+      <path d="M1100 663 H1214"/>
+    </g>
+    <!-- inside the engine: receipts and documented calls meet in the ledger -->
+    <g stroke="#1C2530" stroke-width="2.5" fill="none" marker-end="url(#ah)">
+      <path d="M700 258 V279"/>
+      <path d="M700 396 V375"/>
+    </g>
+    <text class="s" x="716" y="275" font-size="15.5" fill="#1C2530">receipts: PROVEN needs one</text>
+    <text class="s" x="716" y="390" font-size="15.5" fill="#1C2530">documented calls</text>
+  </svg>
+  <aside class="speaker-notes">Sources on the left are treated as untrusted data: the guide is cloned outside the repo and only parsed. Every engine module writes a committed artifact, so each figure in this deck has a file behind it. The one planned piece, a Ledger contract on V3, is drawn dashed.</aside>
+</section>
+
+<!-- 7 · WHY IT'S NEW -->
+<section class="slide s7" data-title="Why it's new">
+  <div class="content"><h2 class="h">Docs, chain and receipt, joined</h2></div>
+  <div class="alone">
+    <span class="lab">What each source tells you alone</span>
+    <div class="r"><b class="blue">A docs page</b><span>what was designed; the page names no runtime spec</span></div>
+    <div class="r"><b>An explorer</b><span>what exists at one block, not what the docs promised</span></div>
+    <div class="r"><b>One test tx</b><span>that one call worked once, on one runtime</span></div>
+    <div class="r us"><b>Plumbline</b><span>all three joined per documented call: one verdict, stamped with the spec, PROVEN only with a receipt, re-run on the next runtime</span></div>
+  </div>
+  <div class="chart">
+    <span class="lab">What moved, mainnet spec 1002 → V3 spec 3002</span>
+    <div class="bars">
+      <div class="bar"><span>pallets added</span><div><i style="width:104px"></i>40</div></div>
+      <div class="bar"><span>pallets removed</span><div><i style="width:5px"></i>2</div></div>
+      <div class="bar"><span>calls added</span><div><i style="width:190px"></i>73</div></div>
+      <div class="bar"><span>calls removed</span><div><i style="width:31px"></i>12</div></div>
+      <div class="bar"><span>calls renamed</span><div><i style="width:5px"></i>2</div></div>
+      <div class="bar"><span>argument changes</span><div><i style="width:258px"></i>99</div></div>
+      <div class="bar"><span>constant changes</span><div><i style="width:310px"></i>119</div></div>
+      <div class="bar"><span>event changes</span><div><i style="width:440px"></i>169</div></div>
+    </div>
+    <p class="tot"><b>516 rows</b> from <code>plumbline diff</code> · <code>evidence/diff_1002_v3.json</code></p>
+    <div class="chk"><b>5 → 0</b><span>blocking findings for the same example dApp under <code>plumbline check</code>: on spec 1002, then on V3</span></div>
+  </div>
+  <aside class="speaker-notes">Docs, explorers and a test transaction each answer one question. Plumbline joins them per call and keeps the answer re-runnable. Between mainnet and V3, 516 things moved; that is why a one-time check is not enough.</aside>
+</section>
+
+<!-- 8 · ECOSYSTEM FIT -->
+<section class="slide s8" data-title="Ecosystem fit" data-nodatum>
+  <div class="content"><h2 class="h">Built on Portaldot's own surface</h2></div>
+  <div class="stack">
+    <div class="line"></div>
+    <div class="layer docs"><span class="lab">Portaldot's documented surface</span>
+      <p><code>portaldot-dev.readthedocs.io</code> extrinsic pages · the V3 testnet guide and its FAQ</p></div>
+    <div class="layer us"><span class="lab">Plumbline · the middleware between them</span>
+      <p><code>plumb</code> · <code>diff</code> · <code>check</code> · <code>canary</code></p></div>
+    <div class="layer"><span class="lab">The SDK Portaldot's docs point to</span>
+      <p><code>substrate-interface</code> 1.8.1: <code>compose_call</code> · <code>create_signed_extrinsic</code> · <code>submit_extrinsic</code> · <code>get_block</code> · <code>get_events</code></p></div>
+    <div class="layer"><span class="lab">Portaldot's two runtimes</span>
+      <p>V3 testnet <code>portaldot-v3</code>/3002 · mainnet spec 1002, read-only: <code>state_getMetadata</code> · <code>state_getRuntimeVersion</code> · <code>state_getStorageHash</code> (<code>:code</code>)</p></div>
+  </div>
+  <div class="notes">
+    <div><b>Track: Modular Cloud &amp; Middleware</b><span>Plumbline sits between Portaldot's docs and its runtime; <code>check</code> runs a dApp's calls against V3 before anything is sent.</span></div>
+    <div><b>Pinned to the real V3</b><span>The <code>v3</code> profile checks genesis <code>0xd4f9acbc…5283bd</code>, spec 3002 and the <code>:code</code> hash, and fails loudly on a mismatch.</span></div>
+    <div><b>Re-run per upgrade</b><span>The spec 1002 baseline and the spec 3002 sheet come from the same commands; the next runtime is the next run.</span></div>
+  </div>
+  <aside class="speaker-notes">Everything Plumbline reads is Portaldot's: its two live runtimes, its docs, its V3 guide, through the SDK its docs recommend. It is middleware in the literal sense: the layer between what Portaldot documents and what Portaldot runs.</aside>
+</section>
+
+<!-- 9 · USERS AND BUSINESS -->
+<section class="slide s9" data-title="Users and model">
+  <div class="content"><h2 class="h">Who runs it, who pays</h2></div>
+  <table class="who">
+    <thead><tr><th class="lab">Who</th><th class="lab">Moment of pain</th><th class="lab">What they get</th><th class="lab" style="text-align:right">Status</th></tr></thead>
+    <tbody>
+      <tr><td>Hacker House builders<small>now, the first audience</small></td><td>a documented call fails on V3</td><td><code>plumbline check &lt;dApp&gt; --target v3</code>; exit code 1 on blocking findings, so it can gate CI</td><td><span class="stamp">today</span></td></tr>
+      <tr><td>Teams with mainnet code<small>moving 1002 → V3</small></td><td>not knowing what breaks on V3</td><td>the 516-row runtime diff, and <code>check</code> run on their repo</td><td><span class="stamp">today</span></td></tr>
+      <tr><td>Portaldot docs &amp; devrel<small>customer #1</small></td><td>re-verifying every page per runtime by hand</td><td>the ledger as docs CI: a "verified on spec N" line per reference entry</td><td><span class="stamp soft">planned</span></td></tr>
+      <tr><td>Wallets &amp; integrators<small>after the event</small></td><td>an upgrade changes call shapes</td><td>a diff and a canary re-run per upgrade; always-on alerts as the paid tier</td><td><span class="stamp soft">planned</span></td></tr>
+    </tbody>
+  </table>
+  <div class="biz">
+    <div><b>Model</b><span>Docs CI as an ecosystem-funded public good, plus paid upgrade alerts for integrators. Portaldot is the first chain; any Substrate chain whose docs trail its runtime has the same gap.</span></div>
+    <div><b>Honest limit</b><span>No revenue and no external users yet. The first two rows work today on the public repo; the last two are the plan.</span></div>
+  </div>
+  <aside class="speaker-notes">Builders use it today, for free, from the repo. The customer we want is Portaldot's own docs and devrel team: the ledger becomes their docs CI. Integrators pay for alerts later. We say plainly that there is no revenue yet.</aside>
+</section>
+
+<!-- 10 · STATUS AND LINKS -->
+<section class="slide s10" data-title="Status and links">
+  <div class="content"><h2 class="h">Re-run every number here</h2></div>
+  <div class="cols">
+    <div>
+      <h3>At the check-in</h3>
+      <ul>
+        <li><code>runtime</code>, <code>plumb</code>, <code>diff</code>, <code>check</code>, <code>canary</code> run against V3, spec 3002</li>
+        <li>549 verdict rows, byte-identical on re-run</li>
+        <li>3 V3 transactions, read back 3/3</li>
+        <li>263 tests passed (2026-10-20) · 86 commits from 2026-10-14</li>
+      </ul>
+    </div>
+    <div class="plan">
+      <h3>Planned before the final (Nov 6)</h3>
+      <ul>
+        <li>a canary per documented call: 3 of 196 PROVEN today</li>
+        <li>Plumbline Ledger contract (Revive) on V3</li>
+        <li><code>check</code>: TYPE-TRAP detection, runtime APIs (ReviveApi)</li>
+        <li>GitHub Pages docs</li>
+      </ul>
+    </div>
+  </div>
+  <div class="run term">
+<pre><span class="dim">$</span> pip install -e '.[dev]' &amp;&amp; pytest -q
+<span class="dim">$</span> plumbline check examples/mainnet-dapp --target v3   <span class="dim"># blocking 0</span></pre>
+  </div>
+  <div class="links">
+    <div class="qr"><svg viewBox="0 0 37 37" role="img" shape-rendering="crispEdges"><title>QR code: github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu</title><path class="qrline" stroke="#1c2530" d="M0 0.5h7m1 0h1m1 0h6m1 0h3m1 0h1m3 0h2m3 0h7m-37 1h1m5 0h1m1 0h3m2 0h2m5 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m5 0h1m-37 1h1m1 0h3m1 0h1m1 0h1m3 0h5m1 0h1m1 0h3m2 0h3m2 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m3 0h3m1 0h1m1 0h2m1 0h1m1 0h1m3 0h1m2 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m1 0h2m3 0h1m1 0h1m1 0h3m5 0h2m1 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m3 0h2m1 0h6m3 0h2m2 0h1m1 0h1m1 0h1m5 0h1m-37 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-27 1h3m1 0h1m5 0h1m1 0h1m2 0h1m1 0h2m-29 1h1m2 0h6m1 0h1m1 0h2m1 0h2m1 0h3m3 0h1m1 0h1m2 0h1m2 0h1m1 0h3m-35 1h4m2 0h2m10 0h4m1 0h3m1 0h1m2 0h1m1 0h2m-36 1h2m2 0h3m1 0h1m2 0h1m1 0h1m3 0h2m4 0h1m1 0h1m1 0h1m2 0h1m5 0h1m-37 1h3m6 0h1m1 0h1m2 0h2m1 0h1m4 0h2m2 0h1m6 0h4m-37 1h4m1 0h2m2 0h1m4 0h1m1 0h1m2 0h1m3 0h1m4 0h1m1 0h2m4 0h1m-37 1h1m4 0h1m2 0h2m1 0h1m1 0h6m4 0h1m1 0h3m4 0h2m-31 1h1m2 0h1m3 0h2m2 0h4m1 0h2m1 0h1m4 0h2m1 0h1m1 0h5m-37 1h1m1 0h1m5 0h7m1 0h4m3 0h2m1 0h3m1 0h2m1 0h3m-36 1h2m2 0h3m1 0h1m5 0h1m1 0h2m1 0h2m1 0h4m1 0h1m1 0h3m2 0h2m-34 1h4m1 0h2m2 0h3m2 0h1m1 0h1m1 0h2m3 0h1m1 0h1m5 0h2m-35 1h1m3 0h1m1 0h5m2 0h1m1 0h1m1 0h1m2 0h1m2 0h1m1 0h1m1 0h3m2 0h3m1 0h1m-37 1h1m1 0h1m1 0h2m1 0h3m1 0h1m2 0h1m3 0h1m3 0h1m2 0h1m3 0h2m2 0h1m2 0h1m-36 1h3m1 0h2m1 0h1m1 0h1m4 0h3m5 0h2m2 0h7m-34 1h1m2 0h1m3 0h5m3 0h1m2 0h2m2 0h2m1 0h3m1 0h1m2 0h1m1 0h1m-35 1h2m1 0h1m2 0h1m1 0h1m1 0h1m1 0h1m1 0h5m1 0h4m3 0h5m1 0h1m2 0h1m-37 1h3m1 0h2m3 0h1m1 0h1m1 0h2m2 0h1m5 0h2m4 0h1m1 0h4m-34 1h2m1 0h1m1 0h2m1 0h2m1 0h1m1 0h1m1 0h4m1 0h2m1 0h1m2 0h1m1 0h3m3 0h2m-37 1h1m2 0h2m3 0h3m2 0h1m2 0h1m2 0h3m1 0h2m1 0h4m1 0h2m1 0h1m-35 1h2m1 0h6m1 0h1m1 0h1m1 0h1m1 0h1m2 0h2m5 0h2m1 0h8m-37 1h1m1 0h4m1 0h1m2 0h3m2 0h1m2 0h1m1 0h1m1 0h1m7 0h2m1 0h2m-35 1h1m1 0h1m2 0h2m2 0h1m3 0h2m7 0h2m1 0h1m2 0h7m1 0h1m-29 1h1m1 0h1m3 0h3m1 0h3m1 0h1m2 0h1m1 0h2m3 0h1m1 0h2m-36 1h7m1 0h3m1 0h1m2 0h2m2 0h1m1 0h6m1 0h1m1 0h1m1 0h1m3 0h1m-37 1h1m5 0h1m1 0h1m2 0h4m1 0h3m6 0h1m1 0h2m3 0h1m2 0h2m-37 1h1m1 0h3m1 0h1m1 0h3m1 0h1m2 0h1m5 0h2m1 0h1m1 0h7m3 0h1m-37 1h1m1 0h3m1 0h1m1 0h3m2 0h2m1 0h3m3 0h2m2 0h1m1 0h3m2 0h1m2 0h1m-37 1h1m1 0h3m1 0h1m2 0h1m1 0h2m2 0h2m2 0h2m1 0h3m2 0h3m2 0h1m1 0h1m1 0h1m-37 1h1m5 0h1m4 0h2m3 0h2m1 0h2m5 0h1m3 0h1m1 0h5m-37 1h7m1 0h1m1 0h4m1 0h1m4 0h1m1 0h1m1 0h1m2 0h3m1 0h1m1 0h1m2 0h1"/></svg></div>
+    <p class="cap">Scan: the public repository</p>
+    <ul>
+      <li><b>Repository</b><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu"><code>github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu</code></a></li>
+      <li><b>On-chain proof · V3 findings</b><code>docs/PROOF.md</code> · <code>docs/BASELINE-V3.md</code></li>
+      <li><b>Check-in video</b><a href="https://youtu.be/nBi7jbwwi-k"><code>youtu.be/nBi7jbwwi-k</code></a></li>
+    </ul>
+  </div>
+  <p class="ai">AI assistance: Claude Code drafted most of the code (the author reviews it; README → Team) and drafted this deck from the repo's evidence.</p>
+  <aside class="speaker-notes">Everything in this deck has a command and a file behind it; clone the repo and run it. By the final we want a canary for every documented call and the Ledger contract on V3. Scan the code for the repository.</aside>
+</section>
+
+</div>
+</div>
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const N = slides.length;
+  const stage = document.querySelector('.stage');
+  const pad = n => String(n).padStart(2, '0');
+  slides.forEach((s, i) => {
+    if (!s.hasAttribute('data-nodatum')) {
+      const d = document.createElement('div');
+      d.className = 'datum';
+      s.prepend(d);
+    }
+    const tb = document.createElement('footer');
+    tb.className = 'tb';
+    tb.innerHTML = '<span class="name">Plumbline</span><span>' + s.dataset.title + '</span>' +
+      '<span>Sheet <span class="sheetno">&nbsp;' + pad(i + 1) + '/' + pad(N) + '</span></span>' +
+      '<span><span class="ver">v0.0.1</span>&nbsp;· facts at build&nbsp;<span class="ver">7fd4192</span></span>';
+    s.appendChild(tb);
+    const fl = document.createElement('div');
+    fl.className = 'fl';
+    fl.textContent = 'Portaldot Hacker House 2026 · Modular Cloud & Middleware';
+    s.appendChild(fl);
+  });
+  let cur = 0, overview = false;
+  const fit = () => {
+    if (overview) {
+      const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+      stage.style.transform = 'translate(-50%, -50%) scale(' + k + ')';
+      return;
+    }
+    const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+    stage.style.transform = 'translate(-50%, -50%) scale(' + k + ')';
+  };
+  const show = i => {
+    cur = Math.max(0, Math.min(N - 1, i));
+    slides.forEach((s, j) => s.classList.toggle('active', j === cur));
+    if (location.hash !== '#' + (cur + 1)) history.replaceState(null, '', '#' + (cur + 1));
+  };
+  const setOverview = on => {
+    overview = on;
+    document.body.classList.toggle('overview', on);
+    slides.forEach((s, j) => {
+      if (on) {
+        const c = j % 4, r = Math.floor(j / 4);
+        s.style.transform = 'translate(' + (c * 480 + 4) + 'px,' + (r * 270 + 135) + 'px) scale(' + (472 / 1920) + ')';
+      } else s.style.transform = '';
+    });
+    fit();
+  };
+  const fromHash = () => { const h = parseInt(location.hash.slice(1), 10); return Number.isFinite(h) ? h - 1 : 0; };
+  addEventListener('resize', fit);
+  addEventListener('hashchange', () => show(fromHash()));
+  addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key;
+    if (k === 'Escape') { setOverview(!overview); return; }
+    if (overview) return;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ') { show(cur + 1); e.preventDefault(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp') { show(cur - 1); e.preventDefault(); }
+    else if (k === 'Home') show(0);
+    else if (k === 'End') show(N - 1);
+    else if (/^[0-9]$/.test(k)) show(k === '0' ? 9 : Number(k) - 1);
+    else if (k === 'p' || k === 'P') document.body.classList.toggle('presenter');
+    else if (k === 'c' || k === 'C') document.body.classList.toggle('debug-contrast');
+    else if (k === 'f' || k === 'F') {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+    }
+  });
+  document.addEventListener('click', e => {
+    if (e.target.closest('a')) return;
+    if (overview) {
+      const s = e.target.closest('.slide');
+      if (s) { setOverview(false); show(slides.indexOf(s)); }
+      return;
+    }
+    show(cur + (e.clientX > innerWidth / 2 ? 1 : -1));
+  });
+  let idle;
+  addEventListener('mousemove', () => {
+    document.body.classList.remove('idle');
+    clearTimeout(idle);
+    if (document.body.classList.contains('presenter')) idle = setTimeout(() => document.body.classList.add('idle'), 2000);
+  });
+  fit();
+  show(fromHash());
+})();
+</script>
+</body>
+</html>
