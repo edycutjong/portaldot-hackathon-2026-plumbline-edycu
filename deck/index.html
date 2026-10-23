@@ -180,6 +180,7 @@ a { color: inherit; text-decoration: underline; text-decoration-color: var(--bef
 .s4 .tally p { margin-top: 16px; font: 400 20px/1.42 var(--font-body); }
 .s4 .tally p.take { margin-top: 18px; padding-left: 14px; border-left: 3px solid var(--ink); font: 600 22px/1.35 var(--font-body); }
 .s4 .tally p code { font-size: 18px; }
+.s4 .tally .nw { white-space: nowrap; }
 
 /* ---------- 5 proof ---------- */
 .s5 .head .cap { margin-top: 12px; font-size: 22px; }
@@ -211,7 +212,7 @@ a { color: inherit; text-decoration: underline; text-decoration-color: var(--bef
 .s7 .alone .r.us span { font-weight: 500; }
 .s7 .chart { position: absolute; left: 1060px; top: 262px; width: 760px; }
 .s7 .bars { margin-top: 18px; }
-.s7 .bar { display: grid; grid-template-columns: 250px 1fr; align-items: center; height: 54px; }
+.s7 .bar { display: grid; grid-template-columns: 300px 1fr; align-items: center; height: 54px; }
 .s7 .bar span { font: 400 22px var(--font-body); }
 .s7 .bar div { display: flex; align-items: center; gap: 12px; font: 700 26px/1 var(--font-display); }
 .s7 .bar div i { display: block; height: 26px; background: var(--ink); }
@@ -221,19 +222,18 @@ a { color: inherit; text-decoration: underline; text-decoration-color: var(--bef
 
 /* ---------- 8 ecosystem ---------- */
 .s8 .stack { position: absolute; left: 200px; top: 262px; width: 1000px; }
-.s8 .layer { position: relative; padding: 20px 28px 20px 92px; border: 2px solid var(--ink); background: var(--bg); }
+.s8 .layer { position: relative; z-index: 1; padding: 20px 28px 20px 92px; border: 2px solid var(--ink); background: var(--bg); }
 .s8 .layer + .layer { margin-top: 18px; }
 .s8 .layer .lab { display: block; margin-bottom: 10px; color: var(--ink); }
 .s8 .layer p { font: 400 22px/1.45 var(--font-body); }
-.s8 .layer.docs { border-color: var(--before); border-style: dashed; }
+.s8 .layer.docs { border-color: var(--before); }
 .s8 .layer.docs .lab { color: var(--before); }
 .s8 .layer.us { background: var(--ink); color: var(--bg); }
 .s8 .layer.us .lab { color: var(--bg); }
 .s8 .layer.us p code { font-size: 26px; }
-.s8 .line { position: absolute; left: 46px; top: -14px; width: 3px; bottom: -38px; background: var(--ink); z-index: 2; }
+.s8 .line { position: absolute; left: 46px; top: -14px; width: 3px; bottom: -38px; background: var(--ink); z-index: 0; }
 .s8 .line::after { content: ""; position: absolute; left: -17px; top: 100%; width: 37px; height: 52px; background: var(--bob);
   clip-path: polygon(50% 100%, 0 40%, 10% 8%, 28% 0, 72% 0, 90% 8%, 100% 40%); }
-.s8 .layer.us::before { content: ""; position: absolute; left: 44px; top: 0; bottom: 0; width: 7px; background: var(--bg); }
 .s8 .notes { position: absolute; left: 1270px; top: 262px; width: 550px; }
 .s8 .notes div { padding: 0 0 22px; margin-bottom: 22px; border-bottom: 1.5px solid var(--rule); }
 .s8 .notes div:last-child { border-bottom: 0; }
@@ -312,7 +312,7 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
   <div class="dno">PL-3002 &nbsp;│&nbsp; RUNTIME PORTALDOT-V3 / SPEC 3002 · METADATA V14</div>
   <h1 class="wm">Plumb<span>line</span></h1>
   <p class="tag">Portaldot's documented calls, plumbed against the V3 runtime and proven by real transactions.</p>
-  <p class="lede">One verdict per documented entry on the V3 testnet: 549 verdict rows, and 3 canary transactions read back from their blocks.</p>
+  <p class="lede">549 verdict rows on the V3 testnet (297 documented entries, 252 live calls no source names) and 3 canary transactions read back from their blocks.</p>
   <div class="chips"><span>Built for Portaldot Hacker House 2026</span><span>Modular Cloud &amp; Middleware</span><span class="ver">v0.0.1</span></div>
 
   <svg class="hero" viewBox="0 0 820 800" role="img" aria-label="Plumbline — a plumb line hung against the V3 call sheet: Balances.transfer struck as absent on spec 3002, Balances.transfer_keep_alive stamped with V3 extrinsic 106425-1">
@@ -372,7 +372,7 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
   <div class="content"><h2 class="h">Docs and chain disagree</h2></div>
   <div class="scene">
     <p>A builder at the Hacker House copies <code>Balances.transfer</code> from the Portaldot docs. On the V3 testnet that call does not exist, and the page does not say which runtime it describes.</p>
-    <p>Today the way to find out is to submit a transaction and read the error. The next runtime upgrade moves the line again.</p>
+    <p>Today one way to find out is to submit a transaction and read the error. The next runtime upgrade moves the line again.</p>
   </div>
   <table class="ids">
     <thead><tr><th class="lab"></th><th class="lab blue">What the sources said</th><th class="lab">What V3 reports</th></tr></thead>
@@ -385,9 +385,9 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
   </table>
   <div class="band">
     <div><b class="red">79</b><span>of the 196 calls in Portaldot's mainnet docs disagree with mainnet spec 1002 (64 absent or renamed, 15 with other arguments).</span></div>
-    <div><b class="red">2</b><span>of the same 196 disagree with V3, spec 3002. The pages name no spec, so only plumbing tells which runtime they fit.</span></div>
+    <div><b class="red">2</b><span>of the same 196 disagree with V3, spec 3002: <code>Balances.transfer</code> and <code>governance_fallback</code>. The pages name no spec.</span></div>
   </div>
-  <aside class="speaker-notes">The written sources and the live chain disagree on the basics: the endpoint, the spec version, the token symbol, the pallet count. The same mainnet docs disagree with mainnet itself on 79 of 196 calls but with V3 on only 2: they fit a different runtime than the one they sit next to. Nobody can re-check that by hand on every runtime upgrade.</aside>
+  <aside class="speaker-notes">The written sources and the live chain disagree on the basics: the endpoint, the spec version, the token symbol, the pallet count. The same mainnet docs disagree with mainnet itself on 79 of 196 calls but with V3 on only 2: they match V3 far better than mainnet, and Plumbline cannot say which runtime they were written for. Nobody can re-check that by hand on every runtime upgrade.</aside>
 </section>
 
 <!-- 3 · WHAT IT DOES -->
@@ -447,7 +447,7 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
       <div class="st"><span class="stamp redline">ARG_DRIFT</span></div>
     </div>
     <div class="row off">
-      <div class="call"><span class="struck">conviction_voting · cumulus_parachain_system</span><br><span class="struck">ibridge · paras · referenda</span>
+      <div class="call"><span class="struck">conviction_voting · cumulus_parachain_system ·</span><br><span class="struck">ibridge · paras · referenda</span>
         <span class="note">FAQ lists them for V3.0 · no pallet by that name</span></div>
       <div class="st"><span class="stamp redline">ABSENT ×5</span></div>
     </div>
@@ -470,7 +470,8 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
       <tr class="tot"><td>documented calls</td><td class="n">196</td></tr>
     </table>
     <p class="take">194 of the 196 hold on V3 by name and arguments; 191 of them wait for a canary.</p>
-    <p>The 5 FAQ modules are a separate source (the V3 guide), outside the 196. All sources: 549 verdict rows, each stamped profile <code>v3</code> · spec 3002 · metadata hash; <code>evidence/ledger_v3.json</code>, blake2-256 <code>dc808404…1e34</code>, byte-identical on re-run.</p>
+    <p>The 5 FAQ modules are a separate source (the V3 guide), outside the 196. 549 verdict rows in all: 297 documented entries + 252 live calls no source names.</p>
+    <p><code>evidence/ledger_v3.json</code>, <span class="nw">blake2-256</span> <code>dc808404…1e34</code>, <span class="nw">byte-identical</span> on <span class="nw">re-run</span>.</p>
   </div>
   <aside class="speaker-notes">This is the sheet after the plumb. Balances.transfer is in the docs and not on V3; transfer_keep_alive, which does exist on V3, is proven by our own transaction. One call takes different arguments, five FAQ modules have no pallet. Everything else that exists is UNPROVEN until a transaction proves it: that is the honest state.</aside>
 </section>
@@ -508,7 +509,7 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
 <section class="slide s6" data-title="Architecture">
   <div class="content"><h2 class="h">Sources, engine, evidence</h2></div>
   <div class="legend"><span><i></i>in the repo</span><span><i class="p"></i>planned</span><span><i class="s"></i>stand-in, not V3</span></div>
-  <svg class="arch" viewBox="0 0 1620 820" role="img" aria-label="Plumbline architecture — Portaldot runtimes, docs and a dApp feed six engine modules; every module reads the chain profile from metadata.py; each writes committed evidence; canary receipts feed the ledger">
+  <svg class="arch" viewBox="0 0 1620 820" role="img" aria-label="Plumbline architecture — Portaldot runtimes, docs and a dApp feed the engine modules; every module reads the chain profile from metadata.py; each writes committed evidence; canary receipts feed the ledger">
     <defs>
       <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#1C2530"/></marker>
     </defs>
@@ -527,7 +528,7 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
     <text class="m" x="28" y="300" font-size="21" fill="#6E6B60">interim-sdk</text>
     <text class="s" x="28" y="326" font-size="17" fill="#6E6B60">local stand-in, not V3, test input</text>
     <!-- sources: documented surface -->
-    <rect x="0" y="396" width="400" height="208" fill="#F1EEE4" stroke="#2F64A0" stroke-width="2" stroke-dasharray="8 5"/>
+    <rect x="0" y="396" width="400" height="208" fill="#F1EEE4" stroke="#2F64A0" stroke-width="2"/>
     <text class="d" x="20" y="430" font-size="20" fill="#2F64A0">DOCUMENTED SURFACE</text>
     <text class="m" x="20" y="478" font-size="20" fill="#2F64A0">portaldot-dev.readthedocs.io</text>
     <text class="s" x="20" y="504" font-size="17" fill="#6E6B60">22 extrinsic pages, fetched at run time</text>
@@ -576,7 +577,7 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
       <text class="s" x="1238" y="355" fill="#6E6B60">549 verdict rows + blake2-256</text>
       <rect x="1220" y="408" width="400" height="84" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
       <text class="m" x="1238" y="443" font-size="19" fill="#1C2530">evidence/guide_calls.json</text>
-      <text class="s" x="1238" y="471" fill="#6E6B60">+ docs_1002.json · names + file:line only</text>
+      <text class="s" x="1238" y="471" fill="#6E6B60">+ docs_1002.json · no page text stored</text>
       <rect x="1220" y="524" width="400" height="84" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
       <text class="m" x="1238" y="559" font-size="19" fill="#1C2530">evidence/diff_1002_v3.json</text>
       <text class="s" x="1238" y="587" fill="#6E6B60">516 rows, mainnet 1002 → V3</text>
@@ -611,7 +612,7 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
       <path d="M700 408 V382" marker-end="url(#ah)"/>
     </g>
     <circle cx="478" cy="682" r="5" fill="#1C2530"/>
-    <text class="s" x="0" y="0" font-size="16" fill="#1C2530" transform="translate(468 650) rotate(-90)">profile from metadata.py</text>
+    <text class="s" x="0" y="0" font-size="18" fill="#1C2530" transform="translate(468 660) rotate(-90)">profile from metadata.py</text>
     <text class="s" x="716" y="280" font-size="16.5" fill="#1C2530">receipts: PROVEN needs one</text>
     <text class="s" x="716" y="401" font-size="16.5" fill="#1C2530">documented calls</text>
   </svg>
@@ -627,24 +628,24 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
     <div class="r"><b>node-console</b><span>Portaldot's explorer: what exists at one block, not what the docs promised</span></div>
     <div class="r"><b>A metadata diff</b><span>what moved between two runtimes, not whether the docs match either one</span></div>
     <div class="r"><b>One test tx</b><span>that one call worked once, on one runtime</span></div>
-    <div class="r us"><b>Plumbline</b><span>all three joined per documented call: one verdict, stamped with the spec, PROVEN only with a receipt, re-run on the next runtime</span></div>
+    <div class="r us"><b>Plumbline</b><span>joins the docs entry, the runtime's own metadata and a canary receipt per documented call: one verdict, stamped with the spec, PROVEN only with a receipt, re-run on the next runtime</span></div>
   </div>
   <div class="chart">
     <span class="lab">What moved, mainnet spec 1002 → V3 spec 3002</span>
     <div class="bars">
-      <div class="bar"><span>pallets added</span><div><i style="width:104px"></i>40</div></div>
+      <div class="bar"><span>pallets added</span><div><i style="width:95px"></i>40</div></div>
       <div class="bar"><span>pallets removed</span><div><i style="width:5px"></i>2</div></div>
-      <div class="bar"><span>calls added</span><div><i style="width:190px"></i>73</div></div>
-      <div class="bar"><span>calls removed</span><div><i style="width:31px"></i>12</div></div>
+      <div class="bar"><span>calls added, shared pallets</span><div><i style="width:173px"></i>73</div></div>
+      <div class="bar"><span>calls removed</span><div><i style="width:28px"></i>12</div></div>
       <div class="bar"><span>calls renamed</span><div><i style="width:5px"></i>2</div></div>
-      <div class="bar"><span>argument changes</span><div><i style="width:258px"></i>99</div></div>
-      <div class="bar"><span>constant changes</span><div><i style="width:310px"></i>119</div></div>
-      <div class="bar"><span>event changes</span><div><i style="width:440px"></i>169</div></div>
+      <div class="bar"><span>argument changes</span><div><i style="width:234px"></i>99</div></div>
+      <div class="bar"><span>constant changes</span><div><i style="width:282px"></i>119</div></div>
+      <div class="bar"><span>event changes</span><div><i style="width:400px"></i>169</div></div>
     </div>
     <p class="tot"><b>516 rows</b> from <code>plumbline diff</code> · <code>evidence/diff_1002_v3.json</code></p>
     <div class="chk"><b>5 → 0</b><span>blocking findings for the same example dApp under <code>plumbline check</code>: on spec 1002, then on V3</span></div>
   </div>
-  <aside class="speaker-notes">Docs, the explorer, a metadata diff and a test transaction each answer one question. Plumbline joins them per call, and only a receipt makes a verdict PROVEN. Between mainnet and V3, 516 things moved; that is why a one-time check is not enough.</aside>
+  <aside class="speaker-notes">Docs, the explorer, a metadata diff and a test transaction each answer one question. Plumbline joins the docs, the runtime metadata and a receipt per call, and only a receipt makes a verdict PROVEN. Between mainnet and V3, 516 things moved; that is why a one-time check is not enough.</aside>
 </section>
 
 <!-- 8 · ECOSYSTEM FIT -->
@@ -677,7 +678,7 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
     <tbody>
       <tr><td>Hacker House builders<small>now, the first audience</small></td><td>a documented call fails on V3</td><td><code>plumbline check &lt;dApp&gt; --target v3</code>; exit code 1 on blocking findings, so it can gate CI</td><td><span class="stamp">today</span></td></tr>
       <tr><td>Teams with mainnet code<small>moving 1002 → V3</small></td><td>not knowing what breaks on V3</td><td>the 516-row runtime diff, and <code>check</code> run on their repo</td><td><span class="stamp">today</span></td></tr>
-      <tr><td>Portaldot docs &amp; devrel<small>customer #1</small></td><td>re-verifying every page per runtime by hand</td><td>the ledger as docs CI: a "verified on spec N" line per reference entry</td><td><span class="stamp soft">planned</span></td></tr>
+      <tr><td>Portaldot docs &amp; devrel<small>target customer</small></td><td>re-verifying every page per runtime by hand</td><td>the ledger as docs CI: a "verified on spec N" line per reference entry</td><td><span class="stamp soft">planned</span></td></tr>
       <tr><td>Wallets &amp; integrators<small>after the event</small></td><td>an upgrade changes call shapes</td><td>a diff and a canary re-run per upgrade; always-on alerts as the paid tier</td><td><span class="stamp soft">planned</span></td></tr>
     </tbody>
   </table>
@@ -698,11 +699,11 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
         <li><code>runtime</code>, <code>plumb</code>, <code>diff</code>, <code>check</code>, <code>canary</code> run against V3, spec 3002</li>
         <li>549 verdict rows, byte-identical on re-run</li>
         <li>3 V3 transactions, read back 3/3</li>
-        <li>263 tests passed (2026-10-20) · 86 commits from 2026-10-14 to build 7fd4192</li>
+        <li>263 tests pass (re-run 2026-10-23, <code>evidence/pytest_checkin.txt</code>) · 86 commits from 2026-10-14 to build 7fd4192</li>
       </ul>
     </div>
     <div class="plan">
-      <h3>Next, before the final (Nov 6)</h3>
+      <h3>Next, for the final</h3>
       <ul>
         <li>planned: a canary per documented call (3 of 196 PROVEN today)</li>
         <li>planned: Plumbline Ledger contract (Revive) on V3</li>
