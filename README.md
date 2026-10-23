@@ -278,7 +278,7 @@ There is nothing to compile or deploy and there is no frontend to launch.
 
 ## Demo
 
-- **Video:** check-in demo (≤ 3 min): https://youtu.be/nBi7jbwwi-k
+- **Video:** check-in demo: https://youtu.be/nBi7jbwwi-k
 - **Pitch deck:** [`docs/pitch-deck.pdf`](docs/pitch-deck.pdf) (10 pages, printed from [`deck/index.html`](deck/index.html))
 - **Live demo:** none; Plumbline is a command-line tool.
 - **Test accounts / test data:** no accounts are needed for steps 1–4 and 6 (read-only); step 7 needs one funded V3 account. The stand-in chain uses the well-known dev keys
