@@ -226,7 +226,6 @@ see its header for the default lookup).
 **Steps** (every command below was run on 2026-10-14, except steps 6–7 on 2026-10-19/20):
 
 ```bash
-# (the repository is private until the organisers' public flip; this URL works once it is public)
 git clone https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu.git
 cd portaldot-hackathon-2026-plumbline-edycu
 python3 -m venv .venv && . .venv/bin/activate
@@ -279,7 +278,8 @@ There is nothing to compile or deploy and there is no frontend to launch.
 
 ## Demo
 
-- **Video:** not yet recorded (planned for the check-in; the link will be added here).
+- **Video:** check-in demo (≤ 3 min): https://youtu.be/nBi7jbwwi-k
+- **Pitch deck:** [`docs/pitch-deck.pdf`](docs/pitch-deck.pdf) (10 pages, printed from [`deck/index.html`](deck/index.html))
 - **Live demo:** none; Plumbline is a command-line tool.
 - **Test accounts / test data:** no accounts are needed for steps 1–4 and 6 (read-only); step 7 needs one funded V3 account. The stand-in chain uses the well-known dev keys
   (`//Alice` and per-run `//Plumbline//<run id>` accounts), which are refused on every other profile. Inputs are
