@@ -577,7 +577,7 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
       <text class="s" x="1238" y="355" fill="#6E6B60">549 verdict rows + blake2-256</text>
       <rect x="1220" y="408" width="400" height="84" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
       <text class="m" x="1238" y="443" font-size="19" fill="#1C2530">evidence/guide_calls.json</text>
-      <text class="s" x="1238" y="471" fill="#6E6B60">+ docs_1002.json · no page text stored</text>
+      <text class="s" x="1238" y="471" fill="#6E6B60">+ docs_1002.json · no page HTML stored</text>
       <rect x="1220" y="524" width="400" height="84" fill="#F1EEE4" stroke="#1C2530" stroke-width="2"/>
       <text class="m" x="1238" y="559" font-size="19" fill="#1C2530">evidence/diff_1002_v3.json</text>
       <text class="s" x="1238" y="587" fill="#6E6B60">516 rows, mainnet 1002 → V3</text>
@@ -628,7 +628,7 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
     <div class="r"><b>node-console</b><span>Portaldot's explorer: what exists at one block, not what the docs promised</span></div>
     <div class="r"><b>A metadata diff</b><span>what moved between two runtimes, not whether the docs match either one</span></div>
     <div class="r"><b>One test tx</b><span>that one call worked once, on one runtime</span></div>
-    <div class="r us"><b>Plumbline</b><span>joins the docs entry, the runtime's own metadata and a canary receipt per documented call: one verdict, stamped with the spec, PROVEN only with a receipt, re-run on the next runtime</span></div>
+    <div class="r us"><b>Plumbline</b><span>joins each docs entry to the runtime's own metadata and attaches a canary receipt where one exists: one verdict, stamped with the spec, PROVEN only with a receipt, re-run on the next runtime</span></div>
   </div>
   <div class="chart">
     <span class="lab">What moved, mainnet spec 1002 → V3 spec 3002</span>
@@ -645,7 +645,7 @@ body.debug-contrast .contrast-check, body.debug-contrast .slide :is(h1, h2, h3, 
     <p class="tot"><b>516 rows</b> from <code>plumbline diff</code> · <code>evidence/diff_1002_v3.json</code></p>
     <div class="chk"><b>5 → 0</b><span>blocking findings for the same example dApp under <code>plumbline check</code>: on spec 1002, then on V3</span></div>
   </div>
-  <aside class="speaker-notes">Docs, the explorer, a metadata diff and a test transaction each answer one question. Plumbline joins the docs, the runtime metadata and a receipt per call, and only a receipt makes a verdict PROVEN. Between mainnet and V3, 516 things moved; that is why a one-time check is not enough.</aside>
+  <aside class="speaker-notes">Docs, the explorer, a metadata diff and a test transaction each answer one question. Plumbline joins each docs entry to the runtime metadata and attaches a receipt where one exists; only a receipt makes a verdict PROVEN. Between mainnet and V3, 516 things moved; that is why a one-time check is not enough.</aside>
 </section>
 
 <!-- 8 · ECOSYSTEM FIT -->
