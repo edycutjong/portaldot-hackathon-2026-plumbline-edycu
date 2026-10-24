@@ -4,6 +4,7 @@
 
 **First V3 findings (measured 2026-10-19, spec 3002; details in [`docs/BASELINE-V3.md`](docs/BASELINE-V3.md)):** `Balances.transfer`, which the mainnet docs list, does not exist on V3 (verdict ABSENT); 5 of the 12 modules the V3 guide's FAQ lists for V3.0 are not on the testnet (by pallet name); the 79 mainnet-docs calls that disagree with the runtime on spec 1002 become 2 on V3; the chain reports `portaldot-v3`/3002/`tPOT`/69 pallets where the V3 guide said `tPOTv3` and a third-party measurement (see `docs/BASELINE-V3.md`) said `portaldotV3`/3000/70.
 
+[![CI](https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/actions/workflows/ci.yml)
 ![status](https://img.shields.io/badge/status-prototype-orange)
 ![tests](https://img.shields.io/badge/tests-263%20passing-brightgreen)
 ![license](https://img.shields.io/badge/license-MIT-blue)
@@ -298,6 +299,17 @@ There is nothing to compile or deploy and there is no frontend to launch.
     3 extrinsics (`3040-2` `Balances.transfer_keep_alive`, `3041-2` `System.remark_with_event`, `3042-2`
     `Revive.map_account`), all success, read back 3/3 from a new process after a node restart (`evidence/readback_interim.txt`)
 - **Tests:** 263 passed (+3 live, opt-in) on 2026-10-20.
+
+## Development
+
+```bash
+pip install -e '.[dev]'
+ruff check .          # lint
+python -m pytest -q   # offline tests; live tests are opt-in (pytest -m live)
+```
+
+CI (`.github/workflows/`) runs lint, the offline tests on Python 3.10–3.12 and a package build, plus CodeQL,
+gitleaks and pip-audit. None of it needs a key or a live chain write. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Roadmap
 
