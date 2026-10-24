@@ -30,5 +30,6 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-      - run: pip install pip-audit && pip install -e .
-      - run: pip-audit --skip-editable
+      - run: pip install -U pip setuptools pip-audit && pip install -e .
+      # ecdsa (transitive via substrate-interface) has no fixed release; PYSEC-2026-1325 is reviewed and accepted
+      - run: pip-audit --skip-editable --ignore-vuln PYSEC-2026-1325

@@ -34,3 +34,7 @@ markers = ["live: needs network access to a chain endpoint (deselect with -m 'no
 [tool.ruff]
 # fixtures are AST test inputs (deliberately broken / unresolved names); never lint or rewrite them
 extend-exclude = ["fixtures", "deck"]
+
+[tool.ruff.lint]
+# pyflakes + the pycodestyle error subset: real defects only, stable across ruff versions
+select = ["E4", "E7", "E9", "F"]
