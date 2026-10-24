@@ -1,0 +1,8 @@
+title = "plumbline gitleaks"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "public chain data: block/extrinsic hashes and genesis/code hashes are not secrets"
+paths = ['''evidence/.*''', '''docs/PROOF\.md''', '''fixtures/.*''']
