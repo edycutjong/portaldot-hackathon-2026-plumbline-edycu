@@ -6,10 +6,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,500&family=IBM+Plex+Sans:wght@400&display=block" rel="stylesheet">
 <style>html,body{margin:0;background:#F1EEE4} .wrap{overflow-x:auto}</style>
 </head><body><div class="wrap">
-<svg xmlns="http://www.w3.org/2000/svg" id="arch" width="1288" height="1346" viewBox="0 0 1288 1346" role="img" aria-labelledby="plumbline-arch-title plumbline-arch-desc" style="min-width:1288px;display:block">
+<svg xmlns="http://www.w3.org/2000/svg" id="arch" width="1288" height="1395" viewBox="0 0 1288 1395" role="img" aria-labelledby="plumbline-arch-title plumbline-arch-desc" style="min-width:1288px;display:block">
 <title id="plumbline-arch-title">Plumbline architecture: documented call → verdict → proof</title>
-<desc id="plumbline-arch-desc">The Plumbline CLI reads the Portaldot mainnet docs and the V3 testnet guide into documented calls (docs.py, guide.py), reads a runtime's metadata through a checked chain profile (metadata.py), and plumb.py writes one verdict per documented entry into the drift ledger (evidence/ledger_v3.json, 549 rows). canary.py sends 3 canary transactions to the Portaldot V3 testnet and reads them back; their receipts (docs/PROOF.md, evidence/canary_v3.json) are what make a verdict PROVEN. check.py and diff.py reuse the same chain profiles. Mainnet spec 1002 is a read-only baseline, the interim-sdk chain is a local stand-in and not V3, and the Plumbline Ledger contract is planned and not built.</desc>
-<defs><pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24,0 H0 V24" fill="none" stroke="#D9D3C3" stroke-width="0.75"/></pattern><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#6E6B60" stroke-width="1.6"/></pattern><style>
+<desc id="plumbline-arch-desc">The Plumbline CLI reads the Portaldot mainnet docs and the V3 testnet guide into documented calls (docs.py, guide.py), reads a runtime's metadata through a checked chain profile (metadata.py), and plumb.py writes one verdict per documented entry into the drift ledger (evidence/ledger_v3.json, 549 rows). canary.py sends 3 canary transactions to the Portaldot V3 testnet and reads them back; their receipts (evidence/canary_v3.json, tabulated in docs/PROOF.md) are what make a verdict PROVEN. check.py and diff.py reuse the same chain profiles. Mainnet spec 1002 is a read-only baseline, the interim-sdk chain is a local stand-in and not V3, and the Plumbline Ledger contract is planned and not built.</desc>
+<defs><pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24,0 H0 V24" fill="none" stroke="#D9D3C3" stroke-width="0.75"/></pattern><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#D9D3C3" stroke-width="2.2"/></pattern><style>
 .role{font:600 14px 'Barlow Condensed',sans-serif;letter-spacing:.12em;fill:#6E6B60}
 .role.blue{fill:#2F64A0}
 .name{font:600 22px 'Barlow Condensed',sans-serif;letter-spacing:.04em;fill:#1C2530}
@@ -28,20 +28,33 @@
 .zdesc{font:400 15px 'IBM Plex Sans',sans-serif;fill:#6E6B60}
 .legend{font:400 15px 'IBM Plex Sans',sans-serif;fill:#1C2530}
 .eyebrow{font:600 16px 'Barlow Condensed',sans-serif;letter-spacing:.16em;fill:#6E6B60}
-.title{font:700 46px 'Barlow Condensed',sans-serif;letter-spacing:.03em;fill:#1C2530}
+.title{font:700 44px 'Barlow Condensed',sans-serif;letter-spacing:.03em;fill:#1C2530}
+.tballoon{font:700 22px 'Barlow Condensed',sans-serif;fill:#F1EEE4}
 .sub{font:400 17px 'IBM Plex Sans',sans-serif;fill:#1C2530}
 .tbname{font:700 30px 'Barlow Condensed',sans-serif;letter-spacing:.06em;fill:#1C2530}
 .tbk{font:600 14px 'Barlow Condensed',sans-serif;letter-spacing:.14em;fill:#6E6B60}
 .tbv{font:600 15px 'Barlow Condensed',sans-serif;letter-spacing:.06em;fill:#1C2530}
 </style></defs>
-<rect width="1288" height="1346" fill="#F1EEE4"/>
-<rect x="10" y="10" width="1268" height="1326" fill="url(#grid)" opacity=".55"/>
-<rect x="10" y="10" width="1268" height="1326" fill="none" stroke="#1C2530" stroke-width="1.5"/>
+<rect width="1288" height="1395" fill="#F1EEE4"/>
+<rect x="10" y="10" width="1268" height="1375" fill="url(#grid)" opacity=".55"/>
+<rect x="10" y="10" width="1268" height="1375" fill="none" stroke="#1C2530" stroke-width="1.5"/>
 <circle cx="34" cy="34" r="5" fill="#1C2530"/>
-<line x1="34" y1="34" x2="34" y2="1246" stroke="#1C2530" stroke-width="1.5"/>
-<polygon points="34,1290 21,1264 23,1251 28,1246 40,1246 45,1251 47,1264" fill="#9C7630"/>
+<line x1="34" y1="34" x2="34" y2="1265" stroke="#1C2530" stroke-width="1.5"/>
+<polygon points="34,1309 21,1283 23,1270 28,1265 40,1265 45,1270 47,1283" fill="#9C7630"/>
 <text class="eyebrow" x="64" y="46">PORTALDOT HACKER HOUSE 2026 · MODULAR CLOUD &amp; MIDDLEWARE</text>
-<text class="title" x="62" y="92">DOCUMENTED CALL → VERDICT → PROOF</text>
+<circle cx="80" cy="77" r="16" fill="#1C2530"/>
+<text class="tballoon" x="80" y="85" text-anchor="middle">1</text>
+<text class="title" x="108" y="92">DOCUMENTED CALL</text>
+<path d="M442,77 L469,77" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="482,77 468,83 468,71" fill="#1C2530"/>
+<circle cx="516" cy="77" r="16" fill="#1C2530"/>
+<text class="tballoon" x="516" y="85" text-anchor="middle">2</text>
+<text class="title" x="544" y="92">VERDICT</text>
+<path d="M703,77 L730,77" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="743,77 729,83 729,71" fill="#1C2530"/>
+<circle cx="777" cy="77" r="16" fill="#1C2530"/>
+<text class="tballoon" x="777" y="85" text-anchor="middle">3</text>
+<text class="title" x="805" y="92">PROOF</text>
 <text class="sub" x="64" y="122">Plumbline checks what the docs say a runtime has against what the runtime itself reports.</text>
 <text class="sub" x="64" y="144">Engine and evidence boxes are files in this repository; the rest is what it reads. Dashed is planned.</text>
 <g class="tblock">
@@ -65,215 +78,222 @@
 <text class="tbk" x="1004" y="205">DRAWN</text>
 <text class="tbv" x="1076" y="205">2026-10-24, FROM THE CODE</text>
 </g>
-<rect class="zone" x="48" y="164" width="896" height="214"/><text class="zlabel" x="64" y="190" text-anchor="start">INPUTS · UNTRUSTED DATA</text><text class="zdesc" x="64" y="211" text-anchor="start">the documented surface, and the dApp under test</text>
-<rect class="zone" x="48" y="406" width="896" height="590"/><text class="zlabel" x="928" y="432" text-anchor="end">plumbline/ · ONE PYTHON CLI</text><text class="zdesc" x="928" y="453" text-anchor="end">cli.py (typer) · off-chain</text>
-<rect class="zone" x="976" y="406" width="296" height="590"/><text class="zlabel" x="992" y="432" text-anchor="start">IN THIS REPOSITORY</text><text class="zdesc" x="992" y="453" text-anchor="start">committed evidence</text>
-<rect class="zone" x="48" y="1020" width="1224" height="240"/><text class="zlabel" x="64" y="1046" text-anchor="start">RUNTIMES · AS BUILT</text><text class="zdesc" x="64" y="1067" text-anchor="start">via substrate-interface 1.8.1</text>
-<path d="M508,362 L508,457" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="508,470 502,456 514,456" fill="#1C2530"/>
-<path d="M812,362 L812,392 L508,392" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<path d="M508,582 L508,617" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="508,630 502,616 514,616" fill="#1C2530"/>
-<path d="M508,848 L508,813" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="508,800 514,814 502,814" fill="#1C2530"/>
-<path d="M508,1084 L508,993" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="508,980 514,994 502,994" fill="#1C2530"/>
-<path d="M640,664 L979,664" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="992,664 978,670 978,658" fill="#1C2530"/>
-<path d="M812,980 L812,1071" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="812,1084 806,1070 818,1070" fill="#1C2530"/>
-<path d="M928,940 L979,940" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="992,940 978,946 978,934" fill="#1C2530"/>
-<path d="M992,788 L653,788" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="640,788 654,782 654,794" fill="#1C2530"/>
-<path d="M180,362 L180,460" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="180,470 175.5,459 184.5,459" fill="#6E6B60"/>
-<path d="M376,872 L324,872 L324,526 L306,526" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="296,526 307,521.5 307,530.5" fill="#6E6B60"/>
-<path d="M324,712 L306,712" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="296,712 307,707.5 307,716.5" fill="#6E6B60"/>
-<path d="M296,1207 L348,1207 L348,956 L366,956" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="376,956 365,960.5 365,951.5" fill="#6E6B60"/>
-<path d="M296,1121 L348,1121" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<path d="M992,1164 L938,1164" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-dasharray="6 5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="928,1164 939,1159.5 939,1168.5" fill="#6E6B60"/>
-<circle cx="508" cy="392" r="4.5" fill="#1C2530"/>
-<circle cx="324" cy="712" r="3.5" fill="#6E6B60"/>
-<circle cx="348" cy="1121" r="3.5" fill="#6E6B60"/>
-<g class="node" id="n-dapp" data-box="64,228,232,134">
-<rect x="64" y="228" width="232" height="134" fill="#F1EEE4"/>
-<rect x="64" y="228" width="232" height="134" fill="none" stroke="#1C2530" stroke-width="1.25"/>
+<rect class="zone" x="48" y="164" width="896" height="233"/><text class="zlabel" x="64" y="190" text-anchor="start">INPUTS · UNTRUSTED DATA</text><text class="zdesc" x="64" y="211" text-anchor="start">the documented surface, and the dApp under test</text>
+<rect class="zone" x="48" y="425" width="896" height="590"/><text class="zlabel" x="928" y="451" text-anchor="end">plumbline/ · ONE PYTHON CLI</text><text class="zdesc" x="928" y="472" text-anchor="end">cli.py (typer) · RPC client, no contract</text>
+<rect class="zone" x="976" y="425" width="296" height="590"/><text class="zlabel" x="992" y="451" text-anchor="start">IN THIS REPOSITORY</text><text class="zdesc" x="992" y="472" text-anchor="start">committed evidence</text>
+<rect class="zone" x="48" y="1039" width="1224" height="240"/><text class="zlabel" x="64" y="1065" text-anchor="start">CHAINS</text><text class="zdesc" x="64" y="1086" text-anchor="start">via substrate-interface 1.8.1</text>
+<path d="M508,381 L508,476" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="508,489 502,475 514,475" fill="#1C2530"/>
+<path d="M812,381 L812,411 L508,411" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<path d="M508,601 L508,636" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="508,649 502,635 514,635" fill="#1C2530"/>
+<path d="M508,867 L508,832" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="508,819 514,833 502,833" fill="#1C2530"/>
+<path d="M508,1103 L508,1012" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="508,999 514,1013 502,1013" fill="#1C2530"/>
+<path d="M640,683 L979,683" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="992,683 978,689 978,677" fill="#1C2530"/>
+<path d="M812,999 L812,1090" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="812,1103 806,1089 818,1089" fill="#1C2530"/>
+<path d="M928,959 L979,959" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="992,959 978,965 978,953" fill="#1C2530"/>
+<path d="M992,807 L653,807" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="640,807 654,801 654,813" fill="#1C2530"/>
+<path d="M180,381 L180,479" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="180,489 175.5,478 184.5,478" fill="#6E6B60"/>
+<path d="M376,891 L324,891 L324,545 L306,545" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="296,545 307,540.5 307,549.5" fill="#6E6B60"/>
+<path d="M324,715 L306,715" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="296,715 307,710.5 307,719.5" fill="#6E6B60"/>
+<path d="M296,1226 L348,1226 L348,975 L366,975" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="376,975 365,979.5 365,970.5" fill="#6E6B60"/>
+<path d="M296,1140 L348,1140" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<path d="M992,1170 L938,1170" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-dasharray="6 5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="928,1170 939,1165.5 939,1174.5" fill="#6E6B60"/>
+<circle cx="508" cy="411" r="4.5" fill="#1C2530"/>
+<circle cx="324" cy="715" r="3.5" fill="#6E6B60"/>
+<circle cx="348" cy="1140" r="3.5" fill="#6E6B60"/>
+<g class="node" id="n-dapp" data-box="64,228,232,153">
+<rect x="64" y="228" width="232" height="153" fill="#F1EEE4"/>
+<rect x="64" y="228" width="232" height="153" fill="none" stroke="#1C2530" stroke-width="1.25"/>
 <text class="role" x="78" y="254">INPUT · CODE UNDER TEST</text>
 <text class="name" x="78" y="286">A DAPP DIRECTORY</text>
 <text class="body" x="78" y="308">Python, JS and TS</text>
 <text class="body" x="78" y="328">call sites, plus wasm</text>
 <text class="body" x="78" y="348">import sections</text>
 </g>
-<g class="node" id="n-rtd" data-box="376,228,264,134">
-<rect x="376" y="228" width="264" height="134" fill="#F1EEE4"/>
-<rect x="376" y="228" width="264" height="134" fill="none" stroke="#2F64A0" stroke-width="1.5"/>
+<g class="node" id="n-rtd" data-box="376,228,264,153">
+<rect x="376" y="228" width="264" height="153" fill="#F1EEE4"/>
+<rect x="376" y="228" width="264" height="153" fill="none" stroke="#2F64A0" stroke-width="1.5"/>
 <text class="role blue" x="390" y="254">AS DOCUMENTED · MAINNET</text>
 <text class="name" x="390" y="286">MAINNET DOCS</text>
 <text class="body" x="390" y="308">readthedocs: 22 extrinsic</text>
 <text class="body" x="390" y="328">pages, 196 calls</text>
 <text class="mono" x="390" y="346">scripts/fetch_docs.py</text>
 </g>
-<g class="node" id="n-guide_src" data-box="696,228,232,134">
-<rect x="696" y="228" width="232" height="134" fill="#F1EEE4"/>
-<rect x="696" y="228" width="232" height="134" fill="none" stroke="#2F64A0" stroke-width="1.5"/>
+<g class="node" id="n-guide_src" data-box="696,228,232,153">
+<rect x="696" y="228" width="232" height="153" fill="#F1EEE4"/>
+<rect x="696" y="228" width="232" height="153" fill="none" stroke="#2F64A0" stroke-width="1.5"/>
 <text class="role blue" x="710" y="254">AS DOCUMENTED · V3</text>
 <text class="name" x="710" y="286">V3 TESTNET GUIDE</text>
-<text class="body" x="710" y="308">46 compose_call sites,</text>
-<text class="body" x="710" y="328">12 FAQ modules</text>
-<text class="mono" x="710" y="346">@ d671a32, read by AST</text>
+<text class="body" x="710" y="308">46 compose_call sites in</text>
+<text class="body" x="710" y="328">its demos (read by AST),</text>
+<text class="body" x="710" y="348">12 FAQ modules</text>
+<text class="mono" x="710" y="366">pinned @ d671a32</text>
 </g>
-<g class="node" id="n-docsguide" data-box="376,470,264,112">
-<rect x="376" y="470" width="264" height="112" fill="#F1EEE4"/>
-<rect x="376" y="470" width="264" height="112" fill="none" stroke="#1C2530" stroke-width="1.25"/>
-<circle cx="400" cy="491" r="11" fill="#1C2530"/>
-<text class="balloon" x="400" y="496" text-anchor="middle">1</text>
-<text class="role" x="418" y="496">DOCUMENTED CALL</text>
-<text class="file" x="390" y="525">docs.py · guide.py</text>
-<text class="body" x="390" y="548">each call with its page or</text>
-<text class="body" x="390" y="568">file:line reference</text>
+<g class="node" id="n-docsguide" data-box="376,489,264,112">
+<rect x="376" y="489" width="264" height="112" fill="#F1EEE4"/>
+<rect x="376" y="489" width="264" height="112" fill="none" stroke="#1C2530" stroke-width="1.25"/>
+<circle cx="400" cy="510" r="11" fill="#1C2530"/>
+<text class="balloon" x="400" y="515" text-anchor="middle">1</text>
+<text class="role" x="418" y="515">DOCUMENTED CALL</text>
+<text class="file" x="390" y="544">docs.py · guide.py</text>
+<text class="body" x="390" y="567">each call with its page or</text>
+<text class="body" x="390" y="587">file:line reference</text>
 </g>
-<g class="node" id="n-check" data-box="64,470,232,112">
-<rect x="64" y="470" width="232" height="112" fill="#F1EEE4"/>
-<rect x="64" y="470" width="232" height="112" fill="none" stroke="#1C2530" stroke-width="1.25"/>
-<text class="role" x="78" y="496">DAPP CHECK</text>
-<text class="file" x="78" y="525">check.py</text>
-<text class="body" x="78" y="548">a dApp's calls vs one</text>
-<text class="body" x="78" y="568">runtime: exit 0 / 1 / 2</text>
+<g class="node" id="n-check" data-box="64,489,232,112">
+<rect x="64" y="489" width="232" height="112" fill="#F1EEE4"/>
+<rect x="64" y="489" width="232" height="112" fill="none" stroke="#1C2530" stroke-width="1.25"/>
+<text class="role" x="78" y="515">DAPP CHECK</text>
+<text class="file" x="78" y="544">check.py</text>
+<text class="body" x="78" y="567">a dApp's calls vs one</text>
+<text class="body" x="78" y="587">runtime: exit 0 / 1 / 2</text>
 </g>
-<g class="node" id="n-plumb" data-box="376,630,264,170">
-<rect x="376" y="630" width="264" height="170" fill="#F1EEE4"/>
-<rect x="376" y="630" width="264" height="170" fill="none" stroke="#1C2530" stroke-width="2.5"/>
-<circle cx="400" cy="651" r="11" fill="#1C2530"/>
-<text class="balloon" x="400" y="656" text-anchor="middle">2</text>
-<text class="role" x="418" y="656">VERDICT</text>
-<text class="file" x="390" y="685">plumb.py</text>
-<text class="body" x="390" y="708">joins each documented entry</text>
-<text class="body" x="390" y="728">to one runtime's call surface:</text>
-<text class="body" x="390" y="748">exactly one verdict per entry</text>
-<text class="mono" x="390" y="766">+ produce.py, verdicts.py,</text>
-<text class="mono" x="390" y="785">renames.py; SQLite ledger</text>
+<g class="node" id="n-plumb" data-box="376,649,264,170">
+<rect x="376" y="649" width="264" height="170" fill="#F1EEE4"/>
+<rect x="376" y="649" width="264" height="170" fill="none" stroke="#1C2530" stroke-width="2.5"/>
+<circle cx="400" cy="670" r="11" fill="#1C2530"/>
+<text class="balloon" x="400" y="675" text-anchor="middle">2</text>
+<text class="role" x="418" y="675">VERDICT</text>
+<text class="file" x="390" y="704">plumb.py</text>
+<text class="body" x="390" y="727">joins each documented entry</text>
+<text class="body" x="390" y="747">to one runtime's call surface:</text>
+<text class="body" x="390" y="767">exactly one verdict per entry</text>
+<text class="mono" x="390" y="785">+ produce.py, verdicts.py,</text>
+<text class="mono" x="390" y="804">renames.py; SQLite ledger</text>
 </g>
-<g class="node" id="n-diff" data-box="64,646,232,132">
-<rect x="64" y="646" width="232" height="132" fill="#F1EEE4"/>
-<rect x="64" y="646" width="232" height="132" fill="none" stroke="#1C2530" stroke-width="1.25"/>
-<text class="role" x="78" y="672">RUNTIME DIFF</text>
-<text class="file" x="78" y="701">diff.py</text>
-<text class="body" x="78" y="724">six diff kinds between</text>
-<text class="body" x="78" y="744">two runtimes; 1002 → v3:</text>
-<text class="body" x="78" y="764">516 rows</text>
+<g class="node" id="n-diff" data-box="64,649,232,132">
+<rect x="64" y="649" width="232" height="132" fill="#F1EEE4"/>
+<rect x="64" y="649" width="232" height="132" fill="none" stroke="#1C2530" stroke-width="1.25"/>
+<text class="role" x="78" y="675">RUNTIME DIFF</text>
+<text class="file" x="78" y="704">diff.py</text>
+<text class="body" x="78" y="727">six diff kinds between</text>
+<text class="body" x="78" y="747">two runtimes; 1002 → v3:</text>
+<text class="body" x="78" y="767">516 rows</text>
 </g>
-<g class="node" id="n-metadata" data-box="376,848,264,132">
-<rect x="376" y="848" width="264" height="132" fill="#F1EEE4"/>
-<rect x="376" y="848" width="264" height="132" fill="none" stroke="#1C2530" stroke-width="1.25"/>
-<text class="role" x="390" y="874">CHAIN PROFILES</text>
-<text class="file" x="390" y="903">metadata.py</text>
-<text class="body" x="390" y="926">checks spec name, genesis and</text>
-<text class="body" x="390" y="946">spec version, then reads the</text>
-<text class="body" x="390" y="966">metadata at one pinned block</text>
+<g class="node" id="n-metadata" data-box="376,867,264,132">
+<rect x="376" y="867" width="264" height="132" fill="#F1EEE4"/>
+<rect x="376" y="867" width="264" height="132" fill="none" stroke="#1C2530" stroke-width="1.25"/>
+<text class="role" x="390" y="893">CHAIN PROFILES</text>
+<text class="file" x="390" y="922">metadata.py</text>
+<text class="body" x="390" y="945">checks spec name, genesis and</text>
+<text class="body" x="390" y="965">spec version, then reads the</text>
+<text class="body" x="390" y="985">metadata at one pinned block</text>
 </g>
-<g class="node" id="n-canary" data-box="696,848,232,132">
-<rect x="696" y="848" width="232" height="132" fill="#F1EEE4"/>
-<rect x="696" y="848" width="232" height="132" fill="none" stroke="#1C2530" stroke-width="1.25"/>
-<circle cx="720" cy="869" r="11" fill="#1C2530"/>
-<text class="balloon" x="720" y="874" text-anchor="middle">3</text>
-<text class="role" x="738" y="874">PROOF</text>
-<text class="file" x="710" y="903">canary.py</text>
-<text class="body" x="710" y="926">signs and submits, keeps</text>
-<text class="body" x="710" y="946">the receipt, reads it back</text>
-<text class="body" x="710" y="966">from its block by hash</text>
+<g class="node" id="n-canary" data-box="696,867,232,132">
+<rect x="696" y="867" width="232" height="132" fill="#F1EEE4"/>
+<rect x="696" y="867" width="232" height="132" fill="none" stroke="#1C2530" stroke-width="1.25"/>
+<circle cx="720" cy="888" r="11" fill="#1C2530"/>
+<text class="balloon" x="720" y="893" text-anchor="middle">3</text>
+<text class="role" x="738" y="893">PROOF</text>
+<text class="file" x="710" y="922">canary.py</text>
+<text class="body" x="710" y="945">signs and submits, keeps</text>
+<text class="body" x="710" y="965">the receipt, reads it back</text>
+<text class="body" x="710" y="985">from its block by hash</text>
 </g>
-<g class="node" id="n-ledger" data-box="992,470,264,228">
-<rect x="992" y="470" width="264" height="228" fill="#F1EEE4"/>
-<rect x="992" y="470" width="264" height="228" fill="none" stroke="#1C2530" stroke-width="1.25"/>
-<text class="role" x="1006" y="496">DRIFT LEDGER</text>
-<text class="file" x="1006" y="525">ledger_v3.json</text>
-<text class="body" x="1006" y="548">549 verdict rows, canonical</text>
-<text class="body" x="1006" y="568">JSON, with its blake2-256</text>
-<text class="mono" x="1006" y="586">evidence/ledger_v3.json</text>
-<line x1="993" y1="601" x2="1255" y2="601" stroke="#6E6B60" stroke-width="0.75" stroke-dasharray="2 3"/>
-<text class="mono ink" x="1006" y="625">Balances.transfer</text>
-<line x1="1004" y1="620.5" x2="1150.8" y2="620.5" stroke="#C0341C" stroke-width="2"/>
-<text class="margin" x="1242" y="625" text-anchor="end">ABSENT</text>
-<text class="mono ink" x="1006" y="647">transfer_keep_alive</text>
-<text class="stamp" x="1242" y="647" text-anchor="end">✓ PROVEN</text>
-<text class="mono" x="1242" y="667" text-anchor="end">receipt 106425-1</text>
+<g class="node" id="n-ledger" data-box="992,489,264,228">
+<rect x="992" y="489" width="264" height="228" fill="#F1EEE4"/>
+<rect x="992" y="489" width="264" height="228" fill="none" stroke="#1C2530" stroke-width="1.25"/>
+<text class="role" x="1006" y="515">DRIFT LEDGER</text>
+<text class="file" x="1006" y="544">ledger_v3.json</text>
+<text class="body" x="1006" y="567">549 verdict rows, canonical</text>
+<text class="body" x="1006" y="587">JSON, with its blake2-256</text>
+<text class="mono" x="1006" y="605">evidence/ledger_v3.json</text>
+<line x1="993" y1="620" x2="1255" y2="620" stroke="#6E6B60" stroke-width="0.75"/>
+<text class="mono ink" x="1006" y="644">Balances.transfer</text>
+<line x1="1004" y1="639.5" x2="1150.8" y2="639.5" stroke="#C0341C" stroke-width="2"/>
+<text class="margin" x="1242" y="644" text-anchor="end">ABSENT</text>
+<text class="mono ink" x="1006" y="666">transfer_keep_alive</text>
+<text class="stamp" x="1242" y="666" text-anchor="end">✓ PROVEN</text>
+<text class="mono" x="1242" y="686" text-anchor="end">receipt 106425-1</text>
 </g>
-<g class="node" id="n-proof" data-box="992,764,264,216">
-<rect x="992" y="764" width="264" height="216" fill="#F1EEE4"/>
-<rect x="992" y="764" width="264" height="216" fill="none" stroke="#1C2530" stroke-width="1.25"/>
-<text class="role" x="1006" y="790">PROOF RECORD</text>
-<text class="file" x="1006" y="819">docs/PROOF.md</text>
-<text class="body" x="1006" y="842">3 canary txs on V3, each read</text>
-<text class="body" x="1006" y="862">back from its block: 3 / 3 match</text>
-<text class="mono" x="1006" y="880">+ evidence/canary_v3.json</text>
-<line x1="993" y1="891" x2="1255" y2="891" stroke="#6E6B60" stroke-width="0.75" stroke-dasharray="2 3"/>
-<text class="mono ink" x="1006" y="911">106424-1<tspan class="mono" dx="8.4">remark_with_event</tspan></text>
-<text class="mono ink" x="1006" y="930">106425-1<tspan class="mono" dx="8.4">transfer_keep_alive</tspan></text>
-<text class="mono ink" x="1006" y="949">106426-1<tspan class="mono" dx="8.4">batch_all</tspan></text>
+<g class="node" id="n-proof" data-box="992,783,264,216">
+<rect x="992" y="783" width="264" height="216" fill="#F1EEE4"/>
+<rect x="992" y="783" width="264" height="216" fill="none" stroke="#1C2530" stroke-width="1.25"/>
+<text class="role" x="1006" y="809">PROOF RECORD</text>
+<text class="file" x="1006" y="838">docs/PROOF.md</text>
+<text class="body" x="1006" y="861">3 canary txs on V3, each read</text>
+<text class="body" x="1006" y="881">back from its block: 3 / 3 match</text>
+<text class="mono" x="1006" y="899">+ evidence/canary_v3.json</text>
+<line x1="993" y1="910" x2="1255" y2="910" stroke="#6E6B60" stroke-width="0.75"/>
+<text class="mono ink" x="1006" y="930">106424-1<tspan class="mono" dx="8.4">remark_with_event</tspan></text>
+<text class="mono ink" x="1006" y="949">106425-1<tspan class="mono" dx="8.4">transfer_keep_alive</tspan></text>
+<text class="mono ink" x="1006" y="968">106426-1<tspan class="mono" dx="8.4">batch_all</tspan></text>
 </g>
-<g class="node" id="n-mainnet" data-box="64,1084,232,74">
-<rect x="64" y="1084" width="232" height="74" fill="#F1EEE4"/>
-<rect x="64" y="1084" width="232" height="74" fill="none" stroke="#1C2530" stroke-width="1.25"/>
-<text class="name" x="78" y="1122">PORTALDOT MAINNET</text>
-<text class="body" x="78" y="1144">spec 1002 · read-only</text>
+<g class="node" id="n-mainnet" data-box="64,1103,232,74">
+<rect x="64" y="1103" width="232" height="74" fill="#F1EEE4"/>
+<rect x="64" y="1103" width="232" height="74" fill="none" stroke="#1C2530" stroke-width="1.25"/>
+<text class="name" x="78" y="1141">PORTALDOT MAINNET</text>
+<text class="body" x="78" y="1163">spec 1002 · read-only</text>
 </g>
-<g class="node" id="n-standin" data-box="64,1170,232,74">
-<rect x="64" y="1170" width="232" height="74" fill="#F1EEE4"/>
-<rect x="64" y="1170" width="14" height="74" fill="url(#hatch)"/>
-<line x1="78" y1="1170" x2="78" y2="1244" stroke="#6E6B60" stroke-width="1"/>
-<rect x="64" y="1170" width="232" height="74" fill="none" stroke="#6E6B60" stroke-width="1.25"/>
-<text class="name" x="92" y="1208">INTERIM-SDK STAND-IN</text>
-<text class="body" x="92" y="1230">local --dev · NOT V3</text>
+<g class="node" id="n-standin" data-box="64,1189,232,74">
+<rect x="64" y="1189" width="232" height="74" fill="#F1EEE4"/>
+<rect x="64" y="1189" width="232" height="74" fill="url(#hatch)"/>
+<rect x="64" y="1189" width="232" height="74" fill="none" stroke="#6E6B60" stroke-width="1.25"/>
+<text class="name" x="78" y="1227">INTERIM-SDK STAND-IN</text>
+<text class="body" x="78" y="1249">local --dev · NOT V3</text>
 </g>
-<g class="node" id="n-v3" data-box="376,1084,552,160">
-<rect x="376" y="1084" width="552" height="160" fill="#F1EEE4"/>
-<rect x="376" y="1084" width="552" height="160" fill="none" stroke="#1C2530" stroke-width="2.0"/>
-<text class="role" x="390" y="1110">JUDGED TARGET · PROFILE v3</text>
-<text class="name" x="390" y="1142">PORTALDOT V3 TESTNET</text>
-<text class="mono ink" x="390" y="1162">wss://test-node-v3.portaldot.dev</text>
-<text class="body" x="390" y="1183">spec 3002 (portaldot-v3): read-only metadata, plus 3 canary transactions</text>
-<text class="mono ink" x="390" y="1201">identity pinned in metadata.py: genesis 0xd4f9acbc…5283bd</text>
+<g class="node" id="n-v3" data-box="376,1103,552,134">
+<rect x="376" y="1103" width="552" height="134" fill="#F1EEE4"/>
+<rect x="376" y="1103" width="552" height="134" fill="none" stroke="#1C2530" stroke-width="1.25"/>
+<text class="role" x="390" y="1129">JUDGED TARGET · PROFILE v3</text>
+<text class="name" x="390" y="1161">PORTALDOT V3 TESTNET</text>
+<text class="mono ink" x="390" y="1181">wss://test-node-v3.portaldot.dev</text>
+<text class="body" x="390" y="1202">spec 3002 (portaldot-v3): read-only metadata, plus 3 canary transactions</text>
+<text class="mono ink" x="390" y="1220">identity pinned in metadata.py: genesis 0xd4f9acbc…5283bd</text>
 </g>
-<g class="node" id="n-ledgerc" data-box="992,1084,264,160">
-<rect x="992" y="1084" width="264" height="160" fill="#F1EEE4"/>
-<rect x="992" y="1084" width="264" height="160" fill="none" stroke="#6E6B60" stroke-width="1.25" stroke-dasharray="6 5"/>
-<text class="role" x="1006" y="1110">PLANNED · NOT BUILT</text>
-<text class="name dim" x="1006" y="1142">PLUMBLINE LEDGER</text>
-<text class="body dim" x="1006" y="1164">Revive contract to attest</text>
-<text class="body dim" x="1006" y="1184">ledger hashes on V3; no</text>
-<text class="body dim" x="1006" y="1204">code or address exists</text>
+<g class="node" id="n-ledgerc" data-box="992,1103,264,134">
+<rect x="992" y="1103" width="264" height="134" fill="#F1EEE4"/>
+<rect x="992" y="1103" width="264" height="134" fill="none" stroke="#6E6B60" stroke-width="1.25" stroke-dasharray="6 5"/>
+<text class="role" x="1006" y="1129">PLANNED · NOT BUILT</text>
+<text class="name dim" x="1006" y="1161">PLUMBLINE LEDGER</text>
+<text class="body dim" x="1006" y="1183">Revive contract to attest</text>
+<text class="body dim" x="1006" y="1203">ledger hashes on V3; no</text>
+<text class="body dim" x="1006" y="1223">code or address exists</text>
 </g>
-<text class="alabel lbl" x="520" y="829" text-anchor="start" paint-order="stroke" stroke="#F1EEE4" stroke-width="6" stroke-linejoin="round">STORED BLOB</text>
-<text class="alabel lbl" x="520" y="1037" text-anchor="start" paint-order="stroke" stroke="#F1EEE4" stroke-width="6" stroke-linejoin="round">READ-ONLY RPC</text>
-<text class="alabel lbl" x="800" y="652" text-anchor="middle" paint-order="stroke" stroke="#F1EEE4" stroke-width="6" stroke-linejoin="round">549 ROWS</text>
-<text class="alabel lbl" x="824" y="1037" text-anchor="start" paint-order="stroke" stroke="#F1EEE4" stroke-width="6" stroke-linejoin="round">3 CANARY TXS</text>
-<text class="amono lbl" x="800" y="776" text-anchor="middle" paint-order="stroke" stroke="#F1EEE4" stroke-width="6" stroke-linejoin="round">--receipts</text>
+<text class="alabel lbl" x="520" y="848" text-anchor="start">STORED BLOB</text>
+<text class="alabel lbl" x="520" y="1056" text-anchor="start">READ-ONLY RPC</text>
+<text class="alabel lbl" x="800" y="671" text-anchor="middle">549 ROWS</text>
+<text class="alabel lbl" x="824" y="1056" text-anchor="start">3 CANARY TXS</text>
+<text class="amono lbl" x="800" y="795" text-anchor="middle">--receipts canary_v3.json</text>
 <g class="legendrow">
-<line x1="64" y1="1284" x2="1256" y2="1284" stroke="#6E6B60" stroke-width="0.75"/>
-<text class="zlabel" x="64" y="1311">LEGEND</text>
-<path d="M144,1306 L167,1306" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="180,1306 166,1312 166,1300" fill="#1C2530"/>
-<text class="legend" x="190" y="1311">core flow 1 → 2 → 3</text>
-<path d="M358.7,1306 L384.7,1306" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="394.7,1306 383.7,1310.5 383.7,1301.5" fill="#6E6B60"/>
-<text class="legend" x="404.7" y="1311">other data flow</text>
-<path d="M544.2,1306 L570.2,1306" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-dasharray="6 5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="580.2,1306 569.2,1310.5 569.2,1301.5" fill="#6E6B60"/>
-<text class="legend" x="590.2" y="1311">planned, not built</text>
-<line x1="751.6" y1="1306" x2="781.6" y2="1306" stroke="#6E6B60" stroke-width="1.5"/>
-<line x1="766.6" y1="1306" x2="766.6" y2="1292" stroke="#6E6B60" stroke-width="1.5"/>
-<circle cx="766.6" cy="1306" r="3.5" fill="#6E6B60"/>
-<text class="legend" x="791.6" y="1311">join</text>
-<rect x="850.8000000000001" y="1296" width="14" height="20" fill="url(#hatch)" stroke="#6E6B60" stroke-width="1"/>
-<text class="legend" x="874.8000000000001" y="1311">stand-in chain, not V3</text>
-<text class="mono ink" x="1065.4" y="1311">transfer</text>
-<line x1="1063.4" y1="1306.5" x2="1134.6000000000001" y2="1306.5" stroke="#C0341C" stroke-width="2"/>
-<text class="legend" x="1145.4" y="1311">drift plumb found</text>
+<line x1="64" y1="1301" x2="1256" y2="1301" stroke="#6E6B60" stroke-width="0.75"/>
+<text class="zlabel" x="64" y="1330">LEGEND</text>
+<path d="M148,1325 L171,1325" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="184,1325 170,1331 170,1319" fill="#1C2530"/>
+<text class="legend" x="194" y="1330">core flow, steps 1–3</text>
+<path d="M364,1325 L390,1325" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="400,1325 389,1329.5 389,1320.5" fill="#6E6B60"/>
+<text class="legend" x="410" y="1330">other data flow</text>
+<path d="M580,1325 L606,1325" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-dasharray="6 5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="616,1325 605,1329.5 605,1320.5" fill="#6E6B60"/>
+<text class="legend" x="626" y="1330">planned link</text>
+<line x1="796" y1="1325" x2="826" y2="1325" stroke="#6E6B60" stroke-width="1.5"/>
+<line x1="811" y1="1325" x2="811" y2="1312" stroke="#6E6B60" stroke-width="1.5"/>
+<circle cx="811" cy="1325" r="3.5" fill="#6E6B60"/>
+<text class="legend" x="836" y="1330">lines join</text>
+<text class="mono ink" x="1012" y="1330">transfer</text>
+<line x1="1010" y1="1325.5" x2="1081.2" y2="1325.5" stroke="#C0341C" stroke-width="2"/>
+<text class="legend" x="1092" y="1330">drift plumb found</text>
+<rect x="148" y="1347" width="34" height="20" fill="#F1EEE4" stroke="#1C2530" stroke-width="2.5"/>
+<text class="legend" x="194" y="1362">verdict engine</text>
+<rect x="364" y="1347" width="34" height="20" fill="#F1EEE4" stroke="#2F64A0" stroke-width="1.5"/>
+<text class="legend" x="410" y="1362">as documented</text>
+<rect x="580" y="1347" width="34" height="20" fill="#F1EEE4" stroke="#6E6B60" stroke-width="1.25" stroke-dasharray="6 5"/>
+<text class="legend" x="626" y="1362">planned, not built</text>
+<rect x="796" y="1347" width="34" height="20" fill="#F1EEE4"/>
+<rect x="796" y="1347" width="34" height="20" fill="url(#hatch)" stroke="#6E6B60" stroke-width="1.25"/>
+<text class="legend" x="842" y="1362">stand-in chain, not V3</text>
 </g>
 </svg>
 </div></body></html>
