@@ -1,6 +1,7 @@
 """The CLI faces wired in this row: `plumbline check` (golden output on the 1002 profile) and `plumbline plumb`."""
 
 import json
+import re
 import subprocess
 import sys
 
@@ -45,7 +46,7 @@ def test_example_call_sites_cite_their_source():
         text = path.read_text()
         if path.name == "router.ts":
             continue  # the dynamic site has no source to cite
-        assert "readthedocs.io" in text or "demo/0" in text, path.name
+        assert re.search(r"readthedocs\.io|demo/0", text), path.name
 
 
 def test_check_json_and_exit_codes():
