@@ -102,6 +102,13 @@ polkadot-sdk dev chain (`interim-sdk`, a stand-in, **not V3**) is kept as test i
 
 ## Technical Architecture
 
+![Plumbline architecture: documented calls (docs.py, guide.py) and V3 runtime metadata (metadata.py) meet in plumb.py, which writes one verdict per call to the drift ledger; canary.py sends 3 transactions to the V3 testnet and their read-back receipts make a verdict PROVEN](docs/architecture.png)
+
+*Drawn from the code in `plumbline/`. Heavy lines are the core flow (1 documented call → 2 verdict → 3 proof); dashed is planned; the hatched chain is the local stand-in, not V3. Source: [`docs/architecture.html`](docs/architecture.html).*
+
+<details>
+<summary>Diagram as text (Mermaid)</summary>
+
 ```mermaid
 flowchart LR
     subgraph IN["Inputs (untrusted data)"]
@@ -170,6 +177,8 @@ flowchart LR
     class LEDGER planned
     class INT,PROOFI standin
 ```
+
+</details>
 
 Solid boxes exist in this repository; dashed boxes are **planned**; yellow boxes are the stand-in chain and what it
 produced (**not V3**); the V3 testnet is a solid box. Drawn from the code; explained step by step in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
