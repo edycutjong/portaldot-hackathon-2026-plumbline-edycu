@@ -3,10 +3,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Plumbline architecture</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,500&family=IBM+Plex+Sans:wght@400&display=block" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,500&family=IBM+Plex+Sans:ital,wght@0,400;1,400&display=block" rel="stylesheet">
 <style>html,body{margin:0;background:#F1EEE4} .wrap{overflow-x:auto}</style>
 </head><body><div class="wrap">
-<svg xmlns="http://www.w3.org/2000/svg" id="arch" width="1288" height="1395" viewBox="0 0 1288 1395" role="img" aria-labelledby="plumbline-arch-title plumbline-arch-desc" style="min-width:1288px;display:block">
+<svg xmlns="http://www.w3.org/2000/svg" id="arch" width="1288" height="1415" viewBox="0 0 1288 1415" role="img" aria-labelledby="plumbline-arch-title plumbline-arch-desc" style="min-width:1288px;display:block">
 <title id="plumbline-arch-title">Plumbline architecture: documented call → verdict → proof</title>
 <desc id="plumbline-arch-desc">The Plumbline CLI reads the Portaldot mainnet docs and the V3 testnet guide into documented calls (docs.py, guide.py), reads a runtime's metadata through a checked chain profile (metadata.py), and plumb.py writes one verdict per documented entry into the drift ledger (evidence/ledger_v3.json, 549 rows). canary.py sends 3 canary transactions to the Portaldot V3 testnet and reads them back; their receipts (evidence/canary_v3.json, tabulated in docs/PROOF.md) are what make a verdict PROVEN. check.py and diff.py reuse the same chain profiles. Mainnet spec 1002 is a read-only baseline, the interim-sdk chain is a local stand-in and not V3, and the Plumbline Ledger contract is planned and not built.</desc>
 <defs><pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24,0 H0 V24" fill="none" stroke="#D9D3C3" stroke-width="0.75"/></pattern><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#D9D3C3" stroke-width="2.2"/></pattern><style>
@@ -23,6 +23,8 @@
 .balloon{font:700 15px 'Barlow Condensed',sans-serif;fill:#F1EEE4}
 .alabel{font:600 14px 'Barlow Condensed',sans-serif;letter-spacing:.1em;fill:#1C2530}
 .amono{font:500 14px 'IBM Plex Mono',monospace;fill:#1C2530}
+.note{font:italic 400 14px 'IBM Plex Sans',sans-serif;fill:#6E6B60}
+.callout{font:italic 400 15px 'IBM Plex Sans',sans-serif;fill:#1C2530}
 .zone{fill:#1C2530;fill-opacity:.025;stroke:#6E6B60;stroke-opacity:.55;stroke-width:1}
 .zlabel{font:600 16px 'Barlow Condensed',sans-serif;letter-spacing:.14em;fill:#1C2530}
 .zdesc{font:400 15px 'IBM Plex Sans',sans-serif;fill:#6E6B60}
@@ -35,12 +37,12 @@
 .tbk{font:600 14px 'Barlow Condensed',sans-serif;letter-spacing:.14em;fill:#6E6B60}
 .tbv{font:600 15px 'Barlow Condensed',sans-serif;letter-spacing:.06em;fill:#1C2530}
 </style></defs>
-<rect width="1288" height="1395" fill="#F1EEE4"/>
-<rect x="10" y="10" width="1268" height="1375" fill="url(#grid)" opacity=".55"/>
-<rect x="10" y="10" width="1268" height="1375" fill="none" stroke="#1C2530" stroke-width="1.5"/>
+<rect width="1288" height="1415" fill="#F1EEE4"/>
+<rect x="10" y="10" width="1268" height="1395" fill="url(#grid)" opacity=".55"/>
+<rect x="10" y="10" width="1268" height="1395" fill="none" stroke="#1C2530" stroke-width="1.5"/>
 <circle cx="34" cy="34" r="5" fill="#1C2530"/>
-<line x1="34" y1="34" x2="34" y2="1283" stroke="#1C2530" stroke-width="1.5"/>
-<polygon points="34,1327 21,1301 23,1288 28,1283 40,1283 45,1288 47,1301" fill="#9C7630"/>
+<line x1="34" y1="34" x2="34" y2="1303" stroke="#1C2530" stroke-width="1.5"/>
+<polygon points="34,1347 21,1321 23,1308 28,1303 40,1303 45,1308 47,1321" fill="#9C7630"/>
 <text class="eyebrow" x="64" y="46">PORTALDOT HACKER HOUSE 2026 · MODULAR CLOUD &amp; MIDDLEWARE</text>
 <circle cx="80" cy="77" r="16" fill="#1C2530"/>
 <text class="tballoon" x="80" y="85" text-anchor="middle">1</text>
@@ -79,9 +81,9 @@
 <text class="tbv" x="1076" y="205">2026-10-24, FROM THE CODE</text>
 </g>
 <rect class="zone" x="48" y="164" width="896" height="233"/><text class="zlabel" x="64" y="190" text-anchor="start">INPUTS · UNTRUSTED DATA</text><text class="zdesc" x="64" y="211" text-anchor="start">the documented surface, and the dApp under test</text>
-<rect class="zone" x="48" y="425" width="896" height="590"/><text class="zlabel" x="928" y="451" text-anchor="end">plumbline/ · ONE PYTHON CLI</text><text class="zdesc" x="928" y="472" text-anchor="end">cli.py (typer) · RPC client, no contract</text>
+<rect class="zone" x="48" y="425" width="896" height="590"/><text class="zlabel" x="928" y="451" text-anchor="end">plumbline/ · PYTHON CLI, RUNS LOCALLY</text><text class="zdesc" x="928" y="472" text-anchor="end">cli.py (typer) · RPC client, no contract</text>
 <rect class="zone" x="976" y="425" width="296" height="590"/><text class="zlabel" x="992" y="451" text-anchor="start">IN THIS REPOSITORY</text><text class="zdesc" x="992" y="472" text-anchor="start">committed evidence</text>
-<rect class="zone" x="48" y="1039" width="1224" height="240"/><text class="zlabel" x="64" y="1065" text-anchor="start">CHAINS</text><text class="zdesc" x="64" y="1086" text-anchor="start">via substrate-interface 1.8.1</text>
+<rect class="zone" x="48" y="1039" width="1224" height="260"/><text class="zlabel" x="64" y="1065" text-anchor="start">CHAINS · ON-CHAIN</text><text class="zdesc" x="64" y="1086" text-anchor="start">via substrate-interface 1.8.1</text>
 <path d="M508,381 L508,476" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
 <polygon class="head" points="508,489 502,475 514,475" fill="#1C2530"/>
 <path d="M812,381 L812,411 L508,411" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
@@ -91,21 +93,21 @@
 <polygon class="head" points="508,819 514,833 502,833" fill="#1C2530"/>
 <path d="M508,1103 L508,1012" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
 <polygon class="head" points="508,999 514,1013 502,1013" fill="#1C2530"/>
-<path d="M640,683 L979,683" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="992,683 978,689 978,677" fill="#1C2530"/>
+<path d="M640,701 L979,701" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="992,701 978,707 978,695" fill="#1C2530"/>
 <path d="M812,999 L812,1090" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
 <polygon class="head" points="812,1103 806,1089 818,1089" fill="#1C2530"/>
 <path d="M928,959 L979,959" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
 <polygon class="head" points="992,959 978,965 978,953" fill="#1C2530"/>
-<path d="M992,807 L653,807" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="640,807 654,801 654,813" fill="#1C2530"/>
+<path d="M992,801 L653,801" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="640,801 654,795 654,807" fill="#1C2530"/>
 <path d="M180,381 L180,479" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
 <polygon class="head" points="180,489 175.5,478 184.5,478" fill="#6E6B60"/>
 <path d="M376,891 L324,891 L324,545 L306,545" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
 <polygon class="head" points="296,545 307,540.5 307,549.5" fill="#6E6B60"/>
 <path d="M324,715 L306,715" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
 <polygon class="head" points="296,715 307,710.5 307,719.5" fill="#6E6B60"/>
-<path d="M296,1226 L348,1226 L348,975 L366,975" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<path d="M296,1236 L348,1236 L348,975 L366,975" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
 <polygon class="head" points="376,975 365,979.5 365,970.5" fill="#6E6B60"/>
 <path d="M296,1140 L348,1140" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
 <path d="M992,1170 L938,1170" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-dasharray="6 5" stroke-linejoin="miter" stroke-linecap="butt"/>
@@ -201,34 +203,36 @@
 <text class="body" x="710" y="965">the receipt, reads it back</text>
 <text class="body" x="710" y="985">from its block by hash</text>
 </g>
-<g class="node" id="n-ledger" data-box="992,489,264,228">
-<rect x="992" y="489" width="264" height="228" fill="#F1EEE4"/>
-<rect x="992" y="489" width="264" height="228" fill="none" stroke="#1C2530" stroke-width="1.25"/>
+<g class="node" id="n-ledger" data-box="992,489,264,264">
+<rect x="992" y="489" width="264" height="264" fill="#F1EEE4"/>
+<rect x="992" y="489" width="264" height="264" fill="none" stroke="#1C2530" stroke-width="1.25"/>
 <text class="role" x="1006" y="515">DRIFT LEDGER</text>
 <text class="file" x="1006" y="544">ledger_v3.json</text>
-<text class="body" x="1006" y="567">549 verdict rows, canonical</text>
-<text class="body" x="1006" y="587">JSON, with its blake2-256</text>
+<text class="body" x="1006" y="567">549 rows: 297 documented</text>
+<text class="body" x="1006" y="587">entries + 252 runtime-only</text>
 <text class="mono" x="1006" y="605">evidence/ledger_v3.json</text>
 <line x1="993" y1="620" x2="1255" y2="620" stroke="#6E6B60" stroke-width="0.75"/>
-<text class="mono ink" x="1006" y="644">Balances.transfer</text>
-<line x1="1004" y1="639.5" x2="1150.8" y2="639.5" stroke="#C0341C" stroke-width="2"/>
-<text class="margin" x="1242" y="644" text-anchor="end">ABSENT</text>
-<text class="mono ink" x="1006" y="666">transfer_keep_alive</text>
-<text class="stamp" x="1242" y="666" text-anchor="end">✓ PROVEN</text>
-<text class="mono" x="1242" y="686" text-anchor="end">receipt 106425-1</text>
+<text class="role" x="1006" y="644">TWO OF THE 549 ROWS</text>
+<text class="mono ink" x="1006" y="668">Balances.transfer</text>
+<line x1="1004" y1="663.5" x2="1150.8" y2="663.5" stroke="#C0341C" stroke-width="2"/>
+<text class="margin" x="1242" y="668" text-anchor="end">ABSENT</text>
+<text class="note" x="1006" y="688">in the docs, not in V3 metadata</text>
+<text class="mono ink" x="1006" y="710">transfer_keep_alive</text>
+<text class="stamp" x="1242" y="710" text-anchor="end">✓ PROVEN</text>
+<text class="mono" x="1242" y="730" text-anchor="end">receipt 106425-1</text>
 </g>
-<g class="node" id="n-proof" data-box="992,783,264,216">
-<rect x="992" y="783" width="264" height="216" fill="#F1EEE4"/>
-<rect x="992" y="783" width="264" height="216" fill="none" stroke="#1C2530" stroke-width="1.25"/>
-<text class="role" x="1006" y="809">PROOF RECORD</text>
-<text class="file" x="1006" y="838">docs/PROOF.md</text>
-<text class="body" x="1006" y="861">3 canary txs on V3, each read</text>
-<text class="body" x="1006" y="881">back from its block: 3 / 3 match</text>
-<text class="mono" x="1006" y="899">+ evidence/canary_v3.json</text>
-<line x1="993" y1="910" x2="1255" y2="910" stroke="#6E6B60" stroke-width="0.75"/>
-<text class="mono ink" x="1006" y="930">106424-1<tspan class="mono" dx="8.4">remark_with_event</tspan></text>
-<text class="mono ink" x="1006" y="949">106425-1<tspan class="mono" dx="8.4">transfer_keep_alive</tspan></text>
-<text class="mono ink" x="1006" y="968">106426-1<tspan class="mono" dx="8.4">batch_all</tspan></text>
+<g class="node" id="n-proof" data-box="992,777,264,222">
+<rect x="992" y="777" width="264" height="222" fill="#F1EEE4"/>
+<rect x="992" y="777" width="264" height="222" fill="none" stroke="#1C2530" stroke-width="1.25"/>
+<text class="role" x="1006" y="803">PROOF RECORD</text>
+<text class="file" x="1006" y="832">docs/PROOF.md</text>
+<text class="body" x="1006" y="855">3 canary txs on V3, each read</text>
+<text class="body" x="1006" y="875">back from its block: 3 / 3 match</text>
+<text class="mono" x="1006" y="893">+ evidence/canary_v3.json</text>
+<line x1="993" y1="904" x2="1255" y2="904" stroke="#6E6B60" stroke-width="0.75"/>
+<text class="mono ink" x="1006" y="924">106424-1<tspan class="mono" dx="8.4">remark_with_event</tspan></text>
+<text class="mono ink" x="1006" y="943">106425-1<tspan class="mono" dx="8.4">transfer_keep_alive</tspan></text>
+<text class="mono ink" x="1006" y="962">106426-1<tspan class="mono" dx="8.4">batch_all</tspan></text>
 </g>
 <g class="node" id="n-mainnet" data-box="64,1103,232,74">
 <rect x="64" y="1103" width="232" height="74" fill="#F1EEE4"/>
@@ -236,12 +240,13 @@
 <text class="name" x="78" y="1141">PORTALDOT MAINNET</text>
 <text class="body" x="78" y="1163">spec 1002 · read-only</text>
 </g>
-<g class="node" id="n-standin" data-box="64,1189,232,74">
-<rect x="64" y="1189" width="232" height="74" fill="#F1EEE4"/>
-<rect x="64" y="1189" width="232" height="74" fill="url(#hatch)"/>
-<rect x="64" y="1189" width="232" height="74" fill="none" stroke="#6E6B60" stroke-width="1.25"/>
+<g class="node" id="n-standin" data-box="64,1189,232,94">
+<rect x="64" y="1189" width="232" height="94" fill="#F1EEE4"/>
+<rect x="64" y="1189" width="232" height="94" fill="url(#hatch)"/>
+<rect x="64" y="1189" width="232" height="94" fill="none" stroke="#6E6B60" stroke-width="1.25"/>
 <text class="name" x="78" y="1227">INTERIM-SDK STAND-IN</text>
 <text class="body" x="78" y="1249">local --dev · NOT V3</text>
+<text class="body" x="78" y="1269">test input; no verdicts</text>
 </g>
 <g class="node" id="n-v3" data-box="376,1103,552,134">
 <rect x="376" y="1103" width="552" height="134" fill="#F1EEE4"/>
@@ -261,39 +266,40 @@
 <text class="body dim" x="1006" y="1203">ledger hashes on V3; no</text>
 <text class="body dim" x="1006" y="1223">code or address exists</text>
 </g>
-<text class="alabel lbl" x="520" y="848" text-anchor="start">STORED BLOB</text>
+<text class="alabel lbl" x="520" y="848" text-anchor="start">STORED METADATA</text>
 <text class="alabel lbl" x="520" y="1056" text-anchor="start">READ-ONLY RPC</text>
-<text class="alabel lbl" x="800" y="671" text-anchor="middle">549 ROWS</text>
+<text class="alabel lbl" x="800" y="689" text-anchor="middle">549 ROWS</text>
 <text class="alabel lbl" x="824" y="1056" text-anchor="start">3 CANARY TXS</text>
-<text class="amono lbl" x="800" y="795" text-anchor="middle">--receipts canary_v3.json</text>
+<text class="amono lbl" x="800" y="789" text-anchor="middle">--receipts canary_v3.json</text>
+<g class="calloutg"><text class="callout" x="668" y="827">Step 3 feeds step 2: PROVEN needs</text><text class="callout" x="668" y="847">a receipt read back from its block.</text></g>
 <g class="legendrow">
-<line x1="64" y1="1301" x2="1256" y2="1301" stroke="#6E6B60" stroke-width="0.75"/>
-<text class="zlabel" x="64" y="1330">LEGEND</text>
-<path d="M148,1325 L171,1325" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="184,1325 170,1331 170,1319" fill="#1C2530"/>
-<text class="legend" x="194" y="1330">core flow, steps 1–3</text>
-<path d="M364,1325 L390,1325" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="400,1325 389,1329.5 389,1320.5" fill="#6E6B60"/>
-<text class="legend" x="410" y="1330">other data flow</text>
-<path d="M580,1325 L606,1325" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-dasharray="6 5" stroke-linejoin="miter" stroke-linecap="butt"/>
-<polygon class="head" points="616,1325 605,1329.5 605,1320.5" fill="#6E6B60"/>
-<text class="legend" x="626" y="1330">planned link</text>
-<line x1="796" y1="1325" x2="826" y2="1325" stroke="#6E6B60" stroke-width="1.5"/>
-<line x1="811" y1="1325" x2="811" y2="1312" stroke="#6E6B60" stroke-width="1.5"/>
-<circle cx="811" cy="1325" r="3.5" fill="#6E6B60"/>
-<text class="legend" x="836" y="1330">lines join</text>
-<text class="mono ink" x="1012" y="1330">transfer</text>
-<line x1="1010" y1="1325.5" x2="1081.2" y2="1325.5" stroke="#C0341C" stroke-width="2"/>
-<text class="legend" x="1092" y="1330">drift plumb found</text>
-<rect x="148" y="1347" width="34" height="20" fill="#F1EEE4" stroke="#1C2530" stroke-width="2.5"/>
-<text class="legend" x="194" y="1362">verdict engine</text>
-<rect x="364" y="1347" width="34" height="20" fill="#F1EEE4" stroke="#2F64A0" stroke-width="1.5"/>
-<text class="legend" x="410" y="1362">as documented</text>
-<rect x="580" y="1347" width="34" height="20" fill="#F1EEE4" stroke="#6E6B60" stroke-width="1.25" stroke-dasharray="6 5"/>
-<text class="legend" x="626" y="1362">planned, not built</text>
-<rect x="796" y="1347" width="34" height="20" fill="#F1EEE4"/>
-<rect x="796" y="1347" width="34" height="20" fill="url(#hatch)" stroke="#6E6B60" stroke-width="1.25"/>
-<text class="legend" x="842" y="1362">stand-in chain, not V3</text>
+<line x1="64" y1="1321" x2="1256" y2="1321" stroke="#6E6B60" stroke-width="0.75"/>
+<text class="zlabel" x="64" y="1350">LEGEND</text>
+<path d="M148,1345 L171,1345" fill="none" stroke="#1C2530" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="184,1345 170,1351 170,1339" fill="#1C2530"/>
+<text class="legend" x="194" y="1350">core flow, steps 1–3</text>
+<path d="M364,1345 L390,1345" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="400,1345 389,1349.5 389,1340.5" fill="#6E6B60"/>
+<text class="legend" x="410" y="1350">other data flow</text>
+<path d="M580,1345 L606,1345" fill="none" stroke="#6E6B60" stroke-width="1.5" stroke-dasharray="6 5" stroke-linejoin="miter" stroke-linecap="butt"/>
+<polygon class="head" points="616,1345 605,1349.5 605,1340.5" fill="#6E6B60"/>
+<text class="legend" x="626" y="1350">planned link</text>
+<line x1="796" y1="1345" x2="826" y2="1345" stroke="#6E6B60" stroke-width="1.5"/>
+<line x1="811" y1="1345" x2="811" y2="1332" stroke="#6E6B60" stroke-width="1.5"/>
+<circle cx="811" cy="1345" r="3.5" fill="#6E6B60"/>
+<text class="legend" x="836" y="1350">lines join</text>
+<text class="mono ink" x="1012" y="1350">transfer</text>
+<line x1="1010" y1="1345.5" x2="1081.2" y2="1345.5" stroke="#C0341C" stroke-width="2"/>
+<text class="legend" x="1092" y="1350">drift plumb found</text>
+<rect x="148" y="1367" width="34" height="20" fill="#F1EEE4" stroke="#1C2530" stroke-width="2.5"/>
+<text class="legend" x="194" y="1382">verdict engine</text>
+<rect x="364" y="1367" width="34" height="20" fill="#F1EEE4" stroke="#2F64A0" stroke-width="1.5"/>
+<text class="legend" x="410" y="1382">as documented</text>
+<rect x="580" y="1367" width="34" height="20" fill="#F1EEE4" stroke="#6E6B60" stroke-width="1.25" stroke-dasharray="6 5"/>
+<text class="legend" x="626" y="1382">planned, not built</text>
+<rect x="796" y="1367" width="34" height="20" fill="#F1EEE4"/>
+<rect x="796" y="1367" width="34" height="20" fill="url(#hatch)" stroke="#6E6B60" stroke-width="1.25"/>
+<text class="legend" x="842" y="1382">stand-in chain, not V3</text>
 </g>
 </svg>
 </div></body></html>
