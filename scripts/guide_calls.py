@@ -12,7 +12,6 @@ site (a comment, a string), so the AST count and a grep count can be compared li
 
 import argparse
 import json
-import re
 import sys
 from collections import Counter
 from pathlib import Path

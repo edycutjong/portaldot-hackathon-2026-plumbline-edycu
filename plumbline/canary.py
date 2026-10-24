@@ -315,7 +315,7 @@ def _v3_section(record: dict, heading: str) -> list[str]:
     return [
         heading,
         "",
-        f"Canary receipts written by `plumbline canary -p v3`. **Every row below is a transaction on the Portaldot V3",
+        "Canary receipts written by `plumbline canary -p v3`. **Every row below is a transaction on the Portaldot V3",
         f"testnet, profile v3** (`{record['spec_name']}`/{record['spec_version']}, genesis pinned in the profile), signed",
         f"by one funded canary account (`{record['signer']}`), the cheapest documented calls, each sent once.",
         "",

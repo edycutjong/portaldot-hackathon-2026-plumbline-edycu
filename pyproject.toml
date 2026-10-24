@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=7"]
+dev = ["pytest>=7", "ruff>=0.5", "pip-audit>=2.7"]
 
 [project.scripts]
 plumbline = "plumbline.cli:app"
@@ -30,3 +30,7 @@ testpaths = ["tests"]
 # live tests read public chains over the network; run them explicitly with `pytest -m live`
 addopts = "-p no:asyncio -m 'not live'"
 markers = ["live: needs network access to a chain endpoint (deselect with -m 'not live')"]
+
+[tool.ruff]
+# fixtures are AST test inputs (deliberately broken / unresolved names); never lint or rewrite them
+extend-exclude = ["fixtures", "deck"]
