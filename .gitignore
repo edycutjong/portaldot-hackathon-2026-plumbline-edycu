@@ -18,3 +18,14 @@ coverage/
 # fetched third-party pages and chain data (never committed; see scripts/fetch_docs.py)
 .cache/
 cache/
+.ruff_cache/
+.idea/
+.vscode/
+*.log
+.env.local
+*.key
+*.p12
+id_rsa*
+*seed*.txt
+.pytest_cache/
+dist/
