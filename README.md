@@ -1,14 +1,33 @@
-# Plumbline
+<a id="plumbline"></a>
 
-**Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof.** Today it gives a verdict for every documented call on the Portaldot V3 testnet (spec 3002) and on mainnet (spec 1002), diffs the two runtimes, checks a dApp against either, and has sent 3 canary transactions to V3 and read them back from their blocks. Every other documented entry on V3 is at most UNPROVEN (present, no transaction sent), or ARGS-UNCHECKED / UNKNOWN-DOC (nothing to compare), or carries a drift verdict (ABSENT, ARG_DRIFT).
+<div align="center">
+  <img src="docs/icon.svg" alt="Plumbline icon" width="144">
+  <h1>Plumbline 📐</h1>
+  <p><em>Checks Portaldot's documented calls against the runtime they claim to describe: documented call → verdict → proof.</em></p>
+  <img src="docs/readme-hero.svg" alt="Plumbline animated hero: a plumb line drops through the documented calls and redlines the one the runtime does not have" width="100%">
+
+  <br/>
+
+  [![Live](https://img.shields.io/badge/🚀_Live-plumbline.edycu.dev-FF2E7E?style=for-the-badge)](https://plumbline.edycu.dev)
+  [![Pitch Deck](https://img.shields.io/badge/📊_Pitch-Deck-D9A13B?style=for-the-badge)](https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/pitch-deck.pdf)
+  [![Demo Video](https://img.shields.io/badge/🎬_Demo-Video-ef4444?style=for-the-badge)](https://youtu.be/edvFuOdUZNk)
+  [![DoraHacks BUIDL](https://img.shields.io/badge/DoraHacks-BUIDL_50127-3A3240?style=for-the-badge)](https://dorahacks.io/build/50127)
+
+  <br/>
+
+  [![CI](https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/actions/workflows/ci.yml)
+  ![status](https://img.shields.io/badge/status-prototype-orange?style=flat)
+  ![tests](https://img.shields.io/badge/tests-263%20passing-brightgreen?style=flat)
+  ![license](https://img.shields.io/badge/license-MIT-blue?style=flat)
+  ![python](https://img.shields.io/badge/python-3.10%2B-blue?style=flat)
+
+</div>
+
+---
+
+Today it gives a verdict for every documented call on the Portaldot V3 testnet (spec 3002) and on mainnet (spec 1002), diffs the two runtimes, checks a dApp against either, and has sent 3 canary transactions to V3 and read them back from their blocks. Every other documented entry on V3 is at most UNPROVEN (present, no transaction sent), or ARGS-UNCHECKED / UNKNOWN-DOC (nothing to compare), or carries a drift verdict (ABSENT, ARG_DRIFT).
 
 **First V3 findings (measured 2026-10-19, spec 3002; details in [`docs/BASELINE-V3.md`](docs/BASELINE-V3.md)):** `Balances.transfer`, which the mainnet docs list, does not exist on V3 (verdict ABSENT); 5 of the 12 modules the V3 guide's FAQ lists for V3.0 are not on the testnet (by pallet name); the 79 mainnet-docs calls that disagree with the runtime on spec 1002 become 2 on V3; the chain reports `portaldot-v3`/3002/`tPOT`/69 pallets where the V3 guide said `tPOTv3` and a third-party measurement (see `docs/BASELINE-V3.md`) said `portaldotV3`/3000/70.
-
-[![CI](https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-prototype-orange)
-![tests](https://img.shields.io/badge/tests-263%20passing-brightgreen)
-![license](https://img.shields.io/badge/license-MIT-blue)
-![python](https://img.shields.io/badge/python-3.10%2B-blue)
 
 > Check-in README (v1, refreshed 2026-10-20 with the first Portaldot V3 measurements). It describes what exists in this
 > repository today; planned parts are marked **planned**. Chain measurements are labelled with their profile: `v3` (the
@@ -17,11 +36,15 @@
 > a 2026-10-11 measurement on a local spec-1002 chain, made before this repository existed and not re-run here (see
 > `docs/BASELINE-1002.md`).
 
-## Project Name
+<a id="project-name"></a>
+
+## 🏷️ Project Name
 
 **Plumbline** (`portaldot-plumbline`, CLI `plumbline`) — team `edycu`, Portaldot Hacker House 2026, track Modular Cloud & Middleware.
 
-## Project Overview
+<a id="project-overview"></a>
+
+## 💡 Project Overview
 
 ### Problem Statement
 
@@ -100,7 +123,9 @@ V3 testnet guide. It is meant to be re-run against each runtime Portaldot ships.
 on 2026-10-19 (spec 3002); mainnet spec 1002 (read-only) is the baseline it is compared with; a local upstream
 polkadot-sdk dev chain (`interim-sdk`, a stand-in, **not V3**) is kept as test input and for the canary runner's first run.
 
-## Technical Architecture
+<a id="technical-architecture"></a>
+
+## 🏗️ Technical Architecture
 
 ![Plumbline architecture: documented calls (docs.py, guide.py) and V3 runtime metadata (metadata.py) meet in plumb.py, which writes one verdict per documented entry to the drift ledger; canary.py sends 3 transactions to the V3 testnet and their read-back receipts make a verdict PROVEN](docs/architecture.png)
 
@@ -203,7 +228,9 @@ carries its profile label.
 text only, never executed. At HEAD its text is not copied here: `evidence/guide_calls.json` holds names and `file:line`
 references only (two short FAQ status phrases appear in the tree snapshots of eight early commits, before `d92203e`; HEAD holds none). The mainnet docs pages are fetched at run time into a gitignored cache.
 
-## Smart Contracts
+<a id="smart-contracts"></a>
+
+## 📜 Smart Contracts
 
 There is **no contract yet**. The Plumbline Ledger (a Revive Solidity contract that would record verdict-report hashes
 on-chain) is **planned** for V3; no directory, address or deployment exists for it. Plumbline is pallet-native today: it
@@ -224,7 +251,9 @@ with `curl` (isolation check). Extrinsics are sent only by `plumbline canary`:
 
 Nothing is sent to mainnet and nothing is deployed, so there are no contract or asset IDs to list.
 
-## Installation & Setup
+<a id="installation--setup"></a>
+
+## 🚀 Installation & Setup
 
 **Requirements:** Python 3.10+ (tested on 3.11.1), git, network access to `test-node-v3.portaldot.dev`, `mainnet.portaldot.io`,
 `portaldot-dev.readthedocs.io` and github.com for the live steps. The interim-node step additionally needs macOS arm64
@@ -286,7 +315,9 @@ plumbline readback evidence/canary_v3.json  # 3/3 receipts match the chain
 To regenerate the docs baseline evidence: `python scripts/docs_baseline.py --profile stored:fixtures/metadata_1002.scale --out evidence/docs_1002.json`.
 There is nothing to compile or deploy and there is no frontend to launch.
 
-## Demo
+<a id="demo"></a>
+
+## 🎬 Demo
 
 - **Video:** demo: https://youtu.be/edvFuOdUZNk
 - **Pitch deck:** [`docs/pitch-deck.pdf`](docs/pitch-deck.pdf) (10 pages, printed from [`deck/index.html`](deck/index.html))
@@ -309,7 +340,9 @@ There is nothing to compile or deploy and there is no frontend to launch.
     `Revive.map_account`), all success, read back 3/3 from a new process after a node restart (`evidence/readback_interim.txt`)
 - **Tests:** 263 passed (+3 live, opt-in) on 2026-10-20.
 
-## Development
+<a id="development"></a>
+
+## 🧪 Development
 
 ```bash
 pip install -e '.[dev]'
@@ -320,7 +353,9 @@ python -m pytest -q   # offline tests; live tests are opt-in (pytest -m live)
 CI (`.github/workflows/`) runs lint, the offline tests on Python 3.10–3.12 and a package build, plus CodeQL,
 gitleaks and pip-audit. None of it needs a key or a live chain write. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Roadmap
+<a id="roadmap"></a>
+
+## 🗺️ Roadmap
 
 **Completed (2026-10-14 to 2026-10-20)**
 - Chain profiles with identity checks; `plumbline runtime`; mainnet spec 1002 metadata stored with sha256 and fetch time
@@ -335,7 +370,9 @@ gitleaks and pip-audit. None of it needs a key or a live chain write. See [CONTR
 - A canary per documented call (3 of 196 mainnet-docs calls are PROVEN on V3, 191 are UNPROVEN, 2 disagree with the V3 runtime)
 - Plumbline Ledger contract (Revive) on V3
 
-## Team
+<a id="team"></a>
+
+## 👥 Team
 
 - **Team name:** edycu
 - **Members & roles:** edycu — solo, design, review and submission
@@ -350,6 +387,8 @@ node binary for the interim chain from [paritytech/polkadot-sdk](https://github.
 Documentation pages and the V3 testnet guide are read from their public sources at run time; at HEAD their text is not
 copied into this repo.
 
-## License
+<a id="license"></a>
+
+## 📄 License
 
 MIT — see [LICENSE](LICENSE).
