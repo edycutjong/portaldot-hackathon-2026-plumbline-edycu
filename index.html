@@ -3,46 +3,695 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Plumbline</title>
-<meta name="description" content="Checks Portaldot&#x27;s documented calls against the runtime they claim to describe: documented call → verdict → proof.">
+<title>Plumbline: the docs say transfer, V3 has never heard of it</title>
+<meta name="description" content="Plumbline checks Portaldot's 196 documented calls against the runtime's own metadata: 79 disagreed with mainnet spec 1002, 2 still disagree on the V3 testnet, 3 are proven by real transactions read back from their blocks.">
+<link rel="canonical" href="https://plumbline.edycu.dev/">
+<meta name="theme-color" content="#E3E8DA">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Plumbline">
+<meta property="og:title" content="Plumbline: the docs say transfer, V3 has never heard of it">
+<meta property="og:description" content="196 documented Portaldot calls checked against the runtime: 79 disagreed with mainnet spec 1002, 2 disagree on V3, 3 proven by real transactions.">
+<meta property="og:url" content="https://plumbline.edycu.dev/">
+<meta property="og:image" content="https://plumbline.edycu.dev/assets/og.png?v=10221c94">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Plumbline field book: Balances.transfer flagged ABSENT on Portaldot V3 spec 3002">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://plumbline.edycu.dev/assets/og.png?v=10221c94">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23E3E8DA'/%3E%3Cpath d='M16 2v8' stroke='%23262823' stroke-width='2'/%3E%3Cpath d='M11 10h10v3c0 6-3 12-5 17-2-5-5-11-5-17z' fill='%239C7630'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/SofiaSansExtraCondensed-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/SofiaSans-wght.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.classList.add('js')</script>
 <style>
-  :root { --bg: #f6f5f1; --fg: #16181d; --muted: #5b6070; --line: #d9d6cc; --accent: #b4441f; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #0f1115; --fg: #e9e7e1; --muted: #9aa0ad; --line: #2a2e37; --accent: #f08a5d; }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--fg);
-         font: 17px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
-  main { max-width: 720px; margin: 0 auto; padding: 72px 16px 56px; }
-  .eyebrow { font: 600 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em;
-             text-transform: uppercase; color: var(--accent); }
-  h1 { font-size: clamp(40px, 9vw, 64px); line-height: 1; margin: 16px 0 20px; letter-spacing: -.02em; }
-  .lede { font-size: 20px; margin: 0 0 32px; }
-  ol { padding: 0; margin: 0 0 32px; list-style: none; border-top: 1px solid var(--line); }
-  li { padding: 14px 0; border-bottom: 1px solid var(--line); display: flex; gap: 16px; }
-  li b { font: 600 14px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); min-width: 72px; }
-  p { color: var(--muted); }
-  .links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
-  a.btn { color: var(--fg); text-decoration: none; border: 1px solid var(--fg); padding: 10px 16px; border-radius: 6px;
-          transition: background .15s ease, color .15s ease; }
-  a.btn:hover, a.btn:focus-visible { background: var(--fg); color: var(--bg); }
-  a.btn.primary { background: var(--fg); color: var(--bg); }
-  a.btn.primary:hover, a.btn.primary:focus-visible { background: var(--accent); border-color: var(--accent); }
-  footer { margin-top: 56px; font-size: 14px; color: var(--muted); }
+@font-face{font-family:"Sofia Sans Extra Condensed";src:url(assets/fonts/SofiaSansExtraCondensed-wght.woff2) format("woff2");font-weight:700 900;font-style:normal;font-display:swap}
+@font-face{font-family:"Sofia Sans Extra Condensed";src:url(assets/fonts/SofiaSansExtraCondensed-Italic-800.woff2) format("woff2");font-weight:800;font-style:italic;font-display:swap}
+@font-face{font-family:"Sofia Sans";src:url(assets/fonts/SofiaSans-wght.woff2) format("woff2");font-weight:400 700;font-style:normal;font-display:swap}
+@font-face{font-family:"Sofia Sans";src:url(assets/fonts/SofiaSans-Italic-400.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Overpass Mono";src:url(assets/fonts/OverpassMono-wght.woff2) format("woff2");font-weight:400 600;font-style:normal;font-display:swap}
+
+:root {
+  --bg:      #E3E8DA;  /* sage field-book ground, ruled every 32 px */
+  --page:    #EEF1E6;  /* the book page itself */
+  --ink:     #262823;  /* graphite ink; state: proven */
+  --flag:    #FF2E7E;  /* state: drifted (survey-pink flagging tape), fill under ink, never text */
+  --bob:     #9C7630;  /* the plumb bob only */
+  --muted:   #5E6257;  /* pencil-grey labels */
+  --pencil:  #4A4D45;  /* state: documented / unchecked */
+  --blue:    #A9BFCB;  /* horizontal ruling */
+  --rose:    #D9A9A4;  /* column rules */
+  --cover:   #2C3A2E;  /* book-cloth cover */
+  --cover-ink:#E6EBDC;
+  --tape-ink:#141511;  /* text on tape (5.0:1) */
+  --font-display: "Sofia Sans Extra Condensed", "Arial Narrow", sans-serif;
+  --font-body:    "Sofia Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-data:    "Overpass Mono", ui-monospace, Menlo, monospace;
+  --tape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23FF5594'/%3E%3Cstop offset='.6' stop-color='%23FF2E7E'/%3E%3Cstop offset='1' stop-color='%23E8226E'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 1.5 L1.2 .4 L2.4 1.2 L98 .2 L99 1 L100 .3 L99.2 6 L100 11 L99.3 15 L100 19.6 L2 19.2 L1 20 L0 18.8 L.8 12 L0 7 Z' fill='url(%23g)'/%3E%3C/svg%3E");
+  --ease-out: cubic-bezier(.2,.9,.2,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0}
+html{background:var(--bg);color:var(--ink);font:400 18px/1.55 var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip;scroll-behavior:smooth;scrollbar-color:var(--muted) var(--bg);scroll-padding-top:12px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background-image:repeating-linear-gradient(to bottom,transparent 0 31px,rgba(169,191,203,.42) 31px 32px);overflow-x:clip}
+::selection{background:var(--flag);color:var(--tape-ink)}
+a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{text-decoration-color:var(--flag);text-decoration-thickness:3px}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px;border-radius:2px}
+code,.mono{font-family:var(--font-data);font-size:.86em;letter-spacing:-.01em}
+img{max-width:100%;display:block}
+.wrap{max-width:1280px;margin:0 auto;padding:0 36px}
+.lab{font:600 12px/1.45 var(--font-data);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.lab a{color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;background:var(--ink);color:var(--page);padding:10px 14px;z-index:9;font-weight:700}
+.skip:focus{top:12px}
+.tape{color:var(--tape-ink);background:var(--tape) center/100% 100% no-repeat;padding:0 .14em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+
+/* nav */
+nav{display:flex;align-items:center;gap:22px;max-width:1280px;margin:0 auto;padding:18px 36px}
+.mark{display:flex;align-items:center;gap:10px;font:900 32px/1 var(--font-display);text-transform:uppercase;letter-spacing:.02em;text-decoration:none}
+.mark svg{width:16px;height:30px}
+nav .links{margin-left:auto;display:flex;gap:20px;align-items:center;font:700 14px var(--font-body);text-transform:uppercase;letter-spacing:.07em}
+nav .links a{text-decoration:none;padding:6px 0;background:linear-gradient(var(--flag),var(--flag)) 0 100%/0 3px no-repeat;transition:background-size .2s var(--ease-out)}
+nav .links a:hover,nav .links a:focus-visible{background-size:100% 3px}
+nav .links a.gh{padding:8px 14px;border:2px solid var(--ink);background:none;transition:transform .15s,box-shadow .15s}
+nav .links a.gh:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:10px;font:700 15px var(--font-body);text-transform:uppercase;letter-spacing:.06em;padding:13px 20px;border:2px solid var(--ink);color:var(--ink);text-decoration:none;background:transparent;transition:transform .15s var(--ease-out),box-shadow .15s var(--ease-out),background-color .15s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink);text-decoration:none}
+.btn:active{transform:translate(0,0);box-shadow:0 0 0 var(--ink)}
+.btn.p{background:var(--ink);color:var(--page)}
+.btn.p:hover{box-shadow:4px 4px 0 var(--flag)}
+.btn svg{width:14px;height:14px;flex:none}
+
+/* hero */
+.hero{max-width:1280px;margin:0 auto;padding:22px 36px 84px;display:grid;grid-template-columns:minmax(0,1.1fr) 40px minmax(0,1fr);grid-template-rows:auto auto auto auto 1fr;grid-template-areas:"lab gut book" "h1 gut book" "sub gut book" "cta gut book" "strip gut book";column-gap:24px;align-items:start}
+.hero>.lab{grid-area:lab;padding-top:14px}
+h1{grid-area:h1;font:900 clamp(60px,6.9vw,106px)/.86 var(--font-display);text-transform:uppercase;letter-spacing:-.004em;margin:16px 0 30px;text-wrap:balance}
+h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.03em;vertical-align:.2em;padding:.1em .18em .06em;border:2px solid var(--ink);background:var(--page);white-space:nowrap}
+.sub{grid-area:sub;max-width:33em;color:#33352F;font-size:19px}
+.sub b{font-weight:700;color:var(--ink)}
+.cta{grid-area:cta;display:flex;flex-wrap:wrap;gap:10px;margin:28px 0 18px}
+.strip{grid-area:strip;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font:400 13px var(--font-data);color:var(--muted)}
+.strip .cmd{display:inline-flex;align-items:center;gap:10px;background:var(--page);border:1px solid #C9CFBE;padding:6px 8px 6px 12px;color:var(--ink)}
+.strip .cmd code{font-size:13px}
+.copy{font:600 11px var(--font-data);letter-spacing:.08em;text-transform:uppercase;background:var(--ink);color:var(--page);border:0;padding:5px 8px;cursor:pointer;transition:background-color .15s,transform .1s}
+.copy:hover{background:#000}.copy:active{transform:scale(.96)}
+.strip .out{color:var(--ink)}
+.gutter{grid-area:gut;position:relative;align-self:stretch;min-height:540px}
+.gutter::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:2px dotted #8E9387}
+.plumb{position:absolute;left:50%;top:-112px;width:24px;margin-left:-12px;height:calc(var(--drop,430px) + 112px);transform-origin:50% 0}
+.plumb .str{position:absolute;left:11.4px;top:0;bottom:46px;border-left:1.2px solid var(--ink)}
+.plumb svg{position:absolute;left:0;bottom:0;width:24px;height:48px}
+.js .plumb{animation:drop 1.25s cubic-bezier(.3,1.3,.5,1) .15s both,swing 2.4s cubic-bezier(.4,0,.3,1) 1.15s both}
+@keyframes drop{from{transform:translateY(-300px)}}
+@keyframes swing{0%{transform:rotate(0)}18%{transform:rotate(2.6deg)}42%{transform:rotate(-1.6deg)}64%{transform:rotate(.8deg)}82%{transform:rotate(-.3deg)}100%{transform:rotate(0)}}
+
+/* the field book page */
+.book{grid-area:book;position:relative;background:var(--page);border:1px solid #C3CAB6;box-shadow:0 1px 0 #fff inset,0 26px 44px -30px rgba(43,58,34,.55),0 2px 0 #D5DBC9;margin-top:20px}
+.book::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0 47px,rgba(169,191,203,.35) 47px 48px);pointer-events:none}
+.book .hd{position:relative;display:flex;justify-content:space-between;align-items:end;gap:12px;padding:18px 20px 12px;border-bottom:2px solid var(--ink)}
+.book .hd b{font:900 28px/1 var(--font-display);text-transform:uppercase;letter-spacing:.01em}
+.book table{position:relative;width:100%;border-collapse:collapse;font-size:15px}
+.book th{font:600 11.5px var(--font-data);letter-spacing:.1em;color:var(--muted);text-align:left;padding:10px 12px 8px;border-bottom:1px solid var(--blue);text-transform:uppercase}
+.book td{padding:11px 12px;border-bottom:1px solid var(--blue);vertical-align:top;color:var(--pencil)}
+.book th+th,.book td+td{border-left:1px solid var(--rose)}
+.book td.sta{font:800 18px/1.2 var(--font-display);color:var(--muted);width:44px}
+.book td.c{font:400 14px/1.35 var(--font-data);color:var(--ink)}
+.book td.c small{display:block;font:600 11px var(--font-body);color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+.book td.c s{text-decoration:line-through 1.5px var(--ink)}
+.book .note{display:block;font:800 italic 17px/1.15 var(--font-display);color:var(--ink);margin-top:5px;letter-spacing:.01em}
+.book .note code{font:inherit;font-style:italic;text-transform:none}
+.book td.v{font:800 16px/1.2 var(--font-display);letter-spacing:.07em;white-space:nowrap;color:var(--ink)}
+.book td.v .tick{display:inline-block;width:9px;height:15px;border:solid var(--ink);border-width:0 2.5px 2.5px 0;transform:rotate(40deg) translateY(-3px);margin-left:8px}
+.book td.r{font:400 13px/1.3 var(--font-data);white-space:nowrap}
+.book td.r a{font-weight:600;color:var(--ink)}
+.book tr.flag{position:relative}
+.book tr.flag td{position:relative;z-index:1;color:var(--tape-ink)}
+.book tr.flag td.c{position:static}
+.book .s{position:relative;z-index:1;display:block}
+.book tr.flag small{color:var(--tape-ink)}
+.flagband{position:absolute;left:-10px;right:-44px;top:7px;bottom:7px;background:linear-gradient(176deg,#FF5594,var(--flag) 55%,#E8226E);transform-origin:left center;transform:rotate(-.7deg);clip-path:polygon(0 0,100% 5%,95% 50%,100% 95%,0 100%,1.2% 50%);box-shadow:0 2px 0 rgba(176,26,85,.55);z-index:0}
+.f2{transform:rotate(.6deg)}
+.js .flagband{animation:tie .5s var(--ease-out) 1.45s both}.js .f2{animation-delay:1.75s}
+@keyframes tie{from{clip-path:polygon(0 0,0 0,0 50%,0 100%,0 100%,0 50%)}}
+.js .note{animation:write .9s steps(18,end) 2.25s both}
+@keyframes write{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.book .foot{position:relative;padding:12px 20px 14px;font:400 12px var(--font-data);color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.js .hero>.lab,.js h1,.js .sub,.js .cta,.js .strip{animation:rise .7s var(--ease-out) both}
+.js h1{animation-delay:.08s}.js .sub{animation-delay:.2s}.js .cta{animation-delay:.3s}.js .strip{animation-delay:.38s}
+.js .book{animation:lay .8s var(--ease-out) .25s both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+@keyframes lay{from{opacity:0;transform:translateY(22px) rotate(.6deg)}}
+.settled .plumb,.settled .flagband,.settled .note,.settled .hero>*,.settled .book{animation:none!important}
+
+/* stakes */
+.stakes{padding:10px 0 100px}
+.stakes .intro{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap}
+.stakes h2{font:800 italic 30px/1.1 var(--font-display);letter-spacing:.01em;max-width:24em}
+.row4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;margin-top:22px;position:relative}
+.stake{position:relative;padding-bottom:64px;display:flex;flex-direction:column}
+.stake .tag{flex:1;position:relative;background:var(--page);border:2px solid var(--ink);padding:16px 18px 14px;box-shadow:5px 5px 0 rgba(38,40,35,.12);z-index:1}
+.stake .n{font:900 88px/.88 var(--font-display);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.stake .n .ar{font-weight:700;font-size:.62em;vertical-align:.18em;margin:0 .04em}
+.stake .l{font-weight:600;margin:10px 0 6px;line-height:1.35}
+.stake .f{font:400 12px var(--font-data);color:var(--muted);overflow-wrap:anywhere}
+.stake .f a{color:inherit}
+.stake svg.post{position:absolute;left:50%;bottom:0;width:46px;height:78px;margin-left:-23px}
+.ground{position:absolute;left:0;right:0;bottom:12px;height:12px;border-top:2px solid var(--ink);background:repeating-linear-gradient(135deg,transparent 0 7px,rgba(38,40,35,.35) 7px 8px)}
+
+/* the open spread */
+.spreadband{background:var(--page);border-top:1px solid #C3CAB6;border-bottom:1px solid #C3CAB6;padding:84px 0 70px;position:relative}
+.spreadband::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0 31px,rgba(169,191,203,.30) 31px 32px);pointer-events:none}
+.spreadband .wrap{position:relative}
+.sphead{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;align-items:end}
+.sphead h2,.proofband h2,.how h2,.faq h2,.cover h2{font:900 clamp(46px,5.2vw,78px)/.9 var(--font-display);text-transform:uppercase;letter-spacing:-.003em}
+.sphead p{max-width:34em;color:#33352F}
+.legend{display:flex;flex-wrap:wrap;gap:8px 22px;margin:30px 0 14px;font:600 13px var(--font-body);color:var(--pencil)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.spread{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 196px minmax(0,1fr);border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);padding:0}
+.spread .ph{font:600 12px var(--font-data);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:12px 4px 10px;border-bottom:1px solid var(--blue)}
+.spread .ph b{display:block;font:900 30px/1 var(--font-display);letter-spacing:.01em;color:var(--ink);margin-top:4px}
+.spread .ph.l{text-align:right;padding-right:16px}.spread .ph.r{padding-left:16px}.spread .ph.c{text-align:center}
+.spread .row{display:contents}
+.spread .cl,.spread .cr{display:flex;flex-wrap:wrap;gap:3px;align-content:center;padding:5px 16px;border-bottom:1px solid rgba(169,191,203,.55);min-height:30px}
+.spread .cl{flex-direction:row-reverse}
+.spread .cc{font:600 12.5px/1.15 var(--font-body);text-align:center;letter-spacing:.02em;padding:6px 8px;border-bottom:1px solid rgba(169,191,203,.55);border-left:1px solid var(--rose);border-right:1px solid var(--rose);display:flex;align-items:center;justify-content:center;gap:6px;color:var(--ink);position:relative;z-index:1}
+.spread .cc small{font:400 11px var(--font-data);color:var(--muted)}
+.spread .cc span{background:var(--page);padding:0 3px}
+.k{display:block;width:11px;height:16px;border:1px solid #8F948A;background:transparent;flex:none;transition:transform .12s}
+.k.p{background:var(--ink);border-color:var(--ink);position:relative}
+.k.p::after{content:"";position:absolute;left:3px;top:2px;width:3px;height:7px;border:solid var(--page);border-width:0 1.6px 1.6px 0;transform:rotate(40deg)}
+.k.f{background:linear-gradient(176deg,#FF5594,var(--flag) 55%,#E8226E);border-color:#C81E61;transform:rotate(-6deg)}
+.k.g{background:repeating-linear-gradient(135deg,var(--flag) 0 3px,#FFC2D9 3px 5px);border-color:#C81E61;transform:rotate(-6deg)}
+.k:hover,.k.on{transform:scale(1.5);outline:2px solid var(--ink);outline-offset:1px;z-index:2;position:relative}
+.legend .k{display:inline-block}
+.bind{position:absolute;left:50%;top:0;bottom:-30px;width:0;border-left:1.2px solid var(--ink);transform-origin:50% 0;pointer-events:none;z-index:0}
+.bind svg{position:absolute;left:-12px;bottom:-4px;width:24px;height:48px}
+.readout{min-height:1.6em;margin-top:44px;font:400 14px var(--font-data);color:var(--ink);display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.readout .lab{flex:none}
+.spfoot{margin-top:10px;font:400 12px var(--font-data);color:var(--muted)}
+.spfoot a{color:inherit}
+.spread.armed .k.f,.spread.armed .k.g{transform:scaleX(0) rotate(-6deg)}
+.spread.armed .k.p{background:transparent;border-color:#8F948A}
+.spread.armed .k.p::after{opacity:0}
+.spread.armed .bind{transform:scaleY(0)}
+.spread.play .k.f,.spread.play .k.g{transition:transform .32s var(--ease-out) calc(var(--d)*13ms)}
+.spread.play .cr .k.f,.spread.play .cr .k.g{transition-delay:1.55s}
+.spread.play .k.p{transition:background-color .3s 1.9s,border-color .3s 1.9s}
+.spread.play .k.p::after{transition:opacity .3s 2s}
+.spread.play .bind{transition:transform 1.4s cubic-bezier(.4,0,.2,1)}
+
+/* proof */
+.proofband{padding:96px 0 90px}
+.proofband .top{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;align-items:end;margin-bottom:34px}
+.proofband .top p{max-width:34em;color:#33352F}
+.term{background:var(--ink);color:#E6EBDC;border-radius:4px;box-shadow:0 30px 50px -34px rgba(20,21,17,.9);overflow:hidden}
+.term .bar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid #3A3D36;font:600 11.5px var(--font-data);letter-spacing:.08em;text-transform:uppercase;color:#B9BFAE}
+.term .bar i{font-style:normal;color:#E6EBDC}
+.term pre{margin:0;padding:18px 18px 20px;font:400 13.5px/1.75 var(--font-data);overflow-x:auto;color:#D9DECF;scrollbar-color:#6E7366 var(--ink)}
+.term .pr{color:var(--flag)}
+.term .cm{color:#9EA493}
+.term .ok{color:var(--page);font-weight:600}
+.term .hit{background:var(--flag);color:var(--tape-ink);padding:0 4px;font-weight:600}
+.term .ln{display:block;min-height:1.75em}
+.term.armed .ln{visibility:hidden}
+.term .caret{display:inline-block;width:.6em;height:1.1em;background:var(--flag);vertical-align:-.18em;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;margin-top:26px}
+.shot{background:var(--page);border:1px solid #C3CAB6;padding:12px 12px 14px;box-shadow:0 22px 40px -30px rgba(43,58,34,.55)}
+.shot .lab{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.shot figcaption{margin-top:12px;font-size:15px;color:#33352F;line-height:1.45}
+.shot figcaption a{font-weight:700}
+.video{position:relative;display:block;aspect-ratio:16/9;background:#1B1D19;overflow:hidden;color:var(--page);text-decoration:none;border:0;padding:0;width:100%;cursor:pointer}
+.video img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease-out),filter .3s}
+.video:hover img{transform:scale(1.02);filter:brightness(.9)}
+.video .play{position:absolute;left:50%;top:50%;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;background:var(--flag);display:grid;place-items:center;box-shadow:0 10px 30px -8px rgba(0,0,0,.6);transition:transform .2s var(--ease-out)}
+.video:hover .play{transform:scale(1.08)}
+.video .play svg{width:30px;height:30px;margin-left:6px}
+.video .dur{position:absolute;right:10px;bottom:10px;background:rgba(20,21,17,.86);color:var(--page);font:600 12px var(--font-data);padding:4px 8px;letter-spacing:.05em}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.console img{aspect-ratio:1600/690;width:100%;height:auto;border:1px solid #C3CAB6}
+.rcpts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:26px;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+.rcpt{padding:14px 16px;border-left:1px solid var(--rose)}
+.rcpt:first-child{border-left:0}
+.rcpt b{display:block;font:900 34px/1 var(--font-display);letter-spacing:.01em}
+.rcpt span{display:block;font:400 13px/1.5 var(--font-data);color:var(--pencil);overflow-wrap:anywhere}
+.rcpt a{font-weight:600;color:var(--ink)}
+
+/* how */
+.how{padding:30px 0 100px}
+.how .top{display:flex;justify-content:space-between;align-items:end;gap:30px;flex-wrap:wrap;margin-bottom:30px}
+.how .top p{max-width:30em;color:#33352F}
+.bento{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:20px}
+.cell{position:relative;background:var(--page);border:1px solid #C3CAB6;padding:22px 22px 20px;box-shadow:0 1px 0 #fff inset}
+.cell::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:repeating-linear-gradient(to bottom,var(--rose) 0 2px,transparent 2px 6px);opacity:.9}
+.cell .st{font:600 11.5px var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.cell h3{font:900 34px/.95 var(--font-display);text-transform:uppercase;margin:8px 0 10px;letter-spacing:.005em}
+.cell p{color:#33352F;font-size:16.5px;line-height:1.5}
+.chip{display:inline-block;margin-top:14px;font:600 12px var(--font-data);background:var(--bg);border:1px solid #B9C0AC;padding:4px 8px;color:var(--ink)}
+.c-plumb{grid-column:span 7;grid-row:span 2;display:flex;flex-direction:column}
+.c-plumb figure{margin-top:18px;border:1px solid #C3CAB6;background:#F1EEE4;overflow:hidden}
+.c-plumb figure img{width:100%;height:auto}
+.c-plumb figcaption{font:400 12px var(--font-data);color:var(--muted);padding:8px 12px;border-top:1px solid #D9D3C3;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--page)}
+.c-plumb figcaption a{color:var(--ink);font-weight:600}
+.c-docs,.c-guide{grid-column:span 5}
+.c-prove{grid-column:span 5}
+.c-diff{grid-column:span 7}
+.c-prove .rcpt-mini{margin-top:14px;font:400 13px/1.7 var(--font-data);border-top:1px solid var(--blue)}
+.c-prove .rcpt-mini div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--blue)}
+.c-prove .rcpt-mini b{font-weight:600}
+.bars{margin-top:14px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:5px 12px;align-items:center;font:400 13px var(--font-data)}
+.bars .bl{color:var(--pencil);white-space:nowrap}
+.bars .bv{text-align:right;font-weight:600}
+.bars .bt{height:12px;background:repeating-linear-gradient(135deg,var(--pencil) 0 1px,transparent 1px 4px);border:1px solid var(--pencil);width:calc(var(--w)*1%);transform-origin:left}
+.bento.armed .bt{transform:scaleX(0)}
+.bento.play .bt{transition:transform .7s var(--ease-out) calc(var(--i)*70ms)}
+.chk{display:flex;align-items:center;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid var(--blue);flex-wrap:wrap}
+.chk b{font:900 48px/1 var(--font-display);white-space:nowrap}
+.chk b .ar{font-weight:700;font-size:.7em;margin:0 .12em;vertical-align:.08em}
+.chk span{font-size:15px;color:#33352F;max-width:24em}
+
+/* honest */
+.honest{background:var(--page);border-top:1px solid #C3CAB6;border-bottom:1px solid #C3CAB6;position:relative;padding:84px 0 80px}
+.honest::before{content:"";position:absolute;top:0;bottom:0;left:max(24px,calc(50% - 640px - 4px));border-left:2px solid var(--rose)}
+.honest::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0 31px,rgba(169,191,203,.3) 31px 32px);pointer-events:none}
+.honest .wrap{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr);gap:50px}
+.honest h2{font:900 clamp(46px,5vw,72px)/.9 var(--font-display);text-transform:uppercase}
+.honest .side p{margin-top:16px;color:#33352F;max-width:22em}
+.remarks{list-style:none;padding:0;counter-reset:r}
+.remarks li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:16px;padding:22px 0;border-bottom:1px solid var(--blue)}
+.remarks li:first-child{border-top:2px solid var(--ink)}
+.remarks .rn{font:900 40px/1 var(--font-display);color:var(--ink)}
+.remarks q{display:block;font:italic 400 21px/1.5 var(--font-body);color:var(--ink);quotes:"“" "”"}
+.remarks cite{display:block;margin-top:8px;font:400 12.5px var(--font-data);font-style:normal;color:var(--muted)}
+.remarks cite a{color:inherit}
+
+/* faq */
+.faq{padding:96px 0 100px}
+.faq .wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr);gap:50px}
+.faq .side p{margin-top:16px;color:#33352F;max-width:22em}
+.faq details{border-bottom:1px solid var(--blue)}
+.faq details:first-of-type{border-top:2px solid var(--ink)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;align-items:center;padding:18px 4px;font:800 26px/1.1 var(--font-display);text-transform:uppercase;letter-spacing:.01em;transition:background-color .15s}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:hover{background:rgba(238,241,230,.7)}
+.faq summary .pm{flex:none;width:22px;height:22px;position:relative}
+.faq summary .pm::before,.faq summary .pm::after{content:"";position:absolute;left:0;right:0;top:10px;height:2.5px;background:var(--ink);transition:transform .25s var(--ease-out)}
+.faq summary .pm::after{transform:rotate(90deg)}
+.faq details[open] summary .pm::after{transform:rotate(0)}
+.faq details[open] summary{color:var(--ink)}
+.faq details>div{padding:0 4px 20px;max-width:44em;color:#33352F}
+.faq details>div code{background:var(--page);padding:1px 4px}
+
+/* cover */
+.cover{background:var(--cover);color:var(--cover-ink);position:relative;overflow:hidden;padding:96px 0 40px}
+.cover::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 3px);pointer-events:none}
+.cover .wrap{position:relative}
+.plate{display:inline-block;border:2px solid #B8924A;outline:1px solid #B8924A;outline-offset:4px;padding:14px 22px;margin-bottom:34px;text-align:center}
+.plate b{display:block;font:900 30px/1 var(--font-display);text-transform:uppercase;letter-spacing:.12em;color:#E8D3A2}
+.plate span{display:block;font:600 11px var(--font-data);letter-spacing:.14em;text-transform:uppercase;color:#C9B486;margin-top:6px}
+.cover h2{color:var(--cover-ink)}
+.cover .grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.3fr);gap:44px;align-items:start}
+.cover p{color:#C8CFBC;max-width:30em;margin-top:18px}
+.cover pre{background:#1E271F;border:1px solid #42513F;padding:18px 18px;font:400 13px/1.8 var(--font-data);color:#DDE3D2;overflow-x:auto;white-space:pre;scrollbar-color:#6E7366 #1E271F}
+.cover pre .pr{color:var(--flag)}
+.cover pre .cm{color:#93A08E}
+.cover .cta{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px}
+.cover .btn{color:var(--cover-ink);border-color:var(--cover-ink)}
+.cover .btn:hover{box-shadow:4px 4px 0 var(--flag)}
+.cover .btn.p{background:var(--cover-ink);color:var(--cover)}
+.cover footer{margin-top:80px;padding-top:20px;border-top:1px solid #4A5947;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font:400 12.5px/1.6 var(--font-data);color:#B3BBA7}
+.cover footer a{color:var(--cover-ink)}
+.cover :focus-visible{outline-color:var(--cover-ink)}
+
+/* responsive */
+@media (max-width:1100px){
+  .spread{grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr)}
+  .spread .cc{font-size:11.5px}
+  .k{width:9px;height:14px}
+}
+@media (max-width:960px){
+  nav .links a:not(.gh){display:none}
+  .hero{grid-template-columns:minmax(0,1fr);grid-template-rows:none;grid-template-areas:"lab" "h1" "book" "sub" "cta" "strip";padding-bottom:64px}
+  .gutter{display:none}
+  .book{margin:0 0 26px}
+  h1{margin-bottom:20px}
+  .row4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sphead,.proofband .top,.honest .wrap,.faq .wrap,.cover .grid{grid-template-columns:minmax(0,1fr);gap:22px}
+  .pair{grid-template-columns:minmax(0,1fr)}
+  .c-plumb,.c-docs,.c-guide,.c-prove,.c-diff{grid-column:1/-1;grid-row:auto}
+  .spread{grid-template-columns:minmax(0,1fr)}
+  .spread .ph.c,.spread .ph.r{display:none}
+  .spread .ph.l{text-align:left;padding-left:4px}
+  .spread .ph.l::after{content:"  ·  top line: spec 1002 · bottom line: V3 spec 3002"}
+  .spread .ph.l b::after{content:" → 2"}
+  .spread .row{display:flex;flex-direction:column}
+  .spread .cc{order:-1;justify-content:flex-start;border:0;padding:12px 0 4px;text-align:left}
+  .spread .cl,.spread .cr{flex-direction:row;padding:2px 0;border-bottom:0;min-height:0}
+  .spread .cr{padding-bottom:8px;border-bottom:1px solid rgba(169,191,203,.55)}
+  .bind{display:none}
+  .readout{margin-top:20px}
+}
+@media (max-width:560px){
+  .wrap,nav,.hero{padding-left:18px;padding-right:18px}
+  html{font-size:17px}
+  h1{font-size:clamp(50px,14.6vw,64px);margin:10px 0 16px}
+  .hero{padding-top:8px}
+  .mark{font-size:28px}
+  .book .hd{padding:12px 12px 10px;flex-direction:column;align-items:flex-start;gap:4px}.book .hd b{font-size:24px}
+  .book th:first-child,.book td.sta{display:none}
+  .book th{padding:8px 8px 6px;font-size:10.5px}
+  .book td{padding:8px 8px}
+  .book td.c{font-size:12px}
+  .book td.v{font-size:14px;letter-spacing:.04em}
+  .book td.r{font-size:11.5px;white-space:normal}
+  .book .note{font-size:15px}
+  .book .foot{padding:10px 12px 12px;font-size:11px}
+  .flagband{left:-6px;right:-8px}
+  .sub{font-size:17.5px}
+  .strip .cmd{max-width:100%}
+  .strip .cmd code{white-space:normal;overflow-wrap:anywhere;font-size:12px}
+  .row4{grid-template-columns:minmax(0,1fr);gap:14px}
+  .stake .n{font-size:72px}
+  .stakes h2{font-size:25px}
+  .k{width:8px;height:12px}
+  .spread .cl,.spread .cr{gap:2px}
+  .term pre{font-size:11.5px;white-space:pre-wrap;word-break:break-word}
+  .rcpts{grid-template-columns:minmax(0,1fr)}
+  .rcpt{border-left:0;border-top:1px solid var(--rose)}.rcpt:first-child{border-top:0}
+  .remarks li{grid-template-columns:40px minmax(0,1fr);gap:10px}
+  .honest::before{left:8px}
+  .remarks .rn{font-size:30px}
+  .remarks q{font-size:18.5px}
+  .faq summary{font-size:21px}
+  .cell h3{font-size:30px}
+  .bars{font-size:11.5px;gap:4px 8px}
+  .cover pre{font-size:11.5px;white-space:pre-wrap;word-break:break-all}
+  .video .play{width:70px;height:70px;margin:-35px 0 0 -35px}
+}
+@media (max-height:820px) and (min-width:961px){
+  h1{font-size:clamp(60px,6.6vw,100px);margin:10px 0 22px}
+  .hero{padding-top:10px}
+  .book td{padding:9px 12px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media print{
+  body{background:none}
+  nav .links,.copy,.skip{display:none}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .spread.armed .k.f,.spread.armed .k.g,.bento.armed .bt{transform:none!important}
+  .term.armed .ln{visibility:visible!important}
+  .cover{background:#fff;color:#000}
+}
 </style>
 </head>
 <body>
-<main>
-  <div class="eyebrow">Portaldot Hacker House 2026 · Modular Cloud &amp; Middleware</div>
-  <h1>Plumbline</h1>
-  <p class="lede">Checks Portaldot&#x27;s documented calls against the runtime they claim to describe: documented call → verdict → proof.</p>
-  <p>Work in progress (check-in build). Plumbline is a command-line tool; this page is a placeholder, not the product.
-    The README has the current status, the evidence files and how to run it.</p>
+<a class="skip" href="#main">Skip to content</a>
+<nav aria-label="Primary">
+  <a class="mark" href="#top" aria-label="Plumbline, top of page"><svg viewBox="0 0 16 30" aria-hidden="true"><path d="M8 0v9" stroke="#262823" stroke-width="1.4"/><rect x="5" y="8" width="6" height="3" fill="#6E5220"/><path d="M3 12h10v2c0 5-2.6 10-5 15.5C5.6 24 3 19 3 14z" fill="#9C7630"/></svg>Plumbline</a>
   <div class="links">
-    <a class="btn primary" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu">Source on GitHub</a>
-    <a class="btn" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu#readme">README</a>
+    <a href="#spread">Every call</a><a href="#proof">Proof</a><a href="#how">How</a><a href="#honest">Honest</a><a href="#faq">FAQ</a>
+    <a class="gh" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu">Source</a>
   </div>
-  <footer>MIT licensed.</footer>
+</nav>
+
+<main id="main">
+<header class="hero" id="top">
+  <p class="lab">Portaldot Hacker House 2026 · Modular Cloud &amp; Middleware</p>
+  <h1>The docs say <span class="call">transfer</span>. V3 has <span class="tape">never heard of&nbsp;it.</span></h1>
+  <div class="gutter" aria-hidden="true"><div class="plumb"><span class="str"></span><svg viewBox="0 0 24 48"><defs><linearGradient id="brass" x1="0" x2="1"><stop offset="0" stop-color="#C9A45B"/><stop offset=".45" stop-color="#9C7630"/><stop offset="1" stop-color="#6E5220"/></linearGradient></defs><rect x="8" y="0" width="8" height="5" rx="1" fill="#6E5220"/><path d="M5 6h14v4c0 9-3.8 19-7 37.5C8.8 29 5 19 5 10z" fill="url(#brass)"/><path d="M8.5 9v3c0 6 1.4 13 3 22" stroke="#E2C78A" stroke-width="1" fill="none" opacity=".7"/></svg></div></div>
+  <section class="book" id="book" aria-labelledby="book-title">
+    <div class="hd"><b id="book-title">Docs → V3 · spec 3002</b><span class="lab">booked 2026-10-19 UTC</span></div>
+    <table>
+      <caption class="sr">Six mainnet-docs calls, read against the Portaldot V3 testnet, spec 3002. The two flagged rows are the only mainnet-docs calls that disagree with V3.</caption>
+      <thead><tr><th scope="col">Sta.</th><th scope="col">Call, as documented</th><th scope="col">On V3</th><th scope="col">Receipt</th></tr></thead>
+      <tbody>
+        <tr class="flag"><td class="sta"><span class="s">1</span></td><td class="c"><span class="flagband" aria-hidden="true"></span><span class="s"><small>Balances</small><s>transfer</s><em class="note">V3 has <code>transfer_allow_death</code>, <code>transfer_keep_alive</code> ↓</em></span></td><td class="v">ABSENT</td><td class="r">no such call</td></tr>
+        <tr><td class="sta"><span class="s">2</span></td><td class="c"><span class="s"><small>Balances</small>transfer_all</span></td><td class="v">UNPROVEN</td><td class="r">present · no tx</td></tr>
+        <tr><td class="sta"><span class="s">3</span></td><td class="c"><span class="s"><small>Balances</small>transfer_keep_alive</span></td><td class="v">PROVEN<span class="tick" aria-hidden="true"></span></td><td class="r"><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xf71728583059750fbdb8095730835eae53955148675b11cae98c90d3374b4c1d" aria-label="extrinsic 106425-1 in the node console">106425-1</a></td></tr>
+        <tr class="flag"><td class="sta"><span class="s">4</span></td><td class="c"><span class="flagband f2" aria-hidden="true"></span><span class="s"><small>ElectionProviderMultiPhase</small><s>governance_fallback</s><em class="note">docs: 2 args · V3: none</em></span></td><td class="v">ARG_DRIFT</td><td class="r">2 args → 0</td></tr>
+        <tr><td class="sta"><span class="s">5</span></td><td class="c"><span class="s"><small>System</small>remark_with_event</span></td><td class="v">PROVEN<span class="tick" aria-hidden="true"></span></td><td class="r"><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xac1f0030783d7470925fb39b691046d58418ac138c4d603916506cb345353ec2" aria-label="extrinsic 106424-1 in the node console">106424-1</a></td></tr>
+        <tr><td class="sta"><span class="s">6</span></td><td class="c"><span class="s"><small>Utility</small>batch_all</span></td><td class="v">PROVEN<span class="tick" aria-hidden="true"></span></td><td class="r"><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0x06a069139c6457bdcd841dd7cb274d986b621538befea8ecb0471988764319ab" aria-label="extrinsic 106426-1 in the node console">106426-1</a></td></tr>
+      </tbody>
+    </table>
+    <p class="foot"><span>6 of 196 documented calls · flagged: the only 2 that disagree on V3</span><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/ledger_v3.json">evidence/ledger_v3.json</a></p>
+  </section>
+  <p class="sub">You copy <code>Balances.transfer</code> from the Portaldot docs into a V3 dApp, and the V3 runtime has no such call. Plumbline hangs all <b>196 documented calls</b> against the runtime’s own metadata. <b>79</b> disagreed with mainnet spec 1002. On V3 spec 3002, <b>2</b> still do, and <b>3</b> are proven the only way that counts: a real transaction, read back from its block.</p>
+  <div class="cta">
+    <a class="btn p" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 4 1 8l4 4M11 4l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none"/></svg>Source on GitHub</a>
+    <a class="btn" href="https://youtu.be/edvFuOdUZNk"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>Watch the demo</a>
+    <a class="btn" href="https://plumbline.edycu.dev/deck/">Pitch deck</a>
+  </div>
+  <div class="strip"><span>try it, read-only:</span><span class="cmd"><code id="cmd">plumbline check examples/mainnet-dapp --target v3</code><button class="copy" type="button" data-copy="#cmd" aria-label="Copy the command">Copy</button></span><span class="out">→ 9 findings · blocking 0 · exit 0</span></div>
+</header>
+
+<section class="stakes" aria-labelledby="stakes-title">
+  <div class="wrap">
+    <div class="intro"><h2 id="stakes-title">Four stakes in the ground. Each figure is a file you can open.</h2><p class="lab">mainnet docs · V3 testnet · this repo</p></div>
+    <div class="row4" data-play>
+      <div class="stake"><div class="tag"><div class="n"><span class="num" data-to="196">196</span></div><p class="l">documented calls, from 22 of 22 mainnet docs pages</p><p class="f"><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/docs_1002.json">evidence/docs_1002.json</a></p></div><svg class="post" viewBox="0 0 46 78" aria-hidden="true"><path d="M19 0h8v62l-4 12-4-12z" fill="#B48A4C" stroke="#262823" stroke-width="1.5"/><path d="M19 12h8v7h-8z" fill="#FF2E7E"/><path d="M27 13c6 0 11 3 16 1-3 5-9 7-16 5z" fill="#FF2E7E"/><path d="M27 17c5 3 8 9 13 10-6 1-10-2-13-6z" fill="#E8226E"/></svg></div>
+      <div class="stake"><div class="tag"><div class="n"><span class="num" data-to="79">79</span><span class="ar">→</span><span class="tape">2</span></div><p class="l">calls that disagree with the runtime: mainnet spec 1002, then V3 spec 3002</p><p class="f"><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/BASELINE-V3.md">docs/BASELINE-V3.md</a></p></div><svg class="post" viewBox="0 0 46 78" aria-hidden="true"><path d="M19 0h8v62l-4 12-4-12z" fill="#B48A4C" stroke="#262823" stroke-width="1.5"/><path d="M19 12h8v7h-8z" fill="#FF2E7E"/><path d="M27 13c6 0 11 3 16 1-3 5-9 7-16 5z" fill="#FF2E7E"/><path d="M27 17c5 3 8 9 13 10-6 1-10-2-13-6z" fill="#E8226E"/></svg></div>
+      <div class="stake"><div class="tag"><div class="n"><span class="num" data-to="3">3</span>/3</div><p class="l">V3 transactions read back from blocks 106424–106426</p><p class="f"><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/readback_v3.txt">evidence/readback_v3.txt</a></p></div><svg class="post" viewBox="0 0 46 78" aria-hidden="true"><path d="M19 0h8v62l-4 12-4-12z" fill="#B48A4C" stroke="#262823" stroke-width="1.5"/><path d="M19 12h8v7h-8z" fill="#FF2E7E"/><path d="M27 13c6 0 11 3 16 1-3 5-9 7-16 5z" fill="#FF2E7E"/><path d="M27 17c5 3 8 9 13 10-6 1-10-2-13-6z" fill="#E8226E"/></svg></div>
+      <div class="stake"><div class="tag"><div class="n"><span class="num" data-to="263">263</span></div><p class="l">offline tests passing, no chain or key needed</p><p class="f"><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/pytest_checkin.txt">evidence/pytest_checkin.txt</a></p></div><svg class="post" viewBox="0 0 46 78" aria-hidden="true"><path d="M19 0h8v62l-4 12-4-12z" fill="#B48A4C" stroke="#262823" stroke-width="1.5"/><path d="M19 12h8v7h-8z" fill="#FF2E7E"/><path d="M27 13c6 0 11 3 16 1-3 5-9 7-16 5z" fill="#FF2E7E"/><path d="M27 17c5 3 8 9 13 10-6 1-10-2-13-6z" fill="#E8226E"/></svg></div>
+      <div class="ground" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+<section class="spreadband" id="spread" aria-labelledby="spread-title">
+  <div class="wrap">
+    <div class="sphead">
+      <h2 id="spread-title">Same 196 calls.<br>Two runtimes.</h2>
+      <p>Each mark is one call from Portaldot’s mainnet docs, booked on its docs page. The left page hangs them against mainnet spec 1002; the right page hangs the same calls against the V3 testnet. Tape marks a disagreement. An ink tick is a call with a transaction behind it.</p>
+    </div>
+    <div class="legend" aria-hidden="true"><span><i class="k f"></i>absent or renamed</span><span><i class="k g"></i>other arguments</span><span><i class="k p"></i>proven by a transaction</span><span><i class="k"></i>present, no transaction yet</span></div>
+    <div class="spread" data-play role="img" aria-label="The same 196 documented calls from 22 docs pages, on two facing pages. Against mainnet spec 1002: 62 absent, 2 renamed, 15 with other arguments, 117 present without a transaction. Against the V3 testnet, spec 3002: 1 absent (Balances.transfer), 1 with other arguments (ElectionProviderMultiPhase.governance_fallback), 3 proven by a transaction, 191 present without a transaction.">
+      <div class="ph l">Mainnet · spec 1002<b>79 flagged</b></div><div class="ph c">Docs page<b>&nbsp;</b></div><div class="ph r">V3 testnet · spec 3002<b>2 flagged</b></div>
+      <div class="row"><div class="cl"><i class="k" data-i="0"></i><i class="k f" data-i="1" style="--d:0"></i><i class="k" data-i="2"></i><i class="k" data-i="3"></i><i class="k" data-i="4"></i><i class="k" data-i="5"></i><i class="k f" data-i="6" style="--d:1"></i><i class="k f" data-i="7" style="--d:2"></i><i class="k f" data-i="8" style="--d:3"></i><i class="k" data-i="9"></i><i class="k" data-i="10"></i><i class="k" data-i="11"></i><i class="k" data-i="12"></i><i class="k" data-i="13"></i><i class="k" data-i="14"></i><i class="k" data-i="15"></i><i class="k" data-i="16"></i><i class="k" data-i="17"></i><i class="k f" data-i="18" style="--d:4"></i><i class="k f" data-i="19" style="--d:5"></i><i class="k" data-i="20"></i><i class="k f" data-i="21" style="--d:6"></i><i class="k" data-i="22"></i><i class="k f" data-i="23" style="--d:7"></i><i class="k" data-i="24"></i><i class="k" data-i="25"></i><i class="k f" data-i="26" style="--d:8"></i><i class="k f" data-i="27" style="--d:9"></i><i class="k" data-i="28"></i><i class="k f" data-i="29" style="--d:10"></i><i class="k" data-i="30"></i><i class="k" data-i="31"></i><i class="k" data-i="32"></i></div><div class="cc"><span>Assets</span> <small>33</small></div><div class="cr"><i class="k" data-i="0"></i><i class="k" data-i="1"></i><i class="k" data-i="2"></i><i class="k" data-i="3"></i><i class="k" data-i="4"></i><i class="k" data-i="5"></i><i class="k" data-i="6"></i><i class="k" data-i="7"></i><i class="k" data-i="8"></i><i class="k" data-i="9"></i><i class="k" data-i="10"></i><i class="k" data-i="11"></i><i class="k" data-i="12"></i><i class="k" data-i="13"></i><i class="k" data-i="14"></i><i class="k" data-i="15"></i><i class="k" data-i="16"></i><i class="k" data-i="17"></i><i class="k" data-i="18"></i><i class="k" data-i="19"></i><i class="k" data-i="20"></i><i class="k" data-i="21"></i><i class="k" data-i="22"></i><i class="k" data-i="23"></i><i class="k" data-i="24"></i><i class="k" data-i="25"></i><i class="k" data-i="26"></i><i class="k" data-i="27"></i><i class="k" data-i="28"></i><i class="k" data-i="29"></i><i class="k" data-i="30"></i><i class="k" data-i="31"></i><i class="k" data-i="32"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="33"></i><i class="k" data-i="34"></i><i class="k" data-i="35"></i></div><div class="cc"><span>Babe</span> <small>3</small></div><div class="cr"><i class="k" data-i="33"></i><i class="k" data-i="34"></i><i class="k" data-i="35"></i></div></div>
+      <div class="row"><div class="cl"><i class="k g" data-i="36" style="--d:11"></i><i class="k" data-i="37"></i><i class="k" data-i="38"></i></div><div class="cc"><span>Balances</span> <small>3</small></div><div class="cr"><i class="k f" data-i="36"></i><i class="k" data-i="37"></i><i class="k p" data-i="38"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="39"></i><i class="k" data-i="40"></i><i class="k f" data-i="41" style="--d:12"></i><i class="k" data-i="42"></i><i class="k" data-i="43"></i><i class="k" data-i="44"></i><i class="k g" data-i="45" style="--d:13"></i><i class="k" data-i="46"></i><i class="k" data-i="47"></i><i class="k" data-i="48"></i></div><div class="cc"><span>Bounties</span> <small>10</small></div><div class="cr"><i class="k" data-i="39"></i><i class="k" data-i="40"></i><i class="k" data-i="41"></i><i class="k" data-i="42"></i><i class="k" data-i="43"></i><i class="k" data-i="44"></i><i class="k" data-i="45"></i><i class="k" data-i="46"></i><i class="k" data-i="47"></i><i class="k" data-i="48"></i></div></div>
+      <div class="row"><div class="cl"><i class="k g" data-i="49" style="--d:14"></i><i class="k f" data-i="50" style="--d:15"></i><i class="k g" data-i="51" style="--d:16"></i><i class="k f" data-i="52" style="--d:17"></i><i class="k g" data-i="53" style="--d:18"></i><i class="k f" data-i="54" style="--d:19"></i><i class="k f" data-i="55" style="--d:20"></i><i class="k f" data-i="56" style="--d:21"></i><i class="k f" data-i="57" style="--d:22"></i><i class="k f" data-i="58" style="--d:23"></i></div><div class="cc"><span>Contracts</span> <small>10</small></div><div class="cr"><i class="k" data-i="49"></i><i class="k" data-i="50"></i><i class="k" data-i="51"></i><i class="k" data-i="52"></i><i class="k" data-i="53"></i><i class="k" data-i="54"></i><i class="k" data-i="55"></i><i class="k" data-i="56"></i><i class="k" data-i="57"></i><i class="k" data-i="58"></i></div></div>
+      <div class="row"><div class="cl"><i class="k f" data-i="59" style="--d:24"></i><i class="k g" data-i="60" style="--d:25"></i><i class="k" data-i="61"></i><i class="k f" data-i="62" style="--d:26"></i><i class="k g" data-i="63" style="--d:27"></i></div><div class="cc"><span>ElectionProviderMultiPhase</span> <small>5</small></div><div class="cr"><i class="k g" data-i="59"></i><i class="k" data-i="60"></i><i class="k" data-i="61"></i><i class="k" data-i="62"></i><i class="k" data-i="63"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="64"></i><i class="k" data-i="65"></i><i class="k" data-i="66"></i></div><div class="cc"><span>Grandpa</span> <small>3</small></div><div class="cr"><i class="k" data-i="64"></i><i class="k" data-i="65"></i><i class="k" data-i="66"></i></div></div>
+      <div class="row"><div class="cl"><i class="k f" data-i="67" style="--d:28"></i><i class="k" data-i="68"></i><i class="k" data-i="69"></i><i class="k f" data-i="70" style="--d:29"></i><i class="k" data-i="71"></i><i class="k" data-i="72"></i><i class="k" data-i="73"></i><i class="k f" data-i="74" style="--d:30"></i><i class="k g" data-i="75" style="--d:31"></i><i class="k" data-i="76"></i><i class="k f" data-i="77" style="--d:32"></i><i class="k" data-i="78"></i><i class="k f" data-i="79" style="--d:33"></i><i class="k f" data-i="80" style="--d:34"></i><i class="k" data-i="81"></i><i class="k" data-i="82"></i><i class="k" data-i="83"></i><i class="k" data-i="84"></i><i class="k" data-i="85"></i><i class="k" data-i="86"></i><i class="k f" data-i="87" style="--d:35"></i><i class="k" data-i="88"></i><i class="k f" data-i="89" style="--d:36"></i><i class="k f" data-i="90" style="--d:37"></i></div><div class="cc"><span>Identity</span> <small>24</small></div><div class="cr"><i class="k" data-i="67"></i><i class="k" data-i="68"></i><i class="k" data-i="69"></i><i class="k" data-i="70"></i><i class="k" data-i="71"></i><i class="k" data-i="72"></i><i class="k" data-i="73"></i><i class="k" data-i="74"></i><i class="k" data-i="75"></i><i class="k" data-i="76"></i><i class="k" data-i="77"></i><i class="k" data-i="78"></i><i class="k" data-i="79"></i><i class="k" data-i="80"></i><i class="k" data-i="81"></i><i class="k" data-i="82"></i><i class="k" data-i="83"></i><i class="k" data-i="84"></i><i class="k" data-i="85"></i><i class="k" data-i="86"></i><i class="k" data-i="87"></i><i class="k" data-i="88"></i><i class="k" data-i="89"></i><i class="k" data-i="90"></i></div></div>
+      <div class="row"><div class="cl"><i class="k g" data-i="91" style="--d:38"></i></div><div class="cc"><span>ImOnline</span> <small>1</small></div><div class="cr"><i class="k" data-i="91"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="92"></i><i class="k" data-i="93"></i><i class="k" data-i="94"></i><i class="k" data-i="95"></i><i class="k f" data-i="96" style="--d:39"></i><i class="k" data-i="97"></i></div><div class="cc"><span>Indices</span> <small>6</small></div><div class="cr"><i class="k" data-i="92"></i><i class="k" data-i="93"></i><i class="k" data-i="94"></i><i class="k" data-i="95"></i><i class="k" data-i="96"></i><i class="k" data-i="97"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="98"></i><i class="k" data-i="99"></i><i class="k" data-i="100"></i><i class="k" data-i="101"></i></div><div class="cc"><span>Lottery</span> <small>4</small></div><div class="cr"><i class="k" data-i="98"></i><i class="k" data-i="99"></i><i class="k" data-i="100"></i><i class="k" data-i="101"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="102"></i><i class="k g" data-i="103" style="--d:40"></i><i class="k" data-i="104"></i><i class="k" data-i="105"></i><i class="k f" data-i="106" style="--d:41"></i></div><div class="cc"><span>Multisig</span> <small>5</small></div><div class="cr"><i class="k" data-i="102"></i><i class="k" data-i="103"></i><i class="k" data-i="104"></i><i class="k" data-i="105"></i><i class="k" data-i="106"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="107"></i><i class="k" data-i="108"></i><i class="k f" data-i="109" style="--d:42"></i><i class="k f" data-i="110" style="--d:43"></i><i class="k f" data-i="111" style="--d:44"></i><i class="k" data-i="112"></i><i class="k" data-i="113"></i><i class="k" data-i="114"></i><i class="k" data-i="115"></i><i class="k" data-i="116"></i><i class="k" data-i="117"></i></div><div class="cc"><span>Proxy</span> <small>11</small></div><div class="cr"><i class="k" data-i="107"></i><i class="k" data-i="108"></i><i class="k" data-i="109"></i><i class="k" data-i="110"></i><i class="k" data-i="111"></i><i class="k" data-i="112"></i><i class="k" data-i="113"></i><i class="k" data-i="114"></i><i class="k" data-i="115"></i><i class="k" data-i="116"></i><i class="k" data-i="117"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="118"></i><i class="k" data-i="119"></i><i class="k f" data-i="120" style="--d:45"></i><i class="k f" data-i="121" style="--d:46"></i><i class="k" data-i="122"></i><i class="k" data-i="123"></i><i class="k" data-i="124"></i><i class="k" data-i="125"></i><i class="k f" data-i="126" style="--d:47"></i><i class="k f" data-i="127" style="--d:48"></i></div><div class="cc"><span>Scheduler</span> <small>10</small></div><div class="cr"><i class="k" data-i="118"></i><i class="k" data-i="119"></i><i class="k" data-i="120"></i><i class="k" data-i="121"></i><i class="k" data-i="122"></i><i class="k" data-i="123"></i><i class="k" data-i="124"></i><i class="k" data-i="125"></i><i class="k" data-i="126"></i><i class="k" data-i="127"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="128"></i><i class="k" data-i="129"></i></div><div class="cc"><span>Session</span> <small>2</small></div><div class="cr"><i class="k" data-i="128"></i><i class="k" data-i="129"></i></div></div>
+      <div class="row"><div class="cl"><i class="k g" data-i="130" style="--d:49"></i><i class="k" data-i="131"></i><i class="k" data-i="132"></i><i class="k g" data-i="133" style="--d:50"></i><i class="k f" data-i="134" style="--d:51"></i><i class="k f" data-i="135" style="--d:52"></i><i class="k" data-i="136"></i><i class="k" data-i="137"></i><i class="k" data-i="138"></i><i class="k" data-i="139"></i><i class="k" data-i="140"></i><i class="k" data-i="141"></i><i class="k f" data-i="142" style="--d:53"></i><i class="k f" data-i="143" style="--d:54"></i><i class="k" data-i="144"></i><i class="k" data-i="145"></i><i class="k f" data-i="146" style="--d:55"></i><i class="k" data-i="147"></i><i class="k" data-i="148"></i><i class="k f" data-i="149" style="--d:56"></i><i class="k" data-i="150"></i><i class="k g" data-i="151" style="--d:57"></i><i class="k" data-i="152"></i><i class="k f" data-i="153" style="--d:58"></i><i class="k" data-i="154"></i><i class="k f" data-i="155" style="--d:59"></i><i class="k" data-i="156"></i><i class="k" data-i="157"></i><i class="k f" data-i="158" style="--d:60"></i><i class="k" data-i="159"></i><i class="k" data-i="160"></i></div><div class="cc"><span>Staking</span> <small>31</small></div><div class="cr"><i class="k" data-i="130"></i><i class="k" data-i="131"></i><i class="k" data-i="132"></i><i class="k" data-i="133"></i><i class="k" data-i="134"></i><i class="k" data-i="135"></i><i class="k" data-i="136"></i><i class="k" data-i="137"></i><i class="k" data-i="138"></i><i class="k" data-i="139"></i><i class="k" data-i="140"></i><i class="k" data-i="141"></i><i class="k" data-i="142"></i><i class="k" data-i="143"></i><i class="k" data-i="144"></i><i class="k" data-i="145"></i><i class="k" data-i="146"></i><i class="k" data-i="147"></i><i class="k" data-i="148"></i><i class="k" data-i="149"></i><i class="k" data-i="150"></i><i class="k" data-i="151"></i><i class="k" data-i="152"></i><i class="k" data-i="153"></i><i class="k" data-i="154"></i><i class="k" data-i="155"></i><i class="k" data-i="156"></i><i class="k" data-i="157"></i><i class="k" data-i="158"></i><i class="k" data-i="159"></i><i class="k" data-i="160"></i></div></div>
+      <div class="row"><div class="cl"><i class="k f" data-i="161" style="--d:61"></i><i class="k f" data-i="162" style="--d:62"></i><i class="k f" data-i="163" style="--d:63"></i><i class="k g" data-i="164" style="--d:64"></i><i class="k" data-i="165"></i><i class="k g" data-i="166" style="--d:65"></i><i class="k" data-i="167"></i><i class="k" data-i="168"></i><i class="k" data-i="169"></i><i class="k" data-i="170"></i><i class="k" data-i="171"></i></div><div class="cc"><span>System</span> <small>11</small></div><div class="cr"><i class="k" data-i="161"></i><i class="k" data-i="162"></i><i class="k" data-i="163"></i><i class="k" data-i="164"></i><i class="k" data-i="165"></i><i class="k" data-i="166"></i><i class="k p" data-i="167"></i><i class="k" data-i="168"></i><i class="k" data-i="169"></i><i class="k" data-i="170"></i><i class="k" data-i="171"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="172"></i></div><div class="cc"><span>Timestamp</span> <small>1</small></div><div class="cr"><i class="k" data-i="172"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="173"></i><i class="k" data-i="174"></i><i class="k" data-i="175"></i></div><div class="cc"><span>TransactionStorage</span> <small>3</small></div><div class="cr"><i class="k" data-i="173"></i><i class="k" data-i="174"></i><i class="k" data-i="175"></i></div></div>
+      <div class="row"><div class="cl"><i class="k f" data-i="176" style="--d:66"></i><i class="k f" data-i="177" style="--d:67"></i><i class="k f" data-i="178" style="--d:68"></i><i class="k f" data-i="179" style="--d:69"></i><i class="k f" data-i="180" style="--d:70"></i><i class="k f" data-i="181" style="--d:71"></i></div><div class="cc"><span>Treasury</span> <small>6</small></div><div class="cr"><i class="k" data-i="176"></i><i class="k" data-i="177"></i><i class="k" data-i="178"></i><i class="k" data-i="179"></i><i class="k" data-i="180"></i><i class="k" data-i="181"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="182"></i><i class="k" data-i="183"></i><i class="k" data-i="184"></i><i class="k f" data-i="185" style="--d:72"></i><i class="k f" data-i="186" style="--d:73"></i><i class="k f" data-i="187" style="--d:74"></i><i class="k f" data-i="188" style="--d:75"></i><i class="k f" data-i="189" style="--d:76"></i></div><div class="cc"><span>Utility</span> <small>8</small></div><div class="cr"><i class="k" data-i="182"></i><i class="k" data-i="183"></i><i class="k p" data-i="184"></i><i class="k" data-i="185"></i><i class="k" data-i="186"></i><i class="k" data-i="187"></i><i class="k" data-i="188"></i><i class="k" data-i="189"></i></div></div>
+      <div class="row"><div class="cl"><i class="k f" data-i="190" style="--d:77"></i><i class="k" data-i="191"></i><i class="k f" data-i="192" style="--d:78"></i><i class="k" data-i="193"></i><i class="k" data-i="194"></i><i class="k" data-i="195"></i></div><div class="cc"><span>Vesting</span> <small>6</small></div><div class="cr"><i class="k" data-i="190"></i><i class="k" data-i="191"></i><i class="k" data-i="192"></i><i class="k" data-i="193"></i><i class="k" data-i="194"></i><i class="k" data-i="195"></i></div></div>
+      <div class="bind" aria-hidden="true"><svg viewBox="0 0 24 48"><rect x="8" y="0" width="8" height="5" rx="1" fill="#6E5220"/><path d="M5 6h14v4c0 9-3.8 19-7 37.5C8.8 29 5 19 5 10z" fill="url(#brass)"/></svg></div>
+    </div>
+    <p class="readout" aria-hidden="true"><span class="lab">reading</span><span id="readout">point at a mark to read its entry</span></p>
+    <p class="spfoot">Source rows: <a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/ledger_1002.json">evidence/ledger_1002.json</a> and <a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/ledger_v3.json">evidence/ledger_v3.json</a>, source <code>mainnet-docs</code>, 196 rows each. On 1002: 62 absent, 2 renamed, 15 with other arguments. No transaction is ever sent to mainnet.</p>
+  </div>
+</section>
+
+<section class="proofband" id="proof" aria-labelledby="proof-title">
+  <div class="wrap">
+    <div class="top">
+      <h2 id="proof-title">Proven means a receipt.</h2>
+      <p>Three canary transactions went to the V3 testnet. A new process then re-read each one from its block by hash and decoded it back to the same call. The terminal replays the committed evidence; the video shows the live runs.</p>
+    </div>
+    <div class="term" data-play>
+      <div class="bar"><span>replay · <i>evidence/readback_v3.txt</i>, <i>evidence/check_v3.txt</i> (verbatim)</span><span>profile v3 · portaldot-v3 / 3002</span></div>
+<pre><span class="ln"><span class="pr">$</span> cat evidence/readback_v3.txt</span><span class="ln cm"># plumbline readback evidence/canary_v3.json — profile v3, run 2026-10-19T18:24:33Z, new process, new connection</span><span class="ln">   106424-1 System.remark_with_event         decoded System.remark_with_event  block 106424  success True  <span class="ok">MATCH</span></span><span class="ln">   106425-1 Balances.transfer_keep_alive     decoded Balances.transfer_keep_alive  block 106425  success True  <span class="ok">MATCH</span></span><span class="ln">   106426-1 Utility.batch_all                decoded Utility.batch_all  block 106426  success True  <span class="ok">MATCH</span></span><span class="ln">profile v3 — Portaldot V3 testnet: <span class="hit">3/3 receipts match the chain</span></span><span class="ln"><span class="pr">$</span> tail -1 evidence/check_v3.txt</span><span class="ln">summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-UNMEASURED 1, UNSCANNED 1 · <span class="hit">blocking 0 · exit 0</span></span></pre>
+    </div>
+    <div class="pair">
+      <figure class="shot">
+        <p class="lab"><span>Demo video · YouTube</span><span>real CLI · V3 testnet</span></p>
+        <a class="video" id="video" href="https://youtu.be/edvFuOdUZNk" data-yt="edvFuOdUZNk" aria-label="Play the Plumbline demo video on YouTube">
+          <img src="assets/demo-poster.jpg" width="1280" height="720" alt="Frame from the demo video: the V3 verdicts query, Balances.transfer ABSENT and governance_fallback ARG_DRIFT struck through" loading="lazy" decoding="async">
+          <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3v18l15-9z" fill="#141511"/></svg></span>
+        </a>
+        <figcaption>Live <code>runtime</code>, <code>check</code> and <code>readback</code> against V3, then the ledger, the diff and the architecture. Waits are cut and labelled as such on screen.</figcaption>
+      </figure>
+      <figure class="shot console">
+        <p class="lab"><span>Screenshot · node-console.portaldot.dev</span><span>V3 RPC</span></p>
+        <a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xac1f0030783d7470925fb39b691046d58418ac138c4d603916506cb345353ec2"><img src="assets/console-106424.jpg" width="1600" height="690" alt="Portaldot node console on the V3 testnet, block 106,424: two extrinsics, timestamp.set and system.remarkWithEvent, with the remark's events" loading="lazy" decoding="async"></a>
+        <figcaption>Block 106,424 in Portaldot’s own explorer: <code>system.remarkWithEvent</code>, our extrinsic <code>106424-1</code>. Times on screen are WIB. <a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xac1f0030783d7470925fb39b691046d58418ac138c4d603916506cb345353ec2">Open the block ↗</a></figcaption>
+      </figure>
+    </div>
+    <div class="rcpts">
+      <div class="rcpt"><b>106424-1</b><span>System.remark_with_event</span><span>tx 0xf5443057…41e6f5</span><span><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xac1f0030783d7470925fb39b691046d58418ac138c4d603916506cb345353ec2">block 106424 ↗</a></span></div>
+      <div class="rcpt"><b>106425-1</b><span>Balances.transfer_keep_alive</span><span>tx 0xa7effe5d…91d90b</span><span><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xf71728583059750fbdb8095730835eae53955148675b11cae98c90d3374b4c1d">block 106425 ↗</a></span></div>
+      <div class="rcpt"><b>106426-1</b><span>Utility.batch_all</span><span>tx 0x25e03522…5dfaa8</span><span><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0x06a069139c6457bdcd841dd7cb274d986b621538befea8ecb0471988764319ab">block 106426 ↗</a></span></div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how" aria-labelledby="how-title">
+  <div class="wrap">
+    <div class="top"><h2 id="how-title">Five stations, one ledger</h2><p>A Python CLI on <code>substrate-interface</code>. Every station writes a committed file, so every figure here has a file behind it.</p></div>
+    <div class="bento" data-play>
+      <article class="cell c-plumb">
+        <p class="st">Sta. 03 · the core</p>
+        <h3>Plumb</h3>
+        <p>Joins every documented call to one runtime’s metadata and writes exactly one verdict, stamped with profile, spec and metadata hash. Same inputs, byte-identical ledger: 549 rows on V3.</p>
+        <span class="chip">plumbline plumb · substrate-interface 1.8.1</span>
+        <figure><img src="assets/architecture-core.png" width="1400" height="907" alt="Architecture drawing, core flow: docs.py and guide.py feed plumb.py, which joins each entry to metadata.py's stored V3 metadata and writes ledger_v3.json; canary.py signs, submits and reads back receipts into docs/PROOF.md" loading="lazy" decoding="async"><figcaption><span>Detail of the architecture drawing (earlier sheet style)</span><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/architecture.png">Open the full drawing ↗</a></figcaption></figure>
+      </article>
+      <article class="cell c-docs">
+        <p class="st">Sta. 01</p>
+        <h3>Read the drawing</h3>
+        <p>Parses the 22 mainnet extrinsic docs pages, in their three layouts, into 196 documented calls.</p>
+        <span class="chip">plumbline docs</span>
+      </article>
+      <article class="cell c-guide">
+        <p class="st">Sta. 02</p>
+        <h3>Read the guide, never run it</h3>
+        <p>Reads the V3 testnet guide at <code>d671a32</code> by AST only: 46 <code>compose_call</code> sites and 12 FAQ modules. Its code is never executed.</p>
+        <span class="chip">plumbline guide · ast</span>
+      </article>
+      <article class="cell c-prove">
+        <p class="st">Sta. 04</p>
+        <h3>Prove</h3>
+        <p>Signs a canary extrinsic, keeps the receipt, then re-reads it from its block by hash. It runs on V3 and local dev chains only; mainnet is refused.</p>
+        <div class="rcpt-mini"><div><b>106424-1</b><span>System.remark_with_event</span></div><div><b>106425-1</b><span>Balances.transfer_keep_alive</span></div><div><b>106426-1</b><span>Utility.batch_all</span></div></div>
+        <span class="chip">plumbline canary · plumbline readback</span>
+      </article>
+      <article class="cell c-diff">
+        <p class="st">Sta. 05</p>
+        <h3>Diff, then check your dApp</h3>
+        <p><code>diff</code> lists what moved between two runtimes: 516 rows from mainnet spec 1002 to V3.</p>
+        <div class="bars"><span class="bl">event changes</span><span class="bt" style="--w:100.0;--i:0"></span><span class="bv">169</span><span class="bl">constant changes</span><span class="bt" style="--w:70.4;--i:1"></span><span class="bv">119</span><span class="bl">argument changes</span><span class="bt" style="--w:58.6;--i:2"></span><span class="bv">99</span><span class="bl">calls added</span><span class="bt" style="--w:43.2;--i:3"></span><span class="bv">73</span><span class="bl">pallets added</span><span class="bt" style="--w:23.7;--i:4"></span><span class="bv">40</span><span class="bl">calls removed</span><span class="bt" style="--w:7.1;--i:5"></span><span class="bv">12</span><span class="bl">pallets removed</span><span class="bt" style="--w:1.2;--i:6"></span><span class="bv">2</span><span class="bl">calls renamed</span><span class="bt" style="--w:1.2;--i:7"></span><span class="bv">2</span></div>
+        <div class="chk"><b>5<span class="ar">→</span>0</b><span><code>check</code> on the example dApp: blocking findings on spec 1002, then on V3. Exit 1 blocks a CI job; exit 0 lets it pass.</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="honest" id="honest" aria-labelledby="honest-title">
+  <div class="wrap">
+    <div class="side"><h2 id="honest-title">Remarks</h2><p>What the ledger does not claim, in the README’s own words.</p></div>
+    <ol class="remarks">
+      <li><span class="rn" aria-hidden="true">R1</span><div><q>Every other documented entry on V3 is at most UNPROVEN (present, no transaction sent), or ARGS-UNCHECKED / UNKNOWN-DOC (nothing to compare), or carries a drift verdict (ABSENT, ARG_DRIFT).</q><cite>README · lead · <a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu#readme">line 3</a></cite></div></li>
+      <li><span class="rn" aria-hidden="true">R2</span><div><q>101 of the 320 rows come from the V3 guide&#x27;s own call table, demo scripts and FAQ; their verdicts there are computed against mainnet spec 1002 and are not V3 findings.</q><cite>README · mainnet-1002 baseline · lines 62–63</cite></div></li>
+      <li><span class="rn" aria-hidden="true">R3</span><div><q>… TYPE-TRAP is not detected yet; wasm verdicts cover two measured cases only …</q><cite>README · other tools · line 93</cite></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="faq" id="faq" aria-labelledby="faq-title">
+  <div class="wrap">
+    <div class="side"><h2 id="faq-title">Questions a judge asks</h2><p>Short answers; the README and <a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/PROOF.md">docs/PROOF.md</a> carry the long ones.</p></div>
+    <div>
+      <details><summary>Is this V3, or a stand-in?<span class="pm" aria-hidden="true"></span></summary><div><p>Profile <code>v3</code> is the live Portaldot V3 testnet, spec 3002, measured 2026-10-19. A local upstream dev chain (<code>interim-sdk</code>) is kept as test input and labelled <b>not V3</b> everywhere it appears.</p></div></details>
+      <details><summary>Does it send transactions?<span class="pm" aria-hidden="true"></span></summary><div><p>Only <code>plumbline canary</code>, and only with a funded seed file: 3 on V3 (blocks 106424–106426), read back 3/3. Everything else is read-only RPC. The canary refuses the mainnet profile.</p></div></details>
+      <details><summary>What does PROVEN mean?<span class="pm" aria-hidden="true"></span></summary><div><p>A canary for that call succeeded on that runtime and was re-read from its block by hash. 3 of the 196 mainnet-docs calls are PROVEN on V3.</p></div></details>
+      <details><summary>Why are 191 calls UNPROVEN, not “OK”?<span class="pm" aria-hidden="true"></span></summary><div><p>They exist on V3 by name and arguments, but no transaction was sent for them. The ledger says what it could not establish instead of rounding it up.</p></div></details>
+      <details><summary>Can I run it on my dApp?<span class="pm" aria-hidden="true"></span></summary><div><p><code>plumbline check &lt;dir&gt; --target v3</code> gives one verdict per call site and exits 0, 1 or 2 (1 = blocking findings). The repo’s example dApp: 9 findings, blocking 0 on V3, blocking 5 on mainnet spec 1002.</p></div></details>
+      <details><summary>What happens at the next runtime upgrade?<span class="pm" aria-hidden="true"></span></summary><div><p>Re-run it. <code>plumbline diff</code> lists what moved (516 rows from mainnet spec 1002 to V3), and the ledger is regenerated against the new metadata.</p></div></details>
+    </div>
+  </div>
+</section>
+
+<section class="cover" id="rerun" aria-labelledby="rerun-title">
+  <div class="wrap">
+    <div class="plate" aria-hidden="true"><b>Plumbline</b><span>Level book · Portaldot V3 · spec 3002</span></div>
+    <div class="grid">
+      <div>
+        <h2 id="rerun-title">Re-run every number here.</h2>
+        <p>Clone it, run the offline tests, then point <code>check</code> at the example dApp or your own. MIT licensed.</p>
+        <div class="cta">
+          <a class="btn p" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu">Source on GitHub</a>
+          <a class="btn" href="https://plumbline.edycu.dev/deck/">Pitch deck</a>
+          <a class="btn" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/pitch-deck.pdf">Deck PDF</a>
+          <a class="btn" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/PROOF.md">PROOF.md</a>
+        </div>
+      </div>
+<pre><span class="pr">$</span> git clone https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu
+<span class="pr">$</span> cd portaldot-hackathon-2026-plumbline-edycu
+<span class="pr">$</span> pip install -e '.[dev]' &amp;&amp; pytest -q
+<span class="cm"># 263 passed, 3 deselected</span>
+<span class="pr">$</span> plumbline check examples/mainnet-dapp --target v3
+<span class="cm"># … · blocking 0 · exit 0</span></pre>
+    </div>
+    <footer><span>Plumbline · MIT · built for Portaldot Hacker House 2026, Modular Cloud &amp; Middleware</span><span>Faces: Sofia Sans, Sofia Sans Extra Condensed, Overpass Mono (SIL OFL 1.1) · <a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/tree/main/site">page source</a></span></footer>
+  </div>
+</section>
 </main>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // hero: drop the bob to the flagged row's height, then settle (captures/print see the final state)
+  const gut = document.querySelector('.gutter'), book = document.querySelector('.book');
+  const place = () => {
+    const row = book.querySelector('tr.flag + tr + tr') || book;
+    const g = gut.getBoundingClientRect(), r = row.getBoundingClientRect();
+    if (g.height) gut.style.setProperty('--drop', Math.max(120, r.top + r.height / 2 - g.top) + 'px');
+  };
+  place(); addEventListener('resize', place); document.fonts && document.fonts.ready.then(place);
+  setTimeout(() => root.classList.add('settled'), rm ? 0 : 3400);
+
+  // scroll-armed moments: only arm what is still below the fold; final state is in the markup
+  const armed = [...document.querySelectorAll('[data-play]')].filter(el => !rm && 'IntersectionObserver' in window && el.getBoundingClientRect().top > innerHeight * .9);
+  const countUp = el => {
+    const to = +el.dataset.to, t0 = performance.now(), d = 1100;
+    const step = t => { const k = Math.min(1, (t - t0) / d); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  };
+  const replay = term => {
+    const lines = [...term.querySelectorAll('.ln')];
+    let i = 0;
+    const next = () => { if (i >= lines.length) { term.classList.remove('armed'); return; } lines[i].style.visibility = 'visible'; i++; setTimeout(next, i === 1 || i === 7 ? 520 : 240); };
+    next();
+  };
+  const play = el => {
+    el.classList.remove('armed'); el.classList.add('play');
+    el.querySelectorAll('.num[data-to]').forEach(countUp);
+    if (el.classList.contains('term')) { el.classList.add('armed'); replay(el); }
+  };
+  if (armed.length) {
+    armed.forEach(el => el.classList.add('armed'));
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.unobserve(e.target); play(e.target); } }), { threshold: .35 });
+    armed.forEach(el => io.observe(el));
+    addEventListener('beforeprint', () => armed.forEach(el => { el.classList.remove('armed'); el.querySelectorAll('.ln').forEach(l => l.style.visibility = 'visible'); }));
+  }
+  addEventListener('beforeprint', () => document.querySelectorAll('details').forEach(d => d.open = true));
+
+  // the spread: read an entry
+  const data = [["Assets.approve_transfer","UNPROVEN","UNPROVEN",""],["Assets.block","ABSENT","UNPROVEN",""],["Assets.burn","UNPROVEN","UNPROVEN",""],["Assets.cancel_approval","UNPROVEN","UNPROVEN",""],["Assets.clear_metadata","UNPROVEN","UNPROVEN",""],["Assets.create","UNPROVEN","UNPROVEN",""],["Assets.destroy_accounts","ABSENT","UNPROVEN",""],["Assets.destroy_approvals","ABSENT","UNPROVEN",""],["Assets.finish_destroy","ABSENT","UNPROVEN",""],["Assets.force_asset_status","UNPROVEN","UNPROVEN",""],["Assets.force_cancel_approval","UNPROVEN","UNPROVEN",""],["Assets.force_clear_metadata","UNPROVEN","UNPROVEN",""],["Assets.force_create","UNPROVEN","UNPROVEN",""],["Assets.force_set_metadata","UNPROVEN","UNPROVEN",""],["Assets.force_transfer","UNPROVEN","UNPROVEN",""],["Assets.freeze","UNPROVEN","UNPROVEN",""],["Assets.freeze_asset","UNPROVEN","UNPROVEN",""],["Assets.mint","UNPROVEN","UNPROVEN",""],["Assets.refund","ABSENT","UNPROVEN",""],["Assets.refund_other","ABSENT","UNPROVEN",""],["Assets.set_metadata","UNPROVEN","UNPROVEN",""],["Assets.set_min_balance","ABSENT","UNPROVEN",""],["Assets.set_team","UNPROVEN","UNPROVEN",""],["Assets.start_destroy","ABSENT","UNPROVEN",""],["Assets.thaw","UNPROVEN","UNPROVEN",""],["Assets.thaw_asset","UNPROVEN","UNPROVEN",""],["Assets.touch","ABSENT","UNPROVEN",""],["Assets.touch_other","ABSENT","UNPROVEN",""],["Assets.transfer","UNPROVEN","UNPROVEN",""],["Assets.transfer_all","ABSENT","UNPROVEN",""],["Assets.transfer_approved","UNPROVEN","UNPROVEN",""],["Assets.transfer_keep_alive","UNPROVEN","UNPROVEN",""],["Assets.transfer_ownership","UNPROVEN","UNPROVEN",""],["Babe.plan_config_change","UNPROVEN","UNPROVEN",""],["Babe.report_equivocation","UNPROVEN","UNPROVEN",""],["Babe.report_equivocation_unsigned","UNPROVEN","UNPROVEN",""],["Balances.transfer","ARG_DRIFT","ABSENT",""],["Balances.transfer_all","UNPROVEN","UNPROVEN",""],["Balances.transfer_keep_alive","UNPROVEN","PROVEN","106425-1"],["Bounties.accept_curator","UNPROVEN","UNPROVEN",""],["Bounties.approve_bounty","UNPROVEN","UNPROVEN",""],["Bounties.approve_bounty_with_curator","ABSENT","UNPROVEN",""],["Bounties.award_bounty","UNPROVEN","UNPROVEN",""],["Bounties.claim_bounty","UNPROVEN","UNPROVEN",""],["Bounties.close_bounty","UNPROVEN","UNPROVEN",""],["Bounties.extend_bounty_expiry","ARG_DRIFT","UNPROVEN",""],["Bounties.propose_bounty","UNPROVEN","UNPROVEN",""],["Bounties.propose_curator","UNPROVEN","UNPROVEN",""],["Bounties.unassign_curator","UNPROVEN","UNPROVEN",""],["Contracts.call","ARG_DRIFT","UNPROVEN",""],["Contracts.call_old_weight","ABSENT","UNPROVEN",""],["Contracts.instantiate","ARG_DRIFT","UNPROVEN",""],["Contracts.instantiate_old_weight","ABSENT","UNPROVEN",""],["Contracts.instantiate_with_code","ARG_DRIFT","UNPROVEN",""],["Contracts.instantiate_with_code_old_weight","ABSENT","UNPROVEN",""],["Contracts.migrate","ABSENT","UNPROVEN",""],["Contracts.remove_code","ABSENT","UNPROVEN",""],["Contracts.set_code","ABSENT","UNPROVEN",""],["Contracts.upload_code","ABSENT","UNPROVEN",""],["ElectionProviderMultiPhase.governance_fallback","ABSENT","ARG_DRIFT",""],["ElectionProviderMultiPhase.set_emergency_election_result","ARG_DRIFT","UNPROVEN",""],["ElectionProviderMultiPhase.set_minimum_untrusted_score","UNPROVEN","UNPROVEN",""],["ElectionProviderMultiPhase.submit","ABSENT","UNPROVEN",""],["ElectionProviderMultiPhase.submit_unsigned","ARG_DRIFT","UNPROVEN",""],["Grandpa.note_stalled","UNPROVEN","UNPROVEN",""],["Grandpa.report_equivocation","UNPROVEN","UNPROVEN",""],["Grandpa.report_equivocation_unsigned","UNPROVEN","UNPROVEN",""],["Identity.accept_username","ABSENT","UNPROVEN",""],["Identity.add_registrar","UNPROVEN","UNPROVEN",""],["Identity.add_sub","UNPROVEN","UNPROVEN",""],["Identity.add_username_authority","ABSENT","UNPROVEN",""],["Identity.cancel_request","UNPROVEN","UNPROVEN",""],["Identity.clear_identity","UNPROVEN","UNPROVEN",""],["Identity.kill_identity","UNPROVEN","UNPROVEN",""],["Identity.kill_username","ABSENT","UNPROVEN",""],["Identity.provide_judgement","ARG_DRIFT","UNPROVEN",""],["Identity.quit_sub","UNPROVEN","UNPROVEN",""],["Identity.remove_expired_approval","ABSENT","UNPROVEN",""],["Identity.remove_sub","UNPROVEN","UNPROVEN",""],["Identity.remove_username","ABSENT","UNPROVEN",""],["Identity.remove_username_authority","ABSENT","UNPROVEN",""],["Identity.rename_sub","UNPROVEN","UNPROVEN",""],["Identity.request_judgement","UNPROVEN","UNPROVEN",""],["Identity.set_account_id","UNPROVEN","UNPROVEN",""],["Identity.set_fee","UNPROVEN","UNPROVEN",""],["Identity.set_fields","UNPROVEN","UNPROVEN",""],["Identity.set_identity","UNPROVEN","UNPROVEN",""],["Identity.set_primary_username","ABSENT","UNPROVEN",""],["Identity.set_subs","UNPROVEN","UNPROVEN",""],["Identity.set_username_for","ABSENT","UNPROVEN",""],["Identity.unbind_username","ABSENT","UNPROVEN",""],["ImOnline.heartbeat","ARG_DRIFT","UNPROVEN",""],["Indices.claim","UNPROVEN","UNPROVEN",""],["Indices.force_transfer","UNPROVEN","UNPROVEN",""],["Indices.free","UNPROVEN","UNPROVEN",""],["Indices.freeze","UNPROVEN","UNPROVEN",""],["Indices.poke_deposit","ABSENT","UNPROVEN",""],["Indices.transfer","UNPROVEN","UNPROVEN",""],["Lottery.buy_ticket","UNPROVEN","UNPROVEN",""],["Lottery.set_calls","UNPROVEN","UNPROVEN",""],["Lottery.start_lottery","UNPROVEN","UNPROVEN",""],["Lottery.stop_repeat","UNPROVEN","UNPROVEN",""],["Multisig.approve_as_multi","UNPROVEN","UNPROVEN",""],["Multisig.as_multi","ARG_DRIFT","UNPROVEN",""],["Multisig.as_multi_threshold_1","UNPROVEN","UNPROVEN",""],["Multisig.cancel_as_multi","UNPROVEN","UNPROVEN",""],["Multisig.poke_deposit","ABSENT","UNPROVEN",""],["Proxy.add_proxy","UNPROVEN","UNPROVEN",""],["Proxy.announce","UNPROVEN","UNPROVEN",""],["Proxy.create_pure","DRIFTED","UNPROVEN",""],["Proxy.kill_pure","DRIFTED","UNPROVEN",""],["Proxy.poke_deposit","ABSENT","UNPROVEN",""],["Proxy.proxy","UNPROVEN","UNPROVEN",""],["Proxy.proxy_announced","UNPROVEN","UNPROVEN",""],["Proxy.reject_announcement","UNPROVEN","UNPROVEN",""],["Proxy.remove_announcement","UNPROVEN","UNPROVEN",""],["Proxy.remove_proxies","UNPROVEN","UNPROVEN",""],["Proxy.remove_proxy","UNPROVEN","UNPROVEN",""],["Scheduler.cancel","UNPROVEN","UNPROVEN",""],["Scheduler.cancel_named","UNPROVEN","UNPROVEN",""],["Scheduler.cancel_retry","ABSENT","UNPROVEN",""],["Scheduler.cancel_retry_named","ABSENT","UNPROVEN",""],["Scheduler.schedule","UNPROVEN","UNPROVEN",""],["Scheduler.schedule_after","UNPROVEN","UNPROVEN",""],["Scheduler.schedule_named","UNPROVEN","UNPROVEN",""],["Scheduler.schedule_named_after","UNPROVEN","UNPROVEN",""],["Scheduler.set_retry","ABSENT","UNPROVEN",""],["Scheduler.set_retry_named","ABSENT","UNPROVEN",""],["Session.purge_keys","UNPROVEN","UNPROVEN",""],["Session.set_keys","UNPROVEN","UNPROVEN",""],["Staking.bond","ARG_DRIFT","UNPROVEN",""],["Staking.bond_extra","UNPROVEN","UNPROVEN",""],["Staking.chill","UNPROVEN","UNPROVEN",""],["Staking.chill_other","ARG_DRIFT","UNPROVEN",""],["Staking.deprecate_controller_batch","ABSENT","UNPROVEN",""],["Staking.force_apply_min_commission","ABSENT","UNPROVEN",""],["Staking.force_new_era","UNPROVEN","UNPROVEN",""],["Staking.force_new_era_always","UNPROVEN","UNPROVEN",""],["Staking.force_no_eras","UNPROVEN","UNPROVEN",""],["Staking.force_unstake","UNPROVEN","UNPROVEN",""],["Staking.increase_validator_count","UNPROVEN","UNPROVEN",""],["Staking.kick","UNPROVEN","UNPROVEN",""],["Staking.manual_slash","ABSENT","UNPROVEN",""],["Staking.migrate_currency","ABSENT","UNPROVEN",""],["Staking.nominate","UNPROVEN","UNPROVEN",""],["Staking.payout_stakers","UNPROVEN","UNPROVEN",""],["Staking.payout_stakers_by_page","ABSENT","UNPROVEN",""],["Staking.reap_stash","UNPROVEN","UNPROVEN",""],["Staking.rebond","UNPROVEN","UNPROVEN",""],["Staking.restore_ledger","ABSENT","UNPROVEN",""],["Staking.scale_validator_count","UNPROVEN","UNPROVEN",""],["Staking.set_controller","ARG_DRIFT","UNPROVEN",""],["Staking.set_invulnerables","UNPROVEN","UNPROVEN",""],["Staking.set_min_commission","ABSENT","UNPROVEN",""],["Staking.set_payee","UNPROVEN","UNPROVEN",""],["Staking.set_staking_configs","ABSENT","UNPROVEN",""],["Staking.set_validator_count","UNPROVEN","UNPROVEN",""],["Staking.unbond","UNPROVEN","UNPROVEN",""],["Staking.update_payee","ABSENT","UNPROVEN",""],["Staking.validate","UNPROVEN","UNPROVEN",""],["Staking.withdraw_unbonded","UNPROVEN","UNPROVEN",""],["System.apply_authorized_upgrade","ABSENT","UNPROVEN",""],["System.authorize_upgrade","ABSENT","UNPROVEN",""],["System.authorize_upgrade_without_checks","ABSENT","UNPROVEN",""],["System.kill_prefix","ARG_DRIFT","UNPROVEN",""],["System.kill_storage","UNPROVEN","UNPROVEN",""],["System.remark","ARG_DRIFT","UNPROVEN",""],["System.remark_with_event","UNPROVEN","PROVEN","106424-1"],["System.set_code","UNPROVEN","UNPROVEN",""],["System.set_code_without_checks","UNPROVEN","UNPROVEN",""],["System.set_heap_pages","UNPROVEN","UNPROVEN",""],["System.set_storage","UNPROVEN","UNPROVEN",""],["Timestamp.set","UNPROVEN","UNPROVEN",""],["TransactionStorage.check_proof","UNPROVEN","UNPROVEN",""],["TransactionStorage.renew","UNPROVEN","UNPROVEN",""],["TransactionStorage.store","UNPROVEN","UNPROVEN",""],["Treasury.check_status","ABSENT","UNPROVEN",""],["Treasury.payout","ABSENT","UNPROVEN",""],["Treasury.remove_approval","ABSENT","UNPROVEN",""],["Treasury.spend","ABSENT","UNPROVEN",""],["Treasury.spend_local","ABSENT","UNPROVEN",""],["Treasury.void_spend","ABSENT","UNPROVEN",""],["Utility.as_derivative","UNPROVEN","UNPROVEN",""],["Utility.batch","UNPROVEN","UNPROVEN",""],["Utility.batch_all","UNPROVEN","PROVEN","106426-1"],["Utility.dispatch_as","ABSENT","UNPROVEN",""],["Utility.dispatch_as_fallible","ABSENT","UNPROVEN",""],["Utility.force_batch","ABSENT","UNPROVEN",""],["Utility.if_else","ABSENT","UNPROVEN",""],["Utility.with_weight","ABSENT","UNPROVEN",""],["Vesting.force_remove_vesting_schedule","ABSENT","UNPROVEN",""],["Vesting.force_vested_transfer","UNPROVEN","UNPROVEN",""],["Vesting.merge_schedules","ABSENT","UNPROVEN",""],["Vesting.vest","UNPROVEN","UNPROVEN",""],["Vesting.vest_other","UNPROVEN","UNPROVEN",""],["Vesting.vested_transfer","UNPROVEN","UNPROVEN",""]];
+  const out = document.getElementById('readout'), sp = document.querySelector('.spread');
+  let on;
+  sp.addEventListener('pointerover', e => {
+    const k = e.target.closest('.k[data-i]'); if (!k) return;
+    const d = data[k.dataset.i];
+    if (on) on.forEach(x => x.classList.remove('on'));
+    on = sp.querySelectorAll('.k[data-i="' + k.dataset.i + '"]'); on.forEach(x => x.classList.add('on'));
+    out.textContent = d[0] + '  ·  spec 1002: ' + d[1] + '  ·  V3 spec 3002: ' + d[2] + (d[3] ? '  ·  receipt ' + d[3] : '');
+  });
+
+  // copy the command
+  document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => {
+    const t = document.querySelector(b.dataset.copy).textContent;
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1600); }, () => { b.textContent = 'Select it'; });
+  }));
+
+  // the video: load YouTube only on click
+  const v = document.getElementById('video');
+  v.addEventListener('click', e => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+    e.preventDefault();
+    const f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + v.dataset.yt + '?autoplay=1&rel=0';
+    f.title = 'Plumbline demo video'; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true;
+    v.replaceChildren(f); v.removeAttribute('href'); v.setAttribute('role', 'presentation');
+  });
+})();
+</script>
 </body>
 </html>

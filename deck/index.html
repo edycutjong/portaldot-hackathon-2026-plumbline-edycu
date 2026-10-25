@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plumbline pitch deck: the docs say transfer, V3 has never heard of it</title>
+<meta name="description" content="Plumbline pitch deck, Portaldot Hacker House 2026, Modular Cloud & Middleware. 196 documented calls checked against the Portaldot V3 testnet (spec 3002), proven by real transactions read back from their blocks.">
+<meta name="theme-color" content="#E3E8DA">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23E3E8DA'/%3E%3Cpath d='M16 2v8' stroke='%23262823' stroke-width='2'/%3E%3Cpath d='M11 10h10v3c0 6-3 12-5 17-2-5-5-11-5-17z' fill='%239C7630'/%3E%3C/svg%3E">
+<!--
+  Plumbline pitch deck. One file, 10 pages of a level book on a fixed 1920x1080 stage (scaled to fit).
+  Keys:  Right / Space / PageDown = next · Left / PageUp = previous · Home / End · 1-9, 0 = jump
+         Esc = overview · F = fullscreen · P = presenter notes · C = contrast debug · index.html#4 opens page 4.
+  PDF:   print (margins none, background graphics on): one page per slide. docs/pitch-deck.pdf is printed from this file.
+  Media: docs/architecture.png (page 6); everything else is inline SVG or text from evidence/ and README.md.
+  Faces: Sofia Sans Extra Condensed, Sofia Sans, Overpass Mono, self-hosted (SIL OFL 1.1, fonts/OFL.txt).
+-->
+<link rel="preload" href="fonts/SofiaSansExtraCondensed-wght.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Sofia Sans Extra Condensed";src:url(fonts/SofiaSansExtraCondensed-wght.woff2) format("woff2");font-weight:700 900;font-style:normal;font-display:block}
+@font-face{font-family:"Sofia Sans Extra Condensed";src:url(fonts/SofiaSansExtraCondensed-Italic-800.woff2) format("woff2");font-weight:800;font-style:italic;font-display:block}
+@font-face{font-family:"Sofia Sans";src:url(fonts/SofiaSans-wght.woff2) format("woff2");font-weight:400 700;font-style:normal;font-display:block}
+@font-face{font-family:"Sofia Sans";src:url(fonts/SofiaSans-Italic-400.woff2) format("woff2");font-weight:400;font-style:italic;font-display:block}
+@font-face{font-family:"Overpass Mono";src:url(fonts/OverpassMono-wght.woff2) format("woff2");font-weight:400 600;font-style:normal;font-display:block}
+
+:root {
+  --bg:      #E3E8DA;  /* sage field-book ground, ruled every 32 px */
+  --page:    #EEF1E6;  /* the book page itself */
+  --ink:     #262823;  /* graphite ink; state: proven */
+  --flag:    #FF2E7E;  /* state: drifted (survey-pink flagging tape), fill under ink, never text */
+  --bob:     #9C7630;  /* the plumb bob only */
+  --muted:   #5E6257;  /* pencil-grey labels */
+  --pencil:  #4A4D45;  /* state: documented / unchecked */
+  --blue:    #A9BFCB;  /* horizontal ruling */
+  --rose:    #D9A9A4;  /* column rules */
+  --cover:   #2C3A2E;  /* book-cloth cover */
+  --cover-ink:#E6EBDC;
+  --tape-ink:#141511;
+  --font-display: "Sofia Sans Extra Condensed", "Arial Narrow", sans-serif;
+  --font-body:    "Sofia Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-data:    "Overpass Mono", ui-monospace, Menlo, monospace;
+  --tape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23FF5594'/%3E%3Cstop offset='.6' stop-color='%23FF2E7E'/%3E%3Cstop offset='1' stop-color='%23E8226E'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 1.5 L1.2 .4 L2.4 1.2 L98 .2 L99 1 L100 .3 L99.2 6 L100 11 L99.3 15 L100 19.6 L2 19.2 L1 20 L0 18.8 L.8 12 L0 7 Z' fill='url(%23g)'/%3E%3C/svg%3E");
+  --ease-out: cubic-bezier(.2,.9,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#1B211C;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font:400 26px/1.45 var(--font-body);color:var(--ink);-webkit-font-smoothing:antialiased}
+::selection{background:var(--flag);color:var(--tape-ink)}
+a{color:inherit;text-underline-offset:5px}
+a:hover{text-decoration-color:var(--flag);text-decoration-thickness:3px}
+:focus-visible{outline:4px solid var(--ink);outline-offset:4px}
+code,.mono{font-family:var(--font-data);font-size:.86em;letter-spacing:-.01em}
+.viewport{position:fixed;inset:0;overflow:hidden}
+.stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:50% 50%}
+.slide{position:absolute;inset:0;display:none;overflow:hidden;background:var(--bg);background-image:repeating-linear-gradient(to bottom,transparent 0 47px,rgba(169,191,203,.42) 47px 48px);pointer-events:none}
+.slide.active{display:block;pointer-events:auto}
+body.overview .slide{display:block;transform-origin:0 0;cursor:pointer;pointer-events:auto;box-shadow:0 0 0 6px #1B211C}
+.slide::before{content:"";position:absolute;left:0;top:0;bottom:0;width:120px;background:linear-gradient(90deg,rgba(43,58,34,.10),transparent);pointer-events:none}
+.slide::after{content:"";position:absolute;left:150px;top:0;bottom:0;border-left:2px solid var(--rose);opacity:.8;pointer-events:none}
+.slide.nomargin::after{display:none}
+.hdr{position:absolute;left:190px;right:110px;top:50px;display:flex;justify-content:space-between;align-items:baseline;font:600 18px var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--ink);padding-bottom:12px}
+.hdr b{font:900 28px/1 var(--font-display);letter-spacing:.06em;color:var(--ink)}
+.ftr{position:absolute;left:190px;right:110px;bottom:38px;display:flex;justify-content:space-between;font:400 16px var(--font-data);color:var(--muted);letter-spacing:.04em}
+.ftr .pg{font:900 26px/1 var(--font-display);color:var(--ink);letter-spacing:.04em}
+.datum{position:absolute;left:74px;top:0;width:24px;height:calc(var(--drop,760px) + 48px);transform-origin:50% 0}
+.datum::before{content:"";position:absolute;left:11.4px;top:0;bottom:46px;border-left:1.6px solid var(--ink)}
+.datum svg{position:absolute;left:0;bottom:0;width:24px;height:48px}
+.body{position:absolute;left:190px;right:110px;top:130px;bottom:100px}
+h1{font:900 150px/.84 var(--font-display);text-transform:uppercase;letter-spacing:-.004em}
+h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.03em;vertical-align:.2em;padding:.1em .18em .06em;border:3px solid var(--ink);background:var(--page)}
+h2{font:900 104px/.88 var(--font-display);text-transform:uppercase;letter-spacing:-.003em}
+.tape{color:var(--tape-ink);background:var(--tape) center/100% 100% no-repeat;padding:0 .14em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.lab{font:600 18px/1.4 var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:30px;line-height:1.4;color:#33352F;max-width:30em}
+.lede b{color:var(--ink)}
+.paper{background:var(--page);border:1px solid #C3CAB6;box-shadow:0 30px 50px -34px rgba(43,58,34,.6);position:relative}
+.paper.flat::before{display:none}
+.paper::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0 47px,rgba(169,191,203,.32) 47px 48px);pointer-events:none}
+
+/* level-book table (cover, problem) */
+.book .hd{position:relative;display:flex;justify-content:space-between;align-items:end;padding:22px 26px 14px;border-bottom:3px solid var(--ink)}
+.book .hd b{font:900 40px/1 var(--font-display);text-transform:uppercase}
+.book table{position:relative;width:100%;border-collapse:collapse}
+.book th{font:600 16px var(--font-data);letter-spacing:.1em;color:var(--muted);text-align:left;padding:12px 16px 10px;border-bottom:1px solid var(--blue);text-transform:uppercase}
+.book td{padding:13px 16px;border-bottom:1px solid var(--blue);vertical-align:top;color:var(--pencil)}
+.book th+th,.book td+td{border-left:1px solid var(--rose)}
+.book td.sta{font:800 26px/1.2 var(--font-display);color:var(--muted);width:60px}
+.book td.c{font:400 21px/1.3 var(--font-data);color:var(--ink)}
+.book td.c small{display:block;font:600 15px var(--font-body);color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+.book td.c s{text-decoration:line-through 2px var(--ink)}
+.book .note{display:block;font:800 italic 25px/1.15 var(--font-display);color:var(--ink);margin-top:6px}
+.book .note code{font:inherit;font-style:italic}
+.book td.v{font:800 24px/1.2 var(--font-display);letter-spacing:.07em;white-space:nowrap;color:var(--ink)}
+.book td.v .tick{display:inline-block;width:12px;height:21px;border:solid var(--ink);border-width:0 3.5px 3.5px 0;transform:rotate(40deg) translateY(-4px);margin-left:12px}
+.book td.r{font:400 19px/1.3 var(--font-data);white-space:nowrap}
+.book td.r a{font-weight:600;color:var(--ink)}
+.book tr.flag{position:relative}
+.book tr.flag td{position:relative;z-index:1;color:var(--tape-ink)}
+.book tr.flag td.c{position:static}
+.book tr.flag small{color:var(--tape-ink)}
+.book .s{position:relative;z-index:1;display:block}
+.flagband{position:absolute;left:-14px;right:-60px;top:8px;bottom:8px;background:linear-gradient(176deg,#FF5594,var(--flag) 55%,#E8226E);transform-origin:left center;transform:rotate(-.7deg);clip-path:polygon(0 0,100% 5%,95% 50%,100% 95%,0 100%,1.2% 50%);box-shadow:0 3px 0 rgba(176,26,85,.55);z-index:0}
+.f2{transform:rotate(.6deg)}
+.active .flagband{animation:tie .5s var(--ease-out) .7s both}.active .f2{animation-delay:.95s}
+@keyframes tie{from{clip-path:polygon(0 0,0 0,0 50%,0 100%,0 100%,0 50%)}}
+
+/* terminal */
+.term{background:var(--ink);color:#D9DECF;border-radius:6px;box-shadow:0 30px 50px -34px rgba(20,21,17,.9);overflow:hidden}
+.term .bar{display:flex;justify-content:space-between;gap:16px;padding:12px 22px;border-bottom:1px solid #3A3D36;font:600 15px var(--font-data);letter-spacing:.08em;text-transform:uppercase;color:#B9BFAE}
+.term pre{margin:0;padding:20px 22px 22px;font:400 19px/1.7 var(--font-data);white-space:pre;color:#D9DECF}
+.term .pr{color:var(--flag)}
+.term .cm{color:#9EA493}
+.term .ok{color:var(--page);font-weight:600}
+.term .hit{background:var(--flag);color:var(--tape-ink);padding:0 5px;font-weight:600}
+.term .ln{display:block}
+
+/* entrance */
+.active .rise{animation:rise .7s var(--ease-out) both}
+.active .rise.d1{animation-delay:.08s}.active .rise.d2{animation-delay:.16s}.active .rise.d3{animation-delay:.24s}.active .rise.d4{animation-delay:.32s}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}}
+.active .datum{animation:drop 1.1s cubic-bezier(.3,1.3,.5,1) both,swing 2.2s cubic-bezier(.4,0,.3,1) 1s both}
+@keyframes drop{from{transform:translateY(-320px)}}
+@keyframes swing{0%{transform:rotate(0)}20%{transform:rotate(1.6deg)}45%{transform:rotate(-1deg)}70%{transform:rotate(.4deg)}100%{transform:rotate(0)}}
+
+/* 1 cover */
+.s1 .body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);gap:70px;align-items:start;top:120px}
+.s1 h1{margin:26px 0 30px}
+.s1 .run{position:absolute;left:190px;right:110px;bottom:100px}
+.s1 .run pre{font-size:20px;padding:16px 22px}
+.s1 .sub{font-size:29px;line-height:1.38;color:#33352F;max-width:24em}
+.s1 .book{margin-top:6px}
+
+/* 2 problem */
+.s2 .body{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:70px;align-items:start}
+.s2 .lede{margin-top:34px;font-size:29px}
+.src{width:100%;border-collapse:collapse;position:relative}
+.src th{font:600 16px var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:14px 18px 10px;border-bottom:2px solid var(--ink)}
+.src td{padding:16px 18px;border-bottom:1px solid var(--blue);vertical-align:top}
+.src td+td,.src th+th{border-left:1px solid var(--rose)}
+.src td.k{font:800 26px var(--font-display);text-transform:uppercase;letter-spacing:.05em;width:150px}
+.src td.was{font:400 21px/1.35 var(--font-data);color:var(--pencil)}
+.src td.was s{text-decoration:line-through 2px var(--ink);color:var(--ink)}
+.src td.was small{display:block;font:italic 400 17px/1.3 var(--font-body);color:var(--muted);margin-top:4px}
+.src td.is{font:600 22px/1.35 var(--font-data);color:var(--ink)}
+.big79{position:absolute;left:190px;right:110px;bottom:100px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:46px;align-items:center;border-top:3px solid var(--ink);padding-top:26px}
+.big79 b{font:900 170px/.8 var(--font-display);white-space:nowrap}
+.big79 b .ar{font-weight:700;font-size:.55em;vertical-align:.2em;margin:0 .06em}
+.big79 p{font-size:27px;line-height:1.4;color:#33352F}
+.big79 p b{font:inherit;font-weight:700;color:var(--ink)}
+
+/* 3 stations */
+.s3 .run3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:50px;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);position:relative}
+.s3 .stn{padding:30px 34px 34px;border-left:1px solid var(--rose);position:relative}
+.s3 .stn:first-child{border-left:0}
+.s3 .stn .no{font:900 120px/.8 var(--font-display);color:var(--ink)}
+.s3 .stn h3{font:900 54px/.95 var(--font-display);text-transform:uppercase;margin:16px 0 14px}
+.s3 .stn p{font-size:24px;line-height:1.42;color:#33352F}
+.s3 .stn .cmd{margin-top:22px;font:600 20px var(--font-data);display:inline-block;background:var(--page);border:1px solid #B9C0AC;padding:6px 12px}
+.s3 .stn .arw{position:absolute;right:-26px;top:58px;width:52px;height:52px;background:var(--bg);display:grid;place-items:center;z-index:2;font:900 44px/1 var(--font-display)}
+.vocab{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:34px}
+.vocab span{font:800 24px var(--font-display);letter-spacing:.07em;padding:6px 14px;border:2px solid var(--ink)}
+.vocab span.t{border-color:transparent;background:var(--tape) center/100% 100% no-repeat;color:var(--tape-ink)}
+.vocab span.p{background:var(--ink);color:var(--page)}
+.vocab em{font:400 18px var(--font-data);font-style:normal;color:var(--muted);margin-left:8px}
+.s3 .side{margin-top:24px;font-size:23px;color:#33352F;max-width:62em}
+
+/* 4 spread */
+.s4 .top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:60px;align-items:end}
+.s4 h2{font-size:92px}
+.s4 .top p{font-size:23px;line-height:1.4;color:#33352F}
+.spread{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 260px minmax(0,1fr);border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);margin-top:22px}
+.spread .ph{font:600 15px var(--font-data);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:8px 4px 6px;border-bottom:1px solid var(--blue)}
+.spread .ph b{font:900 30px/1 var(--font-display);letter-spacing:.01em;color:var(--ink);margin-left:12px}
+.spread .ph.l{text-align:right;padding-right:22px}.spread .ph.r{padding-left:22px}.spread .ph.c{text-align:center}
+.spread .row{display:contents}
+.spread .cl,.spread .cr{display:flex;flex-wrap:wrap;gap:4px;align-content:center;padding:3px 22px;border-bottom:1px solid rgba(169,191,203,.55);min-height:27px}
+.spread .cl{flex-direction:row-reverse}
+.spread .cc{font:600 16px/1 var(--font-body);text-align:center;padding:3px 8px;border-bottom:1px solid rgba(169,191,203,.55);border-left:1px solid var(--rose);border-right:1px solid var(--rose);display:flex;align-items:center;justify-content:center;gap:8px;position:relative;z-index:1}
+.spread .cc small{font:400 13px var(--font-data);color:var(--muted)}
+.spread .cc span{background:var(--bg);padding:0 4px}
+.k{display:block;width:14px;height:19px;border:1.4px solid #8F948A;flex:none}
+.k.p{background:var(--ink);border-color:var(--ink);position:relative}
+.k.p::after{content:"";position:absolute;left:4px;top:2px;width:4px;height:9px;border:solid var(--page);border-width:0 2px 2px 0;transform:rotate(40deg)}
+.k.f{background:linear-gradient(176deg,#FF5594,var(--flag) 55%,#E8226E);border-color:#C81E61;transform:rotate(-6deg)}
+.k.g{background:repeating-linear-gradient(135deg,var(--flag) 0 4px,#FFC2D9 4px 7px);border-color:#C81E61;transform:rotate(-6deg)}
+.legend{display:flex;gap:30px;font:600 18px var(--font-body);color:var(--pencil);margin-top:16px}
+.legend span{display:inline-flex;align-items:center;gap:10px}
+.bind{position:absolute;left:50%;top:0;bottom:-22px;border-left:1.6px solid var(--ink);pointer-events:none}
+.bind svg{position:absolute;left:-12px;bottom:-4px;width:24px;height:48px}
+.active .spread .cl .k.f,.active .spread .cl .k.g{animation:flag .32s var(--ease-out) calc(.5s + var(--d)*12ms) both}
+.active .spread .cr .k.f,.active .spread .cr .k.g{animation:flag .32s var(--ease-out) 1.6s both}
+@keyframes flag{from{transform:scaleX(0) rotate(-6deg)}}
+.s4 .tally{position:absolute;left:190px;right:110px;bottom:92px;display:flex;justify-content:space-between;gap:40px;align-items:baseline;font-size:21px;color:#33352F}
+.s4 .tally b{font:900 32px/1 var(--font-display);color:var(--ink);margin-right:6px}
+
+/* 5 receipts */
+.rc{width:100%;border-collapse:collapse;margin-top:40px}
+.rc th{font:600 16px var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 16px;border-bottom:3px solid var(--ink)}
+.rc td{padding:16px;border-bottom:1px solid var(--blue);font:400 20px var(--font-data);vertical-align:middle}
+.rc td+td,.rc th+th{border-left:1px solid var(--rose)}
+.rc td.x{font:900 40px/1 var(--font-display);letter-spacing:.01em}
+.rc td a{font-weight:600}
+.rc td.ok{font:800 24px var(--font-display);letter-spacing:.08em}
+.rc td.ok .tick{display:inline-block;width:11px;height:20px;border:solid var(--ink);border-width:0 3.5px 3.5px 0;transform:rotate(40deg) translateY(-3px);margin-left:10px}
+.s5 .meta{margin-top:14px;font:400 19px var(--font-data);color:var(--muted)}
+.s5 .term{margin-top:34px}
+
+/* 6 architecture */
+.s6 .body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:64px;align-items:start;top:118px}
+.s6 figure{height:842px;border:1px solid #C3CAB6;background:#F1EEE4;box-shadow:0 30px 50px -34px rgba(43,58,34,.6)}
+.s6 figure img{height:100%;width:auto;display:block}
+.s6 h2{font-size:92px;margin-top:8px}
+.s6 ol{list-style:none;margin-top:40px;border-top:3px solid var(--ink)}
+.s6 li{display:grid;grid-template-columns:70px minmax(0,1fr);gap:18px;padding:20px 0;border-bottom:1px solid var(--blue)}
+.s6 li b.n{font:900 64px/.85 var(--font-display)}
+.s6 li strong{display:block;font:900 34px/1 var(--font-display);text-transform:uppercase;margin-bottom:6px}
+.s6 li span{font-size:22px;line-height:1.4;color:#33352F}
+.s6 .cap{margin-top:22px;font:400 18px/1.5 var(--font-data);color:var(--muted)}
+
+/* 7 why new */
+.s7 .body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:70px;align-items:start}
+.alone{margin-top:34px;border-top:3px solid var(--ink)}
+.alone div{display:grid;grid-template-columns:220px minmax(0,1fr);gap:20px;padding:14px 0;border-bottom:1px solid var(--blue)}
+.alone b{font:900 30px/1.05 var(--font-display);text-transform:uppercase}
+.alone span{font-size:22px;line-height:1.38;color:#33352F}
+.join{margin-top:26px;padding:22px 26px;position:relative}
+.join p{position:relative;font-size:25px;line-height:1.42}
+.join p b{font-weight:700}
+.bars{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px 16px;align-items:center;font:400 19px var(--font-data);margin-top:20px}
+.bars .bl{color:var(--pencil);white-space:nowrap}
+.bars .bv{text-align:right;font-weight:600}
+.bars .bt{height:20px;background:repeating-linear-gradient(135deg,var(--pencil) 0 1.5px,transparent 1.5px 6px);border:1.5px solid var(--pencil);width:calc(var(--w)*1%)}
+.active .bars .bt{animation:bar .7s var(--ease-out) calc(.3s + var(--i)*70ms) both;transform-origin:left}
+@keyframes bar{from{transform:scaleX(0)}}
+.s7 .k516{display:flex;align-items:baseline;gap:16px;margin-top:10px}
+.s7 .k516 b{font:900 96px/.9 var(--font-display)}
+.s7 .k516 span{font-size:22px;color:#33352F}
+.s7 .chk{display:flex;align-items:center;gap:22px;margin-top:30px;padding-top:22px;border-top:3px solid var(--ink)}
+.s7 .chk b{font:900 96px/.9 var(--font-display);white-space:nowrap}
+.s7 .chk b .ar{font-weight:700;font-size:.6em;margin:0 .1em;vertical-align:.12em}
+.s7 .chk span{font-size:22px;line-height:1.4;color:#33352F}
+
+/* 8 ecosystem */
+.tier{display:grid;grid-template-columns:260px minmax(0,1fr);gap:30px;align-items:center;padding:22px 0;border-bottom:1px solid var(--blue)}
+.tier:first-of-type{border-top:3px solid var(--ink);margin-top:40px}
+.tier .t{font:900 36px/1 var(--font-display);text-transform:uppercase}
+.tier .t small{display:block;font:600 15px var(--font-data);letter-spacing:.1em;color:var(--muted);margin-top:6px}
+.tier p{font-size:24px;line-height:1.42;color:#33352F}
+.tier p code{color:var(--ink)}
+.tier.mid{background:var(--ink);color:var(--page);padding:24px 28px;margin:0 -28px;border:0}
+.tier.mid .t,.tier.mid p{color:var(--page)}
+.tier.mid .t small{color:#B9BFAE}
+.tier.mid p code{color:var(--page)}
+.tier.mid p b{font:900 40px/1 var(--font-display);letter-spacing:.04em;text-transform:uppercase}
+.s8 .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px;margin-top:30px}
+.s8 .two div{border-top:3px solid var(--ink);padding-top:14px}
+.s8 .two b{display:block;font:900 32px/1 var(--font-display);text-transform:uppercase;margin-bottom:8px}
+.s8 .two span{font-size:22px;line-height:1.42;color:#33352F}
+
+/* 9 users */
+.who{width:100%;border-collapse:collapse;margin-top:40px}
+.who th{font:600 16px var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 16px;border-bottom:3px solid var(--ink)}
+.who td{padding:18px 16px;border-bottom:1px solid var(--blue);font-size:23px;line-height:1.36;vertical-align:top;color:#33352F}
+.who td+td,.who th+th{border-left:1px solid var(--rose)}
+.who td.w{font:900 30px/1.05 var(--font-display);text-transform:uppercase;color:var(--ink);width:330px}
+.who td.w small{display:block;font:600 15px var(--font-data);letter-spacing:.08em;color:var(--muted);margin-top:6px}
+.who td.st{font:800 24px var(--font-display);letter-spacing:.08em;white-space:nowrap;color:var(--ink)}
+.who td.st.today span{background:var(--ink);color:var(--page);padding:4px 10px}
+.who td.st.plan span{border:2px dashed var(--ink);padding:3px 9px}
+.s9 .model{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:50px;margin-top:30px}
+.s9 .model b{display:block;font:900 32px/1 var(--font-display);text-transform:uppercase;margin-bottom:8px}
+.s9 .model span{font-size:23px;line-height:1.42;color:#33352F}
+
+/* 10 status — the closing cover */
+.s10{background:var(--cover);background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 3px);color:var(--cover-ink)}
+.s10::after{border-color:#5A6A55}
+.s10 .hdr{border-color:var(--cover-ink);color:#B3BBA7}.s10 .hdr b{color:var(--cover-ink)}
+.s10 .ftr{color:#B3BBA7}.s10 .ftr .pg{color:var(--cover-ink)}
+.s10 .datum::before{border-color:var(--cover-ink)}
+.s10 .body{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:70px;align-items:start}
+.s10 h2{color:var(--cover-ink)}
+.s10 .st{margin-top:30px;border-top:3px solid var(--cover-ink)}
+.s10 .st div{display:grid;grid-template-columns:170px minmax(0,1fr);gap:18px;padding:12px 0;border-bottom:1px solid #4A5947;align-items:baseline}
+.s10 .st b{font:900 46px/1 var(--font-display);color:#E8D3A2}
+.s10 .st span{font-size:22px;line-height:1.38;color:#C8CFBC}
+.s10 .next{margin-top:24px;font-size:21px;line-height:1.5;color:#C8CFBC}
+.s10 .next li{list-style:none}
+.s10 .next em{font:800 italic 22px var(--font-display);letter-spacing:.04em;color:var(--cover-ink);margin-right:8px;font-style:italic}
+.s10 pre{background:#1E271F;border:1px solid #42513F;padding:16px 20px;font:400 18px/1.7 var(--font-data);color:#DDE3D2;white-space:pre}
+.s10 pre .pr{color:var(--flag)}.s10 pre .cm{color:#93A08E}
+.s10 .qr{display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;align-items:center;margin-top:26px}
+.s10 .qr svg{width:200px;height:200px;background:var(--cover-ink);padding:10px}
+.s10 .qr p{font:400 19px/1.55 var(--font-data);color:#C8CFBC}
+.s10 .qr p b{display:block;font:900 30px/1.1 var(--font-display);color:var(--cover-ink);letter-spacing:.02em}
+.s10 .qr a{color:var(--cover-ink)}
+.s10 .ai{margin-top:20px;font-size:17px;line-height:1.45;color:#B3BBA7}
+
+/* presenter notes, overview, debug */
+.speaker-notes{display:none}
+body.presenter .slide.active .speaker-notes{display:block;position:absolute;left:0;right:0;bottom:0;height:230px;background:rgba(38,40,35,.97);color:var(--page);border-top:4px solid var(--flag);padding:26px 120px;font:400 26px/1.45 var(--font-body);z-index:6}
+body.debug-contrast .slide :is(h1,h2,h3,p,td,th,li,pre,span,code){outline:1px dashed rgba(255,46,126,.8);outline-offset:2px}
+.hint{position:fixed;right:18px;bottom:14px;font:600 12px var(--font-data);letter-spacing:.08em;color:#9EA493;text-transform:uppercase;transition:opacity .4s}
+body.idle .hint{opacity:0}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@page{size:20in 11.25in;margin:0}
+@media print{
+  html,body{height:auto;overflow:visible;background:var(--bg)}
+  .viewport{position:static;overflow:visible}
+  .stage{position:static;transform:none!important;width:1920px;height:auto}
+  .slide{position:relative;display:block!important;width:1920px;height:1080px;break-after:page;page-break-after:always;break-inside:avoid;transform:none!important}
+  .speaker-notes,.hint{display:none!important}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="viewport">
+<div class="stage">
+
+<!-- 1 · cover: mirrors the landing hero -->
+<section class="slide s1" data-title="Cover">
+  <div class="body">
+    <div>
+      <p class="lab rise">Portaldot Hacker House 2026 · Modular Cloud &amp; Middleware</p>
+      <h1 class="rise d1">The docs say <span class="call">transfer</span>. V3 has <span class="tape">never heard of&nbsp;it.</span></h1>
+      <p class="sub rise d2"><b>Plumbline</b> checks each call Portaldot documents against the runtime’s own metadata, and proves calls with real transactions read back from their blocks.</p>
+    </div>
+    <div class="paper book rise d2">
+      <div class="hd"><b>Docs → V3 · spec 3002</b><span class="lab">booked 2026-10-19 UTC</span></div>
+      <table>
+        <thead><tr><th>Sta.</th><th>Call, as documented</th><th>On V3</th><th>Receipt</th></tr></thead>
+        <tbody>
+        <tr class="flag"><td class="sta"><span class="s">1</span></td><td class="c"><span class="flagband" aria-hidden="true"></span><span class="s"><small>Balances</small><s>transfer</s><em class="note">V3 has <code>transfer_allow_death</code>, <code>transfer_keep_alive</code> ↓</em></span></td><td class="v">ABSENT</td><td class="r">no such call</td></tr>
+        <tr><td class="sta"><span class="s">2</span></td><td class="c"><span class="s"><small>Balances</small>transfer_all</span></td><td class="v">UNPROVEN</td><td class="r">present · no tx</td></tr>
+        <tr><td class="sta"><span class="s">3</span></td><td class="c"><span class="s"><small>Balances</small>transfer_keep_alive</span></td><td class="v">PROVEN<span class="tick" aria-hidden="true"></span></td><td class="r"><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xf71728583059750fbdb8095730835eae53955148675b11cae98c90d3374b4c1d" aria-label="extrinsic 106425-1 in the node console">106425-1</a></td></tr>
+        <tr class="flag"><td class="sta"><span class="s">4</span></td><td class="c"><span class="flagband f2" aria-hidden="true"></span><span class="s"><small>ElectionProviderMultiPhase</small><s>governance_fallback</s><em class="note">docs: 2 args · V3: none</em></span></td><td class="v">ARG_DRIFT</td><td class="r">2 args → 0</td></tr>
+        <tr><td class="sta"><span class="s">5</span></td><td class="c"><span class="s"><small>System</small>remark_with_event</span></td><td class="v">PROVEN<span class="tick" aria-hidden="true"></span></td><td class="r"><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xac1f0030783d7470925fb39b691046d58418ac138c4d603916506cb345353ec2" aria-label="extrinsic 106424-1 in the node console">106424-1</a></td></tr>
+        <tr><td class="sta"><span class="s">6</span></td><td class="c"><span class="s"><small>Utility</small>batch_all</span></td><td class="v">PROVEN<span class="tick" aria-hidden="true"></span></td><td class="r"><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0x06a069139c6457bdcd841dd7cb274d986b621538befea8ecb0471988764319ab" aria-label="extrinsic 106426-1 in the node console">106426-1</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="run term rise d3"><pre><span class="pr">$</span> plumbline check examples/mainnet-dapp --target v3   <span class="cm"># evidence/check_v3.txt</span>
+summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-UNMEASURED 1, UNSCANNED 1 · <span class="hit">blocking 0 · exit 0</span></pre></div>
+  <aside class="speaker-notes">A builder copies Balances.transfer from the Portaldot docs; on the V3 testnet that call does not exist. Plumbline books every documented call against the runtime's own metadata: only two disagree with V3, and three calls are proven by our own transactions, read back from their blocks.</aside>
+</section>
+
+<!-- 2 · problem -->
+<section class="slide s2" data-title="Problem">
+  <div class="body">
+    <div>
+      <h2 class="rise">Docs and chain disagree</h2>
+      <p class="lede rise d1">A builder copies <code>Balances.transfer</code> from the Portaldot docs. On the V3 testnet that call does not exist, and the page does not say which runtime it describes.</p>
+    </div>
+    <div class="paper flat rise d2">
+      <table class="src">
+        <thead><tr><th></th><th>What the sources said</th><th>What V3 reports</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Endpoint</td><td class="was"><s>testnetv3-node.feso-apps.xyz</s><small>V3 testnet guide §1.1 · no DNS on 2026-10-14</small></td><td class="is">test-node-v3.portaldot.dev</td></tr>
+          <tr><td class="k">Spec</td><td class="was"><s>portaldotV3 / 3000</s><small>a third-party README, not re-verified</small></td><td class="is">portaldot-v3 / 3002</td></tr>
+          <tr><td class="k">Symbol</td><td class="was"><s>tPOTv3</s><small>V3 testnet guide §1.1, §3.1</small></td><td class="is">tPOT</td></tr>
+          <tr><td class="k">Pallets</td><td class="was"><s>70</s><small>the same README, not re-verified</small></td><td class="is">69</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="big79 rise d3"><b>79<span class="ar">→</span><span class="tape">2</span></b><p>Of the <b>196</b> calls in Portaldot’s mainnet docs, <b>79</b> disagree with mainnet spec 1002 (64 absent or renamed, 15 with other arguments). <b>2</b> disagree with V3 spec 3002: <code>Balances.transfer</code> and <code>governance_fallback</code>. The pages name no spec.</p></div>
+  <aside class="speaker-notes">The written sources and the live chain disagree on the basics: endpoint, spec version, token symbol, pallet count. The mainnet docs disagree with mainnet itself on 79 of 196 calls but with V3 on only 2, and the pages never say which runtime they describe. Nobody can re-check that by hand on every runtime upgrade.</aside>
+</section>
+
+<!-- 3 · what it does -->
+<section class="slide s3" data-title="What it does">
+  <div class="body">
+    <h2 class="rise">Call, verdict, proof</h2>
+    <div class="run3 rise d1">
+      <div class="stn"><div class="no">01</div><h3>Documented call</h3><p>22 mainnet docs pages give 196 calls. The V3 testnet guide at <code>d671a32</code> gives 46 <code>compose_call</code> sites and 12 FAQ modules, read by AST and never executed.</p><span class="cmd">plumbline docs · guide</span><span class="arw" aria-hidden="true">→</span></div>
+      <div class="stn"><div class="no">02</div><h3>Verdict</h3><p>Each entry is joined to one runtime’s metadata and gets exactly one verdict, stamped with profile, spec version and metadata hash. Same inputs, byte-identical ledger.</p><span class="cmd">plumbline plumb</span><span class="arw" aria-hidden="true">→</span></div>
+      <div class="stn"><div class="no">03</div><h3>Proof</h3><p>A canary extrinsic is signed and sent, its receipt kept, then re-read from its block by hash in a new process. PROVEN needs that receipt.</p><span class="cmd">plumbline canary · readback</span></div>
+    </div>
+    <div class="vocab rise d2"><span class="p">PROVEN</span><span>UNPROVEN</span><span>ARGS-UNCHECKED</span><span class="t">ARG_DRIFT</span><span class="t">DRIFTED</span><span class="t">ABSENT</span><em>verdicts from plumbline/verdicts.py</em></div>
+    <p class="side rise d3">Beside the flow: <code>plumbline diff A B</code> lists what moved between two runtimes; <code>plumbline check &lt;dApp&gt; --target v3</code> classifies a dApp’s call sites against one runtime and exits 0 / 1 / 2.</p>
+  </div>
+  <aside class="speaker-notes">Three steps. Read what the docs and the V3 guide say exists. Join each entry to the runtime's own metadata and write exactly one verdict. Only a transaction that went through and was read back from its block can make a verdict PROVEN.</aside>
+</section>
+
+<!-- 4 · the frozen slide: the open spread -->
+<section class="slide s4" data-title="V3 findings">
+  <div class="body">
+    <div class="top rise"><h2>Same 196 calls.<br>Two runtimes.</h2><p>Every call in Portaldot’s mainnet docs, booked by docs page. Left: hung against mainnet spec 1002. Right: the same calls against the V3 testnet, spec 3002, on 2026-10-19.</p></div>
+    <div class="spread rise d1">
+      <div class="ph l">Mainnet · spec 1002<b>79 flagged</b></div><div class="ph c">Docs page</div><div class="ph r">V3 testnet · spec 3002<b>2 flagged</b></div>
+      <div class="row"><div class="cl"><i class="k" data-i="0"></i><i class="k f" data-i="1" style="--d:0"></i><i class="k" data-i="2"></i><i class="k" data-i="3"></i><i class="k" data-i="4"></i><i class="k" data-i="5"></i><i class="k f" data-i="6" style="--d:1"></i><i class="k f" data-i="7" style="--d:2"></i><i class="k f" data-i="8" style="--d:3"></i><i class="k" data-i="9"></i><i class="k" data-i="10"></i><i class="k" data-i="11"></i><i class="k" data-i="12"></i><i class="k" data-i="13"></i><i class="k" data-i="14"></i><i class="k" data-i="15"></i><i class="k" data-i="16"></i><i class="k" data-i="17"></i><i class="k f" data-i="18" style="--d:4"></i><i class="k f" data-i="19" style="--d:5"></i><i class="k" data-i="20"></i><i class="k f" data-i="21" style="--d:6"></i><i class="k" data-i="22"></i><i class="k f" data-i="23" style="--d:7"></i><i class="k" data-i="24"></i><i class="k" data-i="25"></i><i class="k f" data-i="26" style="--d:8"></i><i class="k f" data-i="27" style="--d:9"></i><i class="k" data-i="28"></i><i class="k f" data-i="29" style="--d:10"></i><i class="k" data-i="30"></i><i class="k" data-i="31"></i><i class="k" data-i="32"></i></div><div class="cc"><span>Assets</span> <small>33</small></div><div class="cr"><i class="k" data-i="0"></i><i class="k" data-i="1"></i><i class="k" data-i="2"></i><i class="k" data-i="3"></i><i class="k" data-i="4"></i><i class="k" data-i="5"></i><i class="k" data-i="6"></i><i class="k" data-i="7"></i><i class="k" data-i="8"></i><i class="k" data-i="9"></i><i class="k" data-i="10"></i><i class="k" data-i="11"></i><i class="k" data-i="12"></i><i class="k" data-i="13"></i><i class="k" data-i="14"></i><i class="k" data-i="15"></i><i class="k" data-i="16"></i><i class="k" data-i="17"></i><i class="k" data-i="18"></i><i class="k" data-i="19"></i><i class="k" data-i="20"></i><i class="k" data-i="21"></i><i class="k" data-i="22"></i><i class="k" data-i="23"></i><i class="k" data-i="24"></i><i class="k" data-i="25"></i><i class="k" data-i="26"></i><i class="k" data-i="27"></i><i class="k" data-i="28"></i><i class="k" data-i="29"></i><i class="k" data-i="30"></i><i class="k" data-i="31"></i><i class="k" data-i="32"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="33"></i><i class="k" data-i="34"></i><i class="k" data-i="35"></i></div><div class="cc"><span>Babe</span> <small>3</small></div><div class="cr"><i class="k" data-i="33"></i><i class="k" data-i="34"></i><i class="k" data-i="35"></i></div></div>
+      <div class="row"><div class="cl"><i class="k g" data-i="36" style="--d:11"></i><i class="k" data-i="37"></i><i class="k" data-i="38"></i></div><div class="cc"><span>Balances</span> <small>3</small></div><div class="cr"><i class="k f" data-i="36"></i><i class="k" data-i="37"></i><i class="k p" data-i="38"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="39"></i><i class="k" data-i="40"></i><i class="k f" data-i="41" style="--d:12"></i><i class="k" data-i="42"></i><i class="k" data-i="43"></i><i class="k" data-i="44"></i><i class="k g" data-i="45" style="--d:13"></i><i class="k" data-i="46"></i><i class="k" data-i="47"></i><i class="k" data-i="48"></i></div><div class="cc"><span>Bounties</span> <small>10</small></div><div class="cr"><i class="k" data-i="39"></i><i class="k" data-i="40"></i><i class="k" data-i="41"></i><i class="k" data-i="42"></i><i class="k" data-i="43"></i><i class="k" data-i="44"></i><i class="k" data-i="45"></i><i class="k" data-i="46"></i><i class="k" data-i="47"></i><i class="k" data-i="48"></i></div></div>
+      <div class="row"><div class="cl"><i class="k g" data-i="49" style="--d:14"></i><i class="k f" data-i="50" style="--d:15"></i><i class="k g" data-i="51" style="--d:16"></i><i class="k f" data-i="52" style="--d:17"></i><i class="k g" data-i="53" style="--d:18"></i><i class="k f" data-i="54" style="--d:19"></i><i class="k f" data-i="55" style="--d:20"></i><i class="k f" data-i="56" style="--d:21"></i><i class="k f" data-i="57" style="--d:22"></i><i class="k f" data-i="58" style="--d:23"></i></div><div class="cc"><span>Contracts</span> <small>10</small></div><div class="cr"><i class="k" data-i="49"></i><i class="k" data-i="50"></i><i class="k" data-i="51"></i><i class="k" data-i="52"></i><i class="k" data-i="53"></i><i class="k" data-i="54"></i><i class="k" data-i="55"></i><i class="k" data-i="56"></i><i class="k" data-i="57"></i><i class="k" data-i="58"></i></div></div>
+      <div class="row"><div class="cl"><i class="k f" data-i="59" style="--d:24"></i><i class="k g" data-i="60" style="--d:25"></i><i class="k" data-i="61"></i><i class="k f" data-i="62" style="--d:26"></i><i class="k g" data-i="63" style="--d:27"></i></div><div class="cc"><span>ElectionProviderMultiPhase</span> <small>5</small></div><div class="cr"><i class="k g" data-i="59"></i><i class="k" data-i="60"></i><i class="k" data-i="61"></i><i class="k" data-i="62"></i><i class="k" data-i="63"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="64"></i><i class="k" data-i="65"></i><i class="k" data-i="66"></i></div><div class="cc"><span>Grandpa</span> <small>3</small></div><div class="cr"><i class="k" data-i="64"></i><i class="k" data-i="65"></i><i class="k" data-i="66"></i></div></div>
+      <div class="row"><div class="cl"><i class="k f" data-i="67" style="--d:28"></i><i class="k" data-i="68"></i><i class="k" data-i="69"></i><i class="k f" data-i="70" style="--d:29"></i><i class="k" data-i="71"></i><i class="k" data-i="72"></i><i class="k" data-i="73"></i><i class="k f" data-i="74" style="--d:30"></i><i class="k g" data-i="75" style="--d:31"></i><i class="k" data-i="76"></i><i class="k f" data-i="77" style="--d:32"></i><i class="k" data-i="78"></i><i class="k f" data-i="79" style="--d:33"></i><i class="k f" data-i="80" style="--d:34"></i><i class="k" data-i="81"></i><i class="k" data-i="82"></i><i class="k" data-i="83"></i><i class="k" data-i="84"></i><i class="k" data-i="85"></i><i class="k" data-i="86"></i><i class="k f" data-i="87" style="--d:35"></i><i class="k" data-i="88"></i><i class="k f" data-i="89" style="--d:36"></i><i class="k f" data-i="90" style="--d:37"></i></div><div class="cc"><span>Identity</span> <small>24</small></div><div class="cr"><i class="k" data-i="67"></i><i class="k" data-i="68"></i><i class="k" data-i="69"></i><i class="k" data-i="70"></i><i class="k" data-i="71"></i><i class="k" data-i="72"></i><i class="k" data-i="73"></i><i class="k" data-i="74"></i><i class="k" data-i="75"></i><i class="k" data-i="76"></i><i class="k" data-i="77"></i><i class="k" data-i="78"></i><i class="k" data-i="79"></i><i class="k" data-i="80"></i><i class="k" data-i="81"></i><i class="k" data-i="82"></i><i class="k" data-i="83"></i><i class="k" data-i="84"></i><i class="k" data-i="85"></i><i class="k" data-i="86"></i><i class="k" data-i="87"></i><i class="k" data-i="88"></i><i class="k" data-i="89"></i><i class="k" data-i="90"></i></div></div>
+      <div class="row"><div class="cl"><i class="k g" data-i="91" style="--d:38"></i></div><div class="cc"><span>ImOnline</span> <small>1</small></div><div class="cr"><i class="k" data-i="91"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="92"></i><i class="k" data-i="93"></i><i class="k" data-i="94"></i><i class="k" data-i="95"></i><i class="k f" data-i="96" style="--d:39"></i><i class="k" data-i="97"></i></div><div class="cc"><span>Indices</span> <small>6</small></div><div class="cr"><i class="k" data-i="92"></i><i class="k" data-i="93"></i><i class="k" data-i="94"></i><i class="k" data-i="95"></i><i class="k" data-i="96"></i><i class="k" data-i="97"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="98"></i><i class="k" data-i="99"></i><i class="k" data-i="100"></i><i class="k" data-i="101"></i></div><div class="cc"><span>Lottery</span> <small>4</small></div><div class="cr"><i class="k" data-i="98"></i><i class="k" data-i="99"></i><i class="k" data-i="100"></i><i class="k" data-i="101"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="102"></i><i class="k g" data-i="103" style="--d:40"></i><i class="k" data-i="104"></i><i class="k" data-i="105"></i><i class="k f" data-i="106" style="--d:41"></i></div><div class="cc"><span>Multisig</span> <small>5</small></div><div class="cr"><i class="k" data-i="102"></i><i class="k" data-i="103"></i><i class="k" data-i="104"></i><i class="k" data-i="105"></i><i class="k" data-i="106"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="107"></i><i class="k" data-i="108"></i><i class="k f" data-i="109" style="--d:42"></i><i class="k f" data-i="110" style="--d:43"></i><i class="k f" data-i="111" style="--d:44"></i><i class="k" data-i="112"></i><i class="k" data-i="113"></i><i class="k" data-i="114"></i><i class="k" data-i="115"></i><i class="k" data-i="116"></i><i class="k" data-i="117"></i></div><div class="cc"><span>Proxy</span> <small>11</small></div><div class="cr"><i class="k" data-i="107"></i><i class="k" data-i="108"></i><i class="k" data-i="109"></i><i class="k" data-i="110"></i><i class="k" data-i="111"></i><i class="k" data-i="112"></i><i class="k" data-i="113"></i><i class="k" data-i="114"></i><i class="k" data-i="115"></i><i class="k" data-i="116"></i><i class="k" data-i="117"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="118"></i><i class="k" data-i="119"></i><i class="k f" data-i="120" style="--d:45"></i><i class="k f" data-i="121" style="--d:46"></i><i class="k" data-i="122"></i><i class="k" data-i="123"></i><i class="k" data-i="124"></i><i class="k" data-i="125"></i><i class="k f" data-i="126" style="--d:47"></i><i class="k f" data-i="127" style="--d:48"></i></div><div class="cc"><span>Scheduler</span> <small>10</small></div><div class="cr"><i class="k" data-i="118"></i><i class="k" data-i="119"></i><i class="k" data-i="120"></i><i class="k" data-i="121"></i><i class="k" data-i="122"></i><i class="k" data-i="123"></i><i class="k" data-i="124"></i><i class="k" data-i="125"></i><i class="k" data-i="126"></i><i class="k" data-i="127"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="128"></i><i class="k" data-i="129"></i></div><div class="cc"><span>Session</span> <small>2</small></div><div class="cr"><i class="k" data-i="128"></i><i class="k" data-i="129"></i></div></div>
+      <div class="row"><div class="cl"><i class="k g" data-i="130" style="--d:49"></i><i class="k" data-i="131"></i><i class="k" data-i="132"></i><i class="k g" data-i="133" style="--d:50"></i><i class="k f" data-i="134" style="--d:51"></i><i class="k f" data-i="135" style="--d:52"></i><i class="k" data-i="136"></i><i class="k" data-i="137"></i><i class="k" data-i="138"></i><i class="k" data-i="139"></i><i class="k" data-i="140"></i><i class="k" data-i="141"></i><i class="k f" data-i="142" style="--d:53"></i><i class="k f" data-i="143" style="--d:54"></i><i class="k" data-i="144"></i><i class="k" data-i="145"></i><i class="k f" data-i="146" style="--d:55"></i><i class="k" data-i="147"></i><i class="k" data-i="148"></i><i class="k f" data-i="149" style="--d:56"></i><i class="k" data-i="150"></i><i class="k g" data-i="151" style="--d:57"></i><i class="k" data-i="152"></i><i class="k f" data-i="153" style="--d:58"></i><i class="k" data-i="154"></i><i class="k f" data-i="155" style="--d:59"></i><i class="k" data-i="156"></i><i class="k" data-i="157"></i><i class="k f" data-i="158" style="--d:60"></i><i class="k" data-i="159"></i><i class="k" data-i="160"></i></div><div class="cc"><span>Staking</span> <small>31</small></div><div class="cr"><i class="k" data-i="130"></i><i class="k" data-i="131"></i><i class="k" data-i="132"></i><i class="k" data-i="133"></i><i class="k" data-i="134"></i><i class="k" data-i="135"></i><i class="k" data-i="136"></i><i class="k" data-i="137"></i><i class="k" data-i="138"></i><i class="k" data-i="139"></i><i class="k" data-i="140"></i><i class="k" data-i="141"></i><i class="k" data-i="142"></i><i class="k" data-i="143"></i><i class="k" data-i="144"></i><i class="k" data-i="145"></i><i class="k" data-i="146"></i><i class="k" data-i="147"></i><i class="k" data-i="148"></i><i class="k" data-i="149"></i><i class="k" data-i="150"></i><i class="k" data-i="151"></i><i class="k" data-i="152"></i><i class="k" data-i="153"></i><i class="k" data-i="154"></i><i class="k" data-i="155"></i><i class="k" data-i="156"></i><i class="k" data-i="157"></i><i class="k" data-i="158"></i><i class="k" data-i="159"></i><i class="k" data-i="160"></i></div></div>
+      <div class="row"><div class="cl"><i class="k f" data-i="161" style="--d:61"></i><i class="k f" data-i="162" style="--d:62"></i><i class="k f" data-i="163" style="--d:63"></i><i class="k g" data-i="164" style="--d:64"></i><i class="k" data-i="165"></i><i class="k g" data-i="166" style="--d:65"></i><i class="k" data-i="167"></i><i class="k" data-i="168"></i><i class="k" data-i="169"></i><i class="k" data-i="170"></i><i class="k" data-i="171"></i></div><div class="cc"><span>System</span> <small>11</small></div><div class="cr"><i class="k" data-i="161"></i><i class="k" data-i="162"></i><i class="k" data-i="163"></i><i class="k" data-i="164"></i><i class="k" data-i="165"></i><i class="k" data-i="166"></i><i class="k p" data-i="167"></i><i class="k" data-i="168"></i><i class="k" data-i="169"></i><i class="k" data-i="170"></i><i class="k" data-i="171"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="172"></i></div><div class="cc"><span>Timestamp</span> <small>1</small></div><div class="cr"><i class="k" data-i="172"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="173"></i><i class="k" data-i="174"></i><i class="k" data-i="175"></i></div><div class="cc"><span>TransactionStorage</span> <small>3</small></div><div class="cr"><i class="k" data-i="173"></i><i class="k" data-i="174"></i><i class="k" data-i="175"></i></div></div>
+      <div class="row"><div class="cl"><i class="k f" data-i="176" style="--d:66"></i><i class="k f" data-i="177" style="--d:67"></i><i class="k f" data-i="178" style="--d:68"></i><i class="k f" data-i="179" style="--d:69"></i><i class="k f" data-i="180" style="--d:70"></i><i class="k f" data-i="181" style="--d:71"></i></div><div class="cc"><span>Treasury</span> <small>6</small></div><div class="cr"><i class="k" data-i="176"></i><i class="k" data-i="177"></i><i class="k" data-i="178"></i><i class="k" data-i="179"></i><i class="k" data-i="180"></i><i class="k" data-i="181"></i></div></div>
+      <div class="row"><div class="cl"><i class="k" data-i="182"></i><i class="k" data-i="183"></i><i class="k" data-i="184"></i><i class="k f" data-i="185" style="--d:72"></i><i class="k f" data-i="186" style="--d:73"></i><i class="k f" data-i="187" style="--d:74"></i><i class="k f" data-i="188" style="--d:75"></i><i class="k f" data-i="189" style="--d:76"></i></div><div class="cc"><span>Utility</span> <small>8</small></div><div class="cr"><i class="k" data-i="182"></i><i class="k" data-i="183"></i><i class="k p" data-i="184"></i><i class="k" data-i="185"></i><i class="k" data-i="186"></i><i class="k" data-i="187"></i><i class="k" data-i="188"></i><i class="k" data-i="189"></i></div></div>
+      <div class="row"><div class="cl"><i class="k f" data-i="190" style="--d:77"></i><i class="k" data-i="191"></i><i class="k f" data-i="192" style="--d:78"></i><i class="k" data-i="193"></i><i class="k" data-i="194"></i><i class="k" data-i="195"></i></div><div class="cc"><span>Vesting</span> <small>6</small></div><div class="cr"><i class="k" data-i="190"></i><i class="k" data-i="191"></i><i class="k" data-i="192"></i><i class="k" data-i="193"></i><i class="k" data-i="194"></i><i class="k" data-i="195"></i></div></div>
+      <div class="bind" aria-hidden="true"><svg viewBox="0 0 24 48"><rect x="8" y="0" width="8" height="5" rx="1" fill="#6E5220"/><path d="M5 6h14v4c0 9-3.8 19-7 37.5C8.8 29 5 19 5 10z" fill="#9C7630"/></svg></div>
+    </div>
+  </div>
+  <div class="tally rise d2"><span class="legend"><span><i class="k f"></i>absent or renamed</span><span><i class="k g"></i>other arguments</span><span><i class="k p"></i>proven by a transaction</span><span><i class="k"></i>present, no tx yet</span></span><span><b>3</b>proven · <b>191</b>unproven · <b>1</b>arg drift · <b>1</b>absent on V3</span></div>
+  <aside class="speaker-notes">This is the frozen moment. The same 196 documented calls, on facing pages. Against mainnet spec 1002, 79 carry tape. Against V3, two do: Balances.transfer is absent and governance_fallback takes no arguments. The three ink ticks are our canary transactions. Everything else exists on V3 and stays UNPROVEN until a transaction proves it. Separately, five modules the V3 guide's FAQ lists have no pallet on V3.</aside>
+</section>
+
+<!-- 5 · on-chain proof -->
+<section class="slide s5" data-title="On-chain proof">
+  <div class="body">
+    <h2 class="rise">Three transactions, read back</h2>
+    <p class="meta rise d1">Portaldot V3 testnet · portaldot-v3 / spec 3002 · signer 5EhP3KWt…RUzDsb · canary run 20261019T182014Z</p>
+    <table class="rc rise d1">
+      <thead><tr><th>Extrinsic</th><th>Call</th><th>Tx hash</th><th>Read back</th><th>Node console</th></tr></thead>
+      <tbody>
+        <tr><td class="x">106424-1</td><td>System.remark_with_event</td><td>0xf544305710…c941e6f5</td><td class="ok">MATCH<span class="tick" aria-hidden="true"></span></td><td><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xac1f0030783d7470925fb39b691046d58418ac138c4d603916506cb345353ec2">block 106424 ↗</a></td></tr>
+        <tr><td class="x">106425-1</td><td>Balances.transfer_keep_alive</td><td>0xa7effe5d5a…ff91d90b</td><td class="ok">MATCH<span class="tick" aria-hidden="true"></span></td><td><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xf71728583059750fbdb8095730835eae53955148675b11cae98c90d3374b4c1d">block 106425 ↗</a></td></tr>
+        <tr><td class="x">106426-1</td><td>Utility.batch_all</td><td>0x25e0352284…0f5dfaa8</td><td class="ok">MATCH<span class="tick" aria-hidden="true"></span></td><td><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0x06a069139c6457bdcd841dd7cb274d986b621538befea8ecb0471988764319ab">block 106426 ↗</a></td></tr>
+      </tbody>
+    </table>
+    <div class="term rise d2"><div class="bar"><span>evidence/readback_v3.txt · verbatim</span><span>new process · new connection</span></div><pre><span class="ln cm"># plumbline readback evidence/canary_v3.json — profile v3, run 2026-10-19T18:24:33Z, new process, new connection</span><span class="ln">   106424-1 System.remark_with_event         decoded System.remark_with_event  block 106424  success True  <span class="ok">MATCH</span></span><span class="ln">   106425-1 Balances.transfer_keep_alive     decoded Balances.transfer_keep_alive  block 106425  success True  <span class="ok">MATCH</span></span><span class="ln">   106426-1 Utility.batch_all                decoded Utility.batch_all  block 106426  success True  <span class="ok">MATCH</span></span><span class="ln">profile v3 — Portaldot V3 testnet: <span class="hit">3/3 receipts match the chain</span></span></pre></div>
+  </div>
+  <aside class="speaker-notes">These are the three transactions behind the PROVEN ticks, on the real V3 testnet. Each was re-read from its block from a new process and decoded back to the same call: three of three match. Every block link opens in Portaldot's node console.</aside>
+</section>
+
+<!-- 6 · architecture -->
+<section class="slide s6" data-title="Architecture">
+  <div class="body">
+    <figure class="rise"><img src="../docs/architecture.png" alt="Plumbline architecture: inputs (dApp directory, mainnet docs, V3 testnet guide) feed docs.py and guide.py, plumb.py writes the drift ledger, metadata.py reads the chains, canary.py sends and reads back receipts into docs/PROOF.md"></figure>
+    <div>
+      <h2 class="rise d1">Sources, engine, evidence</h2>
+      <ol class="rise d2">
+        <li><b class="n">1</b><div><strong>Documented call</strong><span><code>docs.py · guide.py</code>: three docs page layouts, the guide’s call table and AST call sites.</span></div></li>
+        <li><b class="n">2</b><div><strong>Verdict</strong><span><code>plumb.py</code> joins each entry to one runtime: 549 rows in <code>evidence/ledger_v3.json</code>.</span></div></li>
+        <li><b class="n">3</b><div><strong>Proof</strong><span><code>canary.py</code> signs, submits, keeps the receipt and reads it back: 3 / 3 in <code>docs/PROOF.md</code>.</span></div></li>
+      </ol>
+      <p class="cap rise d3">Sources are untrusted data: the guide is cloned outside the repo and only parsed. Dashed boxes are planned, not built. Drawn from the code: docs/architecture.png.</p>
+    </div>
+  </div>
+  <aside class="speaker-notes">Sources on the left are untrusted data: the guide is cloned outside the repo and only parsed. Every engine module writes a committed artifact, so each figure in this deck has a file behind it. The one planned piece, a Ledger contract on V3, is drawn dashed.</aside>
+</section>
+
+<!-- 7 · why it's new -->
+<section class="slide s7" data-title="Why it's new">
+  <div class="body">
+    <div>
+      <h2 class="rise">A verdict needs a receipt</h2>
+      <div class="alone rise d1">
+        <div><b>Docs pages</b><span>what was designed; the pages name no runtime spec</span></div>
+        <div><b>node-console</b><span>Portaldot’s explorer: what exists at one block, not what the docs promised</span></div>
+        <div><b>Metadata diff</b><span>what moved between two runtimes, not whether the docs match either one</span></div>
+        <div><b>One test tx</b><span>that one call worked once, on one runtime</span></div>
+      </div>
+      <div class="paper join rise d2"><p><b>Plumbline joins them:</b> each docs entry against the runtime’s own metadata, one verdict stamped with the spec, PROVEN only with a receipt, re-run on the next runtime.</p></div>
+    </div>
+    <div>
+      <p class="lab rise">What moved, mainnet spec 1002 → V3 spec 3002</p>
+      <div class="k516 rise d1"><b>516</b><span>rows from <code>plumbline diff</code> · evidence/diff_1002_v3.json</span></div>
+      <div class="bars rise d1"><span class="bl">event changes</span><span class="bt" style="--w:100.0;--i:0"></span><span class="bv">169</span><span class="bl">constant changes</span><span class="bt" style="--w:70.4;--i:1"></span><span class="bv">119</span><span class="bl">argument changes</span><span class="bt" style="--w:58.6;--i:2"></span><span class="bv">99</span><span class="bl">calls added</span><span class="bt" style="--w:43.2;--i:3"></span><span class="bv">73</span><span class="bl">pallets added</span><span class="bt" style="--w:23.7;--i:4"></span><span class="bv">40</span><span class="bl">calls removed</span><span class="bt" style="--w:7.1;--i:5"></span><span class="bv">12</span><span class="bl">pallets removed</span><span class="bt" style="--w:1.2;--i:6"></span><span class="bv">2</span><span class="bl">calls renamed</span><span class="bt" style="--w:1.2;--i:7"></span><span class="bv">2</span></div>
+      <div class="chk rise d2"><b>5<span class="ar">→</span>0</b><span>blocking findings for the same example dApp under <code>plumbline check</code>: on spec 1002, then on V3</span></div>
+    </div>
+  </div>
+  <aside class="speaker-notes">Docs, the explorer, a metadata diff and a test transaction each answer one question. Plumbline joins each docs entry to the runtime metadata and attaches a receipt where one exists; only a receipt makes a verdict PROVEN. Between mainnet and V3, 516 things moved; that is why a one-time check is not enough.</aside>
+</section>
+
+<!-- 8 · ecosystem fit -->
+<section class="slide s8" data-title="Ecosystem fit">
+  <div class="body">
+    <h2 class="rise">Between Portaldot’s docs and its runtime</h2>
+    <div class="tier rise d1"><div class="t">Documented<small>what builders read</small></div><p><code>portaldot-dev.readthedocs.io</code> extrinsic pages, and the third-party V3 testnet guide (<code>d671a32</code>) with its FAQ</p></div>
+    <div class="tier mid rise d1"><div class="t">Plumbline<small>the middleware</small></div><p><b>plumb · diff · check · canary</b><br>through the SDK Portaldot’s docs point to, <code>substrate-interface 1.8.1</code>: <code>compose_call · create_signed_extrinsic · submit_extrinsic · get_block · get_events</code></p></div>
+    <div class="tier rise d2"><div class="t">Runtimes<small>what actually runs</small></div><p>V3 testnet <code>portaldot-v3 / 3002</code> · mainnet spec 1002, read-only: <code>state_getMetadata · state_getRuntimeVersion · state_getStorageHash(:code)</code></p></div>
+    <div class="two rise d3">
+      <div><b>Pinned to the real V3</b><span>The <code>v3</code> profile checks spec name <code>portaldot-v3</code>, genesis <code>0xd4f9acbc…5283bd</code> and spec 3002, and fails loudly on a mismatch.</span></div>
+      <div><b>Re-run per upgrade</b><span>The spec 1002 baseline and the spec 3002 sheet come from the same commands; the next runtime is the next run.</span></div>
+    </div>
+  </div>
+  <aside class="speaker-notes">Plumbline reads Portaldot's two live runtimes and its docs, plus the community V3 testnet guide, through the SDK the docs recommend. It is middleware in the literal sense: the layer between what Portaldot documents and what Portaldot runs; check runs a dApp's calls against V3 before anything is sent.</aside>
+</section>
+
+<!-- 9 · users and model -->
+<section class="slide s9" data-title="Users and model">
+  <div class="body">
+    <h2 class="rise">Who runs it, who pays</h2>
+    <table class="who rise d1">
+      <thead><tr><th>Who</th><th>Moment of pain</th><th>What they get</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="w">Hacker House builders<small>now · the first audience</small></td><td>a documented call fails on V3</td><td><code>plumbline check &lt;dApp&gt; --target v3</code>; exit 1 on blocking findings, so it can gate CI</td><td class="st today"><span>TODAY</span></td></tr>
+        <tr><td class="w">Teams moving 1002 → V3</td><td>not knowing what breaks on V3</td><td>the 516-row runtime diff, and <code>check</code> run on their repo</td><td class="st today"><span>TODAY</span></td></tr>
+        <tr><td class="w">Portaldot docs &amp; devrel<small>target customer</small></td><td>re-verifying every page per runtime by hand</td><td>the ledger as docs CI: a “verified on spec N” line per reference entry</td><td class="st plan"><span>PLANNED</span></td></tr>
+        <tr><td class="w">Wallets &amp; integrators<small>after the event</small></td><td>an upgrade changes call shapes</td><td>a diff and a canary re-run per upgrade; always-on alerts as the paid tier</td><td class="st plan"><span>PLANNED</span></td></tr>
+      </tbody>
+    </table>
+    <div class="model rise d2">
+      <div><b>Model</b><span>Docs CI as an ecosystem-funded public good, plus paid upgrade alerts for integrators. Portaldot is the first chain; any Substrate chain whose docs trail its runtime has the same gap.</span></div>
+      <div><b>Honest limit</b><span>No revenue and no external users yet. The first two rows work today on the public repo; the last two are the plan.</span></div>
+    </div>
+  </div>
+  <aside class="speaker-notes">Builders use it today, for free, from the repo. The customer we want is Portaldot's own docs and devrel team: the ledger becomes their docs CI. Integrators pay for alerts later. We say plainly that there is no revenue yet.</aside>
+</section>
+
+<!-- 10 · status and links: the book's back cover -->
+<section class="slide s10" data-title="Status and links">
+  <div class="body">
+    <div>
+      <h2 class="rise">Re-run every number here</h2>
+      <div class="st rise d1">
+        <div><b>549</b><span>verdict rows on V3, spec 3002, byte-identical on re-run</span></div>
+        <div><b>3 / 3</b><span>V3 transactions read back from their blocks</span></div>
+        <div><b>263</b><span>tests pass (evidence/pytest_checkin.txt) · 116 commits from 2026-10-14 to build 2460a0d</span></div>
+      </div>
+      <ul class="next rise d2">
+        <li><em>planned</em>a canary per documented call (3 of 196 PROVEN today)</li>
+        <li><em>planned</em>the Plumbline Ledger contract (Revive) on V3</li>
+        <li><em>open gap</em><code>check</code> does not detect TYPE-TRAP yet; runtime APIs (ReviveApi) are not checked yet</li>
+      </ul>
+    </div>
+    <div>
+<pre class="rise d1"><span class="pr">$</span> pip install -e '.[dev]' &amp;&amp; pytest -q
+<span class="pr">$</span> plumbline check examples/mainnet-dapp --target v3
+<span class="cm"># … · blocking 0 · exit 0</span></pre>
+      <div class="qr rise d2"><svg role="img" aria-label="QR code: plumbline.edycu.dev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" class="segno"><path class="qrline" stroke="#262823" d="M0 0.5h7m1 0h4m1 0h4m1 0h2m2 0h7m-29 1h1m5 0h1m2 0h2m1 0h2m1 0h1m6 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m2 0h3m4 0h2m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m1 0h3m3 0h1m2 0h1m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h3m2 0h1m1 0h1m1 0h4m1 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m1 0h1m2 0h4m1 0h2m4 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-20 1h2m1 0h2m2 0h1m3 0h1m-20 1h7m3 0h1m1 0h1m1 0h2m1 0h3m2 0h2m3 0h1m-29 1h2m2 0h1m2 0h2m2 0h4m2 0h4m1 0h5m1 0h1m-26 1h2m1 0h2m1 0h1m1 0h1m3 0h1m4 0h4m2 0h1m-24 1h1m1 0h1m2 0h1m1 0h1m2 0h3m4 0h3m1 0h2m1 0h1m-28 1h3m3 0h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h1m3 0h1m1 0h1m2 0h3m-26 1h1m4 0h2m1 0h1m1 0h2m1 0h1m1 0h5m1 0h2m1 0h2m-29 1h1m4 0h2m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m4 0h1m3 0h1m-28 1h6m2 0h1m2 0h1m4 0h1m1 0h1m5 0h2m-25 1h2m3 0h2m6 0h2m2 0h1m2 0h1m3 0h2m-27 1h1m2 0h1m1 0h1m2 0h2m1 0h3m1 0h2m1 0h8m1 0h2m-29 1h1m1 0h6m2 0h2m1 0h1m3 0h2m3 0h4m-26 1h1m1 0h3m2 0h1m6 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m1 0h1m-28 1h1m3 0h3m1 0h1m5 0h1m2 0h1m2 0h5m1 0h1m1 0h1m-21 1h3m5 0h5m3 0h2m1 0h2m-29 1h7m1 0h1m1 0h4m1 0h3m1 0h2m1 0h1m1 0h1m-25 1h1m5 0h1m1 0h1m1 0h3m2 0h1m1 0h4m3 0h2m1 0h2m-29 1h1m1 0h3m1 0h1m1 0h1m3 0h1m1 0h1m1 0h1m3 0h7m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h1m1 0h1m4 0h1m1 0h5m1 0h1m1 0h1m-26 1h1m1 0h3m1 0h1m1 0h5m2 0h2m2 0h6m2 0h1m-28 1h1m5 0h1m1 0h1m1 0h2m1 0h1m1 0h1m2 0h1m1 0h1m1 0h1m1 0h2m1 0h1m-28 1h7m6 0h3m1 0h1m1 0h1m1 0h2m1 0h3"/></svg><p><b>plumbline.edycu.dev</b>Scan: the landing page<br><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu">github.com/edycutjong/<br>portaldot-hackathon-2026-plumbline-edycu</a><br>proof: docs/PROOF.md · docs/BASELINE-V3.md<br>video: youtu.be/edvFuOdUZNk</p></div>
+      <p class="ai rise d3">AI assistance: Claude Code drafted most of the code (the author reviews it; see the README’s AI disclosure) and drafted this deck from the repo’s evidence.</p>
+    </div>
+  </div>
+  <aside class="speaker-notes">Everything in this deck has a command and a file behind it; clone the repo and run it. By the final we want a canary for every documented call and the Ledger contract on V3. Scan the code for the landing page.</aside>
+</section>
+
+</div>
+</div>
+<div class="hint" aria-hidden="true">← → · Esc overview · P notes</div>
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const N = slides.length, stage = document.querySelector('.stage');
+  const pad = n => String(n).padStart(2, '0');
+  const bob = '<svg viewBox="0 0 24 48" aria-hidden="true"><rect x="8" y="0" width="8" height="5" rx="1" fill="#6E5220"/><path d="M5 6h14v4c0 9-3.8 19-7 37.5C8.8 29 5 19 5 10z" fill="#9C7630"/></svg>';
+  slides.forEach((s, i) => {
+    const h = document.createElement('header'); h.className = 'hdr';
+    h.innerHTML = '<b>Plumbline</b><span>' + s.dataset.title + '</span><span>Level book · Portaldot V3</span>';
+    s.prepend(h);
+    const d = document.createElement('div'); d.className = 'datum'; d.innerHTML = bob; s.prepend(d);
+    const f = document.createElement('footer'); f.className = 'ftr';
+    f.innerHTML = '<span>Portaldot Hacker House 2026 · Modular Cloud &amp; Middleware</span><span>v0.0.1 · facts at build 2460a0d</span><span class="pg">' + pad(i + 1) + ' / ' + pad(N) + '</span>';
+    s.appendChild(f);
+  });
+  let cur = 0, overview = false;
+  const fit = () => {
+    const W = document.documentElement.clientWidth, H = document.documentElement.clientHeight;
+    const k = Math.min(W / 1920, H / 1080);
+    stage.style.transform = 'translate(-50%, -50%) scale(' + k + ')';
+  };
+  const show = i => {
+    cur = Math.max(0, Math.min(N - 1, i));
+    slides.forEach((s, j) => s.classList.toggle('active', j === cur));
+    if (location.hash !== '#' + (cur + 1)) history.replaceState(null, '', '#' + (cur + 1));
+  };
+  const setOverview = on => {
+    overview = on; document.body.classList.toggle('overview', on);
+    slides.forEach((s, j) => {
+      if (on) { const c = j % 4, r = Math.floor(j / 4); s.style.transform = 'translate(' + (c * 480 + 4) + 'px,' + (r * 270 + 135) + 'px) scale(' + (472 / 1920) + ')'; }
+      else s.style.transform = '';
+    });
+    fit();
+  };
+  const fromHash = () => { const h = parseInt(location.hash.slice(1), 10); return Number.isFinite(h) ? h - 1 : 0; };
+  addEventListener('resize', fit);
+  addEventListener('hashchange', () => show(fromHash()));
+  addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key;
+    if (k === 'Escape') { setOverview(!overview); return; }
+    if (overview) return;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ') { show(cur + 1); e.preventDefault(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp') { show(cur - 1); e.preventDefault(); }
+    else if (k === 'Home') show(0);
+    else if (k === 'End') show(N - 1);
+    else if (/^[0-9]$/.test(k)) show(k === '0' ? 9 : Number(k) - 1);
+    else if (k === 'p' || k === 'P') document.body.classList.toggle('presenter');
+    else if (k === 'c' || k === 'C') document.body.classList.toggle('debug-contrast');
+    else if (k === 'f' || k === 'F') { if (document.fullscreenElement) document.exitFullscreen(); else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); }
+  });
+  document.addEventListener('click', e => {
+    if (e.target.closest('a')) return;
+    if (overview) { const s = e.target.closest('.slide'); if (s) { setOverview(false); show(slides.indexOf(s)); } return; }
+    show(cur + (e.clientX > document.documentElement.clientWidth / 2 ? 1 : -1));
+  });
+  let idle; const wake = () => { document.body.classList.remove('idle'); clearTimeout(idle); idle = setTimeout(() => document.body.classList.add('idle'), 2500); };
+  addEventListener('mousemove', wake); wake();
+  fit(); show(fromHash());
+})();
+</script>
+</body>
+</html>
