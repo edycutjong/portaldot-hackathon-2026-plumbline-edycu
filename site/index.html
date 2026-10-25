@@ -12,12 +12,12 @@
 <meta property="og:title" content="Plumbline: the docs say transfer, V3 has never heard of it">
 <meta property="og:description" content="196 documented Portaldot calls checked against the runtime: 79 disagreed with mainnet spec 1002, 2 disagree on V3, 3 proven by real transactions.">
 <meta property="og:url" content="https://plumbline.edycu.dev/">
-<meta property="og:image" content="https://plumbline.edycu.dev/assets/og.png?v=111b8969">
+<meta property="og:image" content="https://plumbline.edycu.dev/assets/og.png?v=1312091d">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Plumbline field book: Balances.transfer flagged ABSENT on Portaldot V3 spec 3002">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://plumbline.edycu.dev/assets/og.png?v=111b8969">
+<meta name="twitter:image" content="https://plumbline.edycu.dev/assets/og.png?v=1312091d">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23E3E8DA'/%3E%3Cpath d='M16 2v8' stroke='%23262823' stroke-width='2'/%3E%3Cpath d='M11 10h10v3c0 6-3 12-5 17-2-5-5-11-5-17z' fill='%239C7630'/%3E%3C/svg%3E">
 <link rel="preload" href="assets/fonts/SofiaSansExtraCondensed-wght.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/SofiaSans-wght.woff2" as="font" type="font/woff2" crossorigin>
@@ -112,7 +112,8 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
 .book{grid-area:book;position:relative;background:var(--page);border:1px solid #C3CAB6;box-shadow:0 1px 0 #fff inset,0 26px 44px -30px rgba(43,58,34,.55),0 2px 0 #D5DBC9;margin-top:20px}
 .book::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0 47px,rgba(169,191,203,.35) 47px 48px);pointer-events:none}
 .book .hd{position:relative;display:flex;justify-content:space-between;align-items:end;gap:12px;padding:18px 20px 12px;border-bottom:2px solid var(--ink)}
-.book .hd b{font:900 28px/1 var(--font-display);text-transform:uppercase;letter-spacing:.01em}
+.book .hd{flex-wrap:wrap;gap:6px 14px}
+.book .hd b{font:900 28px/1 var(--font-display);text-transform:uppercase;letter-spacing:.01em;white-space:nowrap}
 .book table{position:relative;width:100%;border-collapse:collapse;font-size:15px}
 .book th{font:600 12px var(--font-data);letter-spacing:.1em;color:var(--muted);text-align:left;padding:10px 12px 8px;border-bottom:1px solid var(--blue);text-transform:uppercase}
 .book td{padding:11px 12px;border-bottom:1px solid var(--blue);vertical-align:top;color:var(--pencil)}
@@ -450,7 +451,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
   <h1>The docs say<br> <span class="call">transfer</span>. V3<br> has <span class="tape">never heard of&nbsp;it.</span></h1>
   <div class="gutter" aria-hidden="true"><div class="plumb"><span class="str"></span><svg viewBox="0 0 24 48"><defs><linearGradient id="brass" x1="0" x2="1"><stop offset="0" stop-color="#C9A45B"/><stop offset=".45" stop-color="#9C7630"/><stop offset="1" stop-color="#6E5220"/></linearGradient></defs><rect x="8" y="0" width="8" height="5" rx="1" fill="#6E5220"/><path d="M5 6h14v4c0 9-3.8 19-7 37.5C8.8 29 5 19 5 10z" fill="url(#brass)"/><path d="M8.5 9v3c0 6 1.4 13 3 22" stroke="#E2C78A" stroke-width="1" fill="none" opacity=".7"/></svg></div></div>
   <section class="book" id="book" aria-labelledby="book-title">
-    <div class="hd"><b id="book-title">Docs → V3 · spec 3002</b><span class="lab">booked 2026-10-19 UTC</span></div>
+    <div class="hd"><b id="book-title">Docs → V3 · spec 3002</b><span class="lab">portaldot-v3 · booked 2026-10-19 UTC</span></div>
     <table>
       <caption class="sr">Six mainnet-docs calls, read against the Portaldot V3 testnet, spec 3002. The two flagged rows are the only mainnet-docs calls that disagree with V3.</caption>
       <thead><tr><th scope="col">Sta.</th><th scope="col">Call, as documented</th><th scope="col">On V3</th><th scope="col">Receipt</th></tr></thead>
@@ -465,7 +466,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
     </table>
     <p class="foot"><span>Flagged: the only 2 of 196 that disagree on V3</span><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/ledger_v3.json">evidence/ledger_v3.json</a></p>
   </section>
-  <p class="sub">You copy <code>Balances.transfer</code> from the Portaldot docs into a V3 dApp; the V3 runtime has no such call. Plumbline hangs all <b>196 documented calls</b> against the runtime’s own metadata: <b>2</b> disagree on V3, and <b>3</b> are proven by real transactions read back from their blocks.</p>
+  <p class="sub">You copy <code>Balances.transfer</code> from the Portaldot docs into a V3 dApp; the V3 runtime has no such call. Plumbline hangs all <b>196 documented calls</b> against the runtime’s own metadata: <b>2</b> disagree on V3, and <b>3</b> are proven by real canary transactions read back from their blocks.</p>
   <div class="cta">
     <a class="btn p" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 4 1 8l4 4M11 4l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none"/></svg>Source on GitHub</a>
     <a class="btn" href="https://youtu.be/edvFuOdUZNk"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>Watch the demo</a>
