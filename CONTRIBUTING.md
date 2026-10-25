@@ -25,3 +25,10 @@ or a live chain write.
 - Never commit secrets, seeds or `.env` files.
 - Chain measurements must name their profile (`v3`, `mainnet-1002`, `interim-sdk`) and be reproducible
   from a command in the README.
+
+## Releases
+
+Versions are cut automatically on every push to `main` by `.github/workflows/release.yml`, from
+[Angular-style](https://www.conventionalcommits.org/) commit prefixes: `fix:` / `perf:` bump the patch,
+`feat:` bumps the minor, `feat!:` or a `BREAKING CHANGE:` footer bumps the major. `docs:`, `chore:`, `test:`,
+`refactor:`, `style:` and `ci:` commits release nothing.

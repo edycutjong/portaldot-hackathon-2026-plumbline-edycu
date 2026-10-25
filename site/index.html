@@ -646,7 +646,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
 <span class="pr">$</span> plumbline check examples/mainnet-dapp --target v3
 <span class="cm"># … · blocking 0 · exit 0</span></pre>
     </div>
-    <footer><span>Plumbline · MIT · built for Portaldot Hacker House 2026, Modular Cloud &amp; Middleware</span><span>Faces: Sofia Sans, Sofia Sans Extra Condensed, Overpass Mono (SIL OFL 1.1) · <a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/tree/main/site">page source</a></span></footer>
+    <footer><span>Plumbline <a class="ver" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/releases/latest">v0.0.1</a> · MIT · built for Portaldot Hacker House 2026, Modular Cloud &amp; Middleware</span><span>Faces: Sofia Sans, Sofia Sans Extra Condensed, Overpass Mono (SIL OFL 1.1) · <a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/tree/main/site">page source</a></span></footer>
   </div>
 </section>
 </main>
@@ -720,6 +720,11 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
     v.replaceChildren(f); v.removeAttribute('href'); v.setAttribute('role', 'presentation');
   });
 })();
+</script>
+<script>
+fetch('https://api.github.com/repos/edycutjong/portaldot-hackathon-2026-plumbline-edycu/releases/latest').then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+  if (j && j.tag_name) document.querySelectorAll('a.ver').forEach(function (a) { a.textContent = j.tag_name; });
+}).catch(function () {});
 </script>
 </body>
 </html>
