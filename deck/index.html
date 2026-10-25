@@ -66,10 +66,10 @@ body.overview .slide{display:block;transform-origin:0 0;cursor:pointer;pointer-e
 .datum::before{content:"";position:absolute;left:11.4px;top:0;bottom:46px;border-left:1.6px solid var(--ink)}
 .datum svg{position:absolute;left:0;bottom:0;width:24px;height:48px}
 .body{position:absolute;left:190px;right:110px;top:130px;bottom:100px}
-h1{font:900 150px/.84 var(--font-display);text-transform:uppercase;letter-spacing:-.004em}
+h1{font:900 140px/.95 var(--font-display);text-transform:uppercase;letter-spacing:-.004em}
 h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.03em;vertical-align:.2em;padding:.1em .18em .06em;border:3px solid var(--ink);background:var(--page)}
 h2{font:900 104px/.88 var(--font-display);text-transform:uppercase;letter-spacing:-.003em}
-.tape{color:var(--tape-ink);background:var(--tape) center/100% 100% no-repeat;padding:0 .14em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.tape{color:var(--tape-ink);background:var(--tape) 0 70%/100% 88% no-repeat;padding:0 .14em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .lab{font:600 18px/1.4 var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .lede{font-size:30px;line-height:1.4;color:#33352F;max-width:30em}
 .lede b{color:var(--ink)}
@@ -108,10 +108,10 @@ h2{font:900 104px/.88 var(--font-display);text-transform:uppercase;letter-spacin
 .term{background:var(--ink);color:#D9DECF;border-radius:6px;box-shadow:0 30px 50px -34px rgba(20,21,17,.9);overflow:hidden}
 .term .bar{display:flex;justify-content:space-between;gap:16px;padding:12px 22px;border-bottom:1px solid #3A3D36;font:600 15px var(--font-data);letter-spacing:.08em;text-transform:uppercase;color:#B9BFAE}
 .term pre{margin:0;padding:20px 22px 22px;font:400 19px/1.7 var(--font-data);white-space:pre;color:#D9DECF}
-.term .pr{color:var(--flag)}
+.term .pr{color:#C9A45B}
 .term .cm{color:#9EA493}
 .term .ok{color:var(--page);font-weight:600}
-.term .hit{background:var(--flag);color:var(--tape-ink);padding:0 5px;font-weight:600}
+.term .hit{background:#E6EBDC;color:var(--ink);padding:0 5px;font-weight:600}
 .term .ln{display:block}
 
 /* entrance */
@@ -131,21 +131,21 @@ h2{font:900 104px/.88 var(--font-display);text-transform:uppercase;letter-spacin
 .s1 .book{margin-top:6px}
 
 /* 2 problem */
-.s2 .body{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:70px;align-items:start}
-.s2 .lede{margin-top:34px;font-size:29px}
+.s2 .body{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:70px;align-items:start}
+.s2 .lede{margin-top:40px;font-size:32px}
 .src{width:100%;border-collapse:collapse;position:relative}
 .src th{font:600 16px var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:14px 18px 10px;border-bottom:2px solid var(--ink)}
-.src td{padding:16px 18px;border-bottom:1px solid var(--blue);vertical-align:top}
+.src td{padding:26px 20px;border-bottom:1px solid var(--blue);vertical-align:top}
 .src td+td,.src th+th{border-left:1px solid var(--rose)}
-.src td.k{font:800 26px var(--font-display);text-transform:uppercase;letter-spacing:.05em;width:150px}
-.src td.was{font:400 21px/1.35 var(--font-data);color:var(--pencil)}
+.src td.key{font:800 30px var(--font-display);text-transform:uppercase;letter-spacing:.05em;width:150px}
+.src td.was{font:400 19px/1.35 var(--font-data);color:var(--pencil);white-space:nowrap}
 .src td.was s{text-decoration:line-through 2px var(--ink);color:var(--ink)}
-.src td.was small{display:block;font:italic 400 17px/1.3 var(--font-body);color:var(--muted);margin-top:4px}
-.src td.is{font:600 22px/1.35 var(--font-data);color:var(--ink)}
-.big79{position:absolute;left:190px;right:110px;bottom:100px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:46px;align-items:center;border-top:3px solid var(--ink);padding-top:26px}
-.big79 b{font:900 170px/.8 var(--font-display);white-space:nowrap}
+.src td.was small{display:block;font:italic 400 19px/1.3 var(--font-body);color:var(--muted);margin-top:6px;white-space:normal}
+.src td.is{font:600 21px/1.35 var(--font-data);color:var(--ink);overflow-wrap:anywhere}
+.big79{position:absolute;left:190px;right:110px;bottom:118px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:46px;align-items:center;border-top:3px solid var(--ink);padding-top:26px}
+.big79 b{font:900 170px/.86 var(--font-display);white-space:nowrap}
 .big79 b .ar{font-weight:700;font-size:.55em;vertical-align:.2em;margin:0 .06em}
-.big79 p{font-size:27px;line-height:1.4;color:#33352F}
+.big79 p{font-size:29px;line-height:1.4;color:#33352F}
 .big79 p b{font:inherit;font-weight:700;color:var(--ink)}
 
 /* 3 stations */
@@ -153,8 +153,9 @@ h2{font:900 104px/.88 var(--font-display);text-transform:uppercase;letter-spacin
 .s3 .stn{padding:30px 34px 34px;border-left:1px solid var(--rose);position:relative}
 .s3 .stn:first-child{border-left:0}
 .s3 .stn .no{font:900 120px/.8 var(--font-display);color:var(--ink)}
+.s3 .stn .no small{font:800 30px var(--font-display);letter-spacing:.08em;margin-right:8px;color:var(--muted);vertical-align:.1em}
 .s3 .stn h3{font:900 54px/.95 var(--font-display);text-transform:uppercase;margin:16px 0 14px}
-.s3 .stn p{font-size:24px;line-height:1.42;color:#33352F}
+.s3 .stn p{font-size:26px;line-height:1.42;color:#33352F}
 .s3 .stn .cmd{margin-top:22px;font:600 20px var(--font-data);display:inline-block;background:var(--page);border:1px solid #B9C0AC;padding:6px 12px}
 .s3 .stn .arw{position:absolute;right:-26px;top:58px;width:52px;height:52px;background:var(--bg);display:grid;place-items:center;z-index:2;font:900 44px/1 var(--font-display)}
 .vocab{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:34px}
@@ -162,114 +163,117 @@ h2{font:900 104px/.88 var(--font-display);text-transform:uppercase;letter-spacin
 .vocab span.t{border-color:transparent;background:var(--tape) center/100% 100% no-repeat;color:var(--tape-ink)}
 .vocab span.p{background:var(--ink);color:var(--page)}
 .vocab em{font:400 18px var(--font-data);font-style:normal;color:var(--muted);margin-left:8px}
-.s3 .side{margin-top:24px;font-size:23px;color:#33352F;max-width:62em}
+.s3 .side{margin-top:30px;font-size:25px;color:#33352F;max-width:62em}
 
 /* 4 spread */
-.s4 .top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:60px;align-items:end}
-.s4 h2{font-size:92px}
+.s4 .top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:50px;align-items:end}
+.s4 h2{font-size:84px;white-space:nowrap}
 .s4 .top p{font-size:23px;line-height:1.4;color:#33352F}
 .spread{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 260px minmax(0,1fr);border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);margin-top:22px}
 .spread .ph{font:600 15px var(--font-data);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:8px 4px 6px;border-bottom:1px solid var(--blue)}
-.spread .ph b{font:900 30px/1 var(--font-display);letter-spacing:.01em;color:var(--ink);margin-left:12px}
+.spread .ph b{font:900 52px/1 var(--font-display);letter-spacing:.01em;color:var(--ink);margin-left:14px;vertical-align:-.12em}
+.spread .ph.r b{background:var(--tape) center/100% 100% no-repeat;color:var(--tape-ink);padding:0 .12em}
 .spread .ph.l{text-align:right;padding-right:22px}.spread .ph.r{padding-left:22px}.spread .ph.c{text-align:center}
 .spread .row{display:contents}
 .spread .cl,.spread .cr{display:flex;flex-wrap:wrap;gap:4px;align-content:center;padding:3px 22px;border-bottom:1px solid rgba(169,191,203,.55);min-height:27px}
 .spread .cl{flex-direction:row-reverse}
-.spread .cc{font:600 16px/1 var(--font-body);text-align:center;padding:3px 8px;border-bottom:1px solid rgba(169,191,203,.55);border-left:1px solid var(--rose);border-right:1px solid var(--rose);display:flex;align-items:center;justify-content:center;gap:8px;position:relative;z-index:1}
-.spread .cc small{font:400 13px var(--font-data);color:var(--muted)}
+.spread .cc{font:600 19px/1 var(--font-body);text-align:center;padding:3px 8px;border-bottom:1px solid rgba(169,191,203,.55);border-left:1px solid var(--rose);border-right:1px solid var(--rose);display:flex;align-items:center;justify-content:center;gap:8px;position:relative;z-index:1}
+.spread .cc small{font:400 15px var(--font-data);color:var(--muted)}
 .spread .cc span{background:var(--bg);padding:0 4px}
 .k{display:block;width:14px;height:19px;border:1.4px solid #8F948A;flex:none}
 .k.p{background:var(--ink);border-color:var(--ink);position:relative}
 .k.p::after{content:"";position:absolute;left:4px;top:2px;width:4px;height:9px;border:solid var(--page);border-width:0 2px 2px 0;transform:rotate(40deg)}
 .k.f{background:linear-gradient(176deg,#FF5594,var(--flag) 55%,#E8226E);border-color:#C81E61;transform:rotate(-6deg)}
 .k.g{background:repeating-linear-gradient(135deg,var(--flag) 0 4px,#FFC2D9 4px 7px);border-color:#C81E61;transform:rotate(-6deg)}
-.legend{display:flex;gap:30px;font:600 18px var(--font-body);color:var(--pencil);margin-top:16px}
+.legend{display:flex;gap:30px;font:600 21px var(--font-body);color:var(--pencil);margin-top:16px}
 .legend span{display:inline-flex;align-items:center;gap:10px}
 .bind{position:absolute;left:50%;top:0;bottom:-22px;border-left:1.6px solid var(--ink);pointer-events:none}
 .bind svg{position:absolute;left:-12px;bottom:-4px;width:24px;height:48px}
 .active .spread .cl .k.f,.active .spread .cl .k.g{animation:flag .32s var(--ease-out) calc(.5s + var(--d)*12ms) both}
 .active .spread .cr .k.f,.active .spread .cr .k.g{animation:flag .32s var(--ease-out) 1.6s both}
 @keyframes flag{from{transform:scaleX(0) rotate(-6deg)}}
-.s4 .tally{position:absolute;left:190px;right:110px;bottom:92px;display:flex;justify-content:space-between;gap:40px;align-items:baseline;font-size:21px;color:#33352F}
-.s4 .tally b{font:900 32px/1 var(--font-display);color:var(--ink);margin-right:6px}
+.s4 .tally{position:absolute;left:190px;right:110px;bottom:88px;display:flex;justify-content:space-between;gap:40px;align-items:baseline;font-size:23px;color:#33352F}
+.s4 .tally b{font:900 36px/1 var(--font-display);color:var(--ink);margin-right:6px}
 
 /* 5 receipts */
 .rc{width:100%;border-collapse:collapse;margin-top:40px}
 .rc th{font:600 16px var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 16px;border-bottom:3px solid var(--ink)}
-.rc td{padding:16px;border-bottom:1px solid var(--blue);font:400 20px var(--font-data);vertical-align:middle}
+.rc td{padding:24px 18px;border-bottom:1px solid var(--blue);font:400 23px var(--font-data);vertical-align:middle}
 .rc td+td,.rc th+th{border-left:1px solid var(--rose)}
-.rc td.x{font:900 40px/1 var(--font-display);letter-spacing:.01em}
+.rc td.x{font:900 48px/1 var(--font-display);letter-spacing:.01em}
 .rc td a{font-weight:600}
 .rc td.ok{font:800 24px var(--font-display);letter-spacing:.08em}
 .rc td.ok .tick{display:inline-block;width:11px;height:20px;border:solid var(--ink);border-width:0 3.5px 3.5px 0;transform:rotate(40deg) translateY(-3px);margin-left:10px}
-.s5 .meta{margin-top:14px;font:400 19px var(--font-data);color:var(--muted)}
-.s5 .term{margin-top:34px}
+.s5 .meta{margin-top:16px;font:400 21px var(--font-data);color:var(--muted)}
+.s5 .term{margin-top:44px}
+.s5 .term pre{font-size:21px;line-height:1.8}
 
 /* 6 architecture */
-.s6 .body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:64px;align-items:start;top:118px}
-.s6 figure{height:842px;border:1px solid #C3CAB6;background:#F1EEE4;box-shadow:0 30px 50px -34px rgba(43,58,34,.6)}
-.s6 figure img{height:100%;width:auto;display:block}
-.s6 h2{font-size:92px;margin-top:8px}
+.s6 .body{display:grid;grid-template-columns:1060px minmax(0,1fr);gap:56px;align-items:start;top:130px}
+.s6 figure{border:1px solid #C3CAB6;background:#F1EEE4;box-shadow:0 30px 50px -34px rgba(43,58,34,.6)}
+.s6 figcaption{font:400 17px var(--font-data);color:var(--muted);padding:10px 14px;border-top:1px solid #D9D3C3;background:var(--page)}
+.s6 figure img{width:100%;height:auto;display:block}
+.s6 h2{font-size:80px;margin-top:0}
 .s6 ol{list-style:none;margin-top:40px;border-top:3px solid var(--ink)}
-.s6 li{display:grid;grid-template-columns:70px minmax(0,1fr);gap:18px;padding:20px 0;border-bottom:1px solid var(--blue)}
+.s6 li{display:grid;grid-template-columns:60px minmax(0,1fr);gap:16px;padding:16px 0;border-bottom:1px solid var(--blue)}
 .s6 li b.n{font:900 64px/.85 var(--font-display)}
-.s6 li strong{display:block;font:900 34px/1 var(--font-display);text-transform:uppercase;margin-bottom:6px}
-.s6 li span{font-size:22px;line-height:1.4;color:#33352F}
-.s6 .cap{margin-top:22px;font:400 18px/1.5 var(--font-data);color:var(--muted)}
+.s6 li strong{display:block;font:900 38px/1 var(--font-display);text-transform:uppercase;margin-bottom:6px}
+.s6 li span{font-size:24px;line-height:1.4;color:#33352F}
+.s6 .cap{margin-top:20px;font:400 18px/1.45 var(--font-data);color:var(--muted)}
 
 /* 7 why new */
 .s7 .body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:70px;align-items:start}
 .alone{margin-top:34px;border-top:3px solid var(--ink)}
-.alone div{display:grid;grid-template-columns:220px minmax(0,1fr);gap:20px;padding:14px 0;border-bottom:1px solid var(--blue)}
-.alone b{font:900 30px/1.05 var(--font-display);text-transform:uppercase}
-.alone span{font-size:22px;line-height:1.38;color:#33352F}
+.alone div{display:grid;grid-template-columns:240px minmax(0,1fr);gap:20px;padding:20px 0;border-bottom:1px solid var(--blue)}
+.alone b{font:900 34px/1.05 var(--font-display);text-transform:uppercase}
+.alone span{font-size:25px;line-height:1.38;color:#33352F}
 .join{margin-top:26px;padding:22px 26px;position:relative}
-.join p{position:relative;font-size:25px;line-height:1.42}
+.join p{position:relative;font-size:27px;line-height:1.42}
 .join p b{font-weight:700}
-.bars{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px 16px;align-items:center;font:400 19px var(--font-data);margin-top:20px}
+.bars{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px 18px;align-items:center;font:400 22px var(--font-data);margin-top:24px}
 .bars .bl{color:var(--pencil);white-space:nowrap}
 .bars .bv{text-align:right;font-weight:600}
-.bars .bt{height:20px;background:repeating-linear-gradient(135deg,var(--pencil) 0 1.5px,transparent 1.5px 6px);border:1.5px solid var(--pencil);width:calc(var(--w)*1%)}
+.bars .bt{height:24px;background:repeating-linear-gradient(135deg,var(--pencil) 0 1.5px,transparent 1.5px 6px);border:1.5px solid var(--pencil);width:calc(var(--w)*1%)}
 .active .bars .bt{animation:bar .7s var(--ease-out) calc(.3s + var(--i)*70ms) both;transform-origin:left}
 @keyframes bar{from{transform:scaleX(0)}}
 .s7 .k516{display:flex;align-items:baseline;gap:16px;margin-top:10px}
 .s7 .k516 b{font:900 96px/.9 var(--font-display)}
-.s7 .k516 span{font-size:22px;color:#33352F}
+.s7 .k516 span{font-size:24px;color:#33352F}
 .s7 .chk{display:flex;align-items:center;gap:22px;margin-top:30px;padding-top:22px;border-top:3px solid var(--ink)}
 .s7 .chk b{font:900 96px/.9 var(--font-display);white-space:nowrap}
 .s7 .chk b .ar{font-weight:700;font-size:.6em;margin:0 .1em;vertical-align:.12em}
-.s7 .chk span{font-size:22px;line-height:1.4;color:#33352F}
+.s7 .chk span{font-size:25px;line-height:1.4;color:#33352F}
 
 /* 8 ecosystem */
-.tier{display:grid;grid-template-columns:260px minmax(0,1fr);gap:30px;align-items:center;padding:22px 0;border-bottom:1px solid var(--blue)}
+.tier{display:grid;grid-template-columns:280px minmax(0,1fr);gap:30px;align-items:center;padding:32px 0;border-bottom:1px solid var(--blue)}
 .tier:first-of-type{border-top:3px solid var(--ink);margin-top:40px}
-.tier .t{font:900 36px/1 var(--font-display);text-transform:uppercase}
+.tier .t{font:900 42px/1 var(--font-display);text-transform:uppercase}
 .tier .t small{display:block;font:600 15px var(--font-data);letter-spacing:.1em;color:var(--muted);margin-top:6px}
-.tier p{font-size:24px;line-height:1.42;color:#33352F}
+.tier p{font-size:27px;line-height:1.42;color:#33352F}
 .tier p code{color:var(--ink)}
-.tier.mid{background:var(--ink);color:var(--page);padding:24px 28px;margin:0 -28px;border:0}
+.tier.mid{background:var(--ink);color:var(--page);padding:34px 28px;margin:0 -28px;border:0}
 .tier.mid .t,.tier.mid p{color:var(--page)}
 .tier.mid .t small{color:#B9BFAE}
 .tier.mid p code{color:var(--page)}
 .tier.mid p b{font:900 40px/1 var(--font-display);letter-spacing:.04em;text-transform:uppercase}
-.s8 .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px;margin-top:30px}
+.s8 .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:50px;margin-top:44px}
 .s8 .two div{border-top:3px solid var(--ink);padding-top:14px}
-.s8 .two b{display:block;font:900 32px/1 var(--font-display);text-transform:uppercase;margin-bottom:8px}
-.s8 .two span{font-size:22px;line-height:1.42;color:#33352F}
+.s8 .two b{display:block;font:900 38px/1 var(--font-display);text-transform:uppercase;margin-bottom:8px}
+.s8 .two span{font-size:25px;line-height:1.42;color:#33352F}
 
 /* 9 users */
 .who{width:100%;border-collapse:collapse;margin-top:40px}
 .who th{font:600 16px var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 16px;border-bottom:3px solid var(--ink)}
-.who td{padding:18px 16px;border-bottom:1px solid var(--blue);font-size:23px;line-height:1.36;vertical-align:top;color:#33352F}
+.who td{padding:20px 18px;border-bottom:1px solid var(--blue);font-size:25px;line-height:1.36;vertical-align:top;color:#33352F}
 .who td+td,.who th+th{border-left:1px solid var(--rose)}
-.who td.w{font:900 30px/1.05 var(--font-display);text-transform:uppercase;color:var(--ink);width:330px}
+.who td.w{font:900 34px/1.05 var(--font-display);text-transform:uppercase;color:var(--ink);width:330px}
 .who td.w small{display:block;font:600 15px var(--font-data);letter-spacing:.08em;color:var(--muted);margin-top:6px}
 .who td.st{font:800 24px var(--font-display);letter-spacing:.08em;white-space:nowrap;color:var(--ink)}
 .who td.st.today span{background:var(--ink);color:var(--page);padding:4px 10px}
 .who td.st.plan span{border:2px dashed var(--ink);padding:3px 9px}
-.s9 .model{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:50px;margin-top:30px}
-.s9 .model b{display:block;font:900 32px/1 var(--font-display);text-transform:uppercase;margin-bottom:8px}
-.s9 .model span{font-size:23px;line-height:1.42;color:#33352F}
+.s9 .model{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:50px;margin-top:34px}
+.s9 .model b{display:block;font:900 38px/1 var(--font-display);text-transform:uppercase;margin-bottom:8px}
+.s9 .model span{font-size:25px;line-height:1.42;color:#33352F}
 
 /* 10 status — the closing cover */
 .s10{background:var(--cover);background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 3px);color:var(--cover-ink)}
@@ -280,20 +284,20 @@ h2{font:900 104px/.88 var(--font-display);text-transform:uppercase;letter-spacin
 .s10 .body{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:70px;align-items:start}
 .s10 h2{color:var(--cover-ink)}
 .s10 .st{margin-top:30px;border-top:3px solid var(--cover-ink)}
-.s10 .st div{display:grid;grid-template-columns:170px minmax(0,1fr);gap:18px;padding:12px 0;border-bottom:1px solid #4A5947;align-items:baseline}
-.s10 .st b{font:900 46px/1 var(--font-display);color:#E8D3A2}
-.s10 .st span{font-size:22px;line-height:1.38;color:#C8CFBC}
-.s10 .next{margin-top:24px;font-size:21px;line-height:1.5;color:#C8CFBC}
+.s10 .st div{display:grid;grid-template-columns:190px minmax(0,1fr);gap:18px;padding:20px 0;border-bottom:1px solid #4A5947;align-items:baseline}
+.s10 .st b{font:900 56px/1 var(--font-display);color:#E8D3A2}
+.s10 .st span{font-size:25px;line-height:1.38;color:#C8CFBC}
+.s10 .next{margin-top:30px;font-size:24px;line-height:1.6;color:#C8CFBC}
 .s10 .next li{list-style:none}
-.s10 .next em{font:800 italic 22px var(--font-display);letter-spacing:.04em;color:var(--cover-ink);margin-right:8px;font-style:italic}
-.s10 pre{background:#1E271F;border:1px solid #42513F;padding:16px 20px;font:400 18px/1.7 var(--font-data);color:#DDE3D2;white-space:pre}
-.s10 pre .pr{color:var(--flag)}.s10 pre .cm{color:#93A08E}
-.s10 .qr{display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;align-items:center;margin-top:26px}
-.s10 .qr svg{width:200px;height:200px;background:var(--cover-ink);padding:10px}
-.s10 .qr p{font:400 19px/1.55 var(--font-data);color:#C8CFBC}
-.s10 .qr p b{display:block;font:900 30px/1.1 var(--font-display);color:var(--cover-ink);letter-spacing:.02em}
+.s10 .next em{font:800 italic 26px var(--font-display);letter-spacing:.04em;color:var(--cover-ink);margin-right:8px;font-style:italic}
+.s10 pre{background:#1E271F;border:1px solid #42513F;padding:20px 24px;font:400 21px/1.8 var(--font-data);color:#DDE3D2;white-space:pre}
+.s10 pre .pr{color:#C9A45B}.s10 pre .cm{color:#93A08E}
+.s10 .qr{display:grid;grid-template-columns:250px minmax(0,1fr);gap:30px;align-items:center;margin-top:36px}
+.s10 .qr svg{width:250px;height:250px;background:var(--cover-ink);padding:10px}
+.s10 .qr p{font:400 21px/1.55 var(--font-data);color:#C8CFBC}
+.s10 .qr p b{display:block;font:900 38px/1.1 var(--font-display);color:var(--cover-ink);letter-spacing:.02em}
 .s10 .qr a{color:var(--cover-ink)}
-.s10 .ai{margin-top:20px;font-size:17px;line-height:1.45;color:#B3BBA7}
+.s10 .ai{margin-top:30px;font-size:21px;line-height:1.45;color:#B3BBA7}
 
 /* presenter notes, overview, debug */
 .speaker-notes{display:none}
@@ -322,7 +326,7 @@ body.idle .hint{opacity:0}
   <div class="body">
     <div>
       <p class="lab rise">Portaldot Hacker House 2026 · Modular Cloud &amp; Middleware</p>
-      <h1 class="rise d1">The docs say <span class="call">transfer</span>. V3 has <span class="tape">never heard of&nbsp;it.</span></h1>
+      <h1 class="rise d1">The docs say<br> <span class="call">transfer</span>. V3<br> has <span class="tape">never heard of&nbsp;it.</span></h1>
       <p class="sub rise d2"><b>Plumbline</b> checks each call Portaldot documents against the runtime’s own metadata, and proves calls with real transactions read back from their blocks.</p>
     </div>
     <div class="paper book rise d2">
@@ -333,7 +337,7 @@ body.idle .hint{opacity:0}
         <tr class="flag"><td class="sta"><span class="s">1</span></td><td class="c"><span class="flagband" aria-hidden="true"></span><span class="s"><small>Balances</small><s>transfer</s><em class="note">V3 has <code>transfer_allow_death</code>, <code>transfer_keep_alive</code> ↓</em></span></td><td class="v">ABSENT</td><td class="r">no such call</td></tr>
         <tr><td class="sta"><span class="s">2</span></td><td class="c"><span class="s"><small>Balances</small>transfer_all</span></td><td class="v">UNPROVEN</td><td class="r">present · no tx</td></tr>
         <tr><td class="sta"><span class="s">3</span></td><td class="c"><span class="s"><small>Balances</small>transfer_keep_alive</span></td><td class="v">PROVEN<span class="tick" aria-hidden="true"></span></td><td class="r"><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xf71728583059750fbdb8095730835eae53955148675b11cae98c90d3374b4c1d" aria-label="extrinsic 106425-1 in the node console">106425-1</a></td></tr>
-        <tr class="flag"><td class="sta"><span class="s">4</span></td><td class="c"><span class="flagband f2" aria-hidden="true"></span><span class="s"><small>ElectionProviderMultiPhase</small><s>governance_fallback</s><em class="note">docs: 2 args · V3: none</em></span></td><td class="v">ARG_DRIFT</td><td class="r">2 args → 0</td></tr>
+        <tr class="flag"><td class="sta"><span class="s">4</span></td><td class="c"><span class="flagband f2" aria-hidden="true"></span><span class="s"><small>ElectionProviderMultiPhase</small><s>governance_fallback</s><em class="note">docs: 2 args · V3: none</em></span></td><td class="v">ARG_DRIFT</td><td class="r">2&nbsp;args&nbsp;→&nbsp;0</td></tr>
         <tr><td class="sta"><span class="s">5</span></td><td class="c"><span class="s"><small>System</small>remark_with_event</span></td><td class="v">PROVEN<span class="tick" aria-hidden="true"></span></td><td class="r"><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xac1f0030783d7470925fb39b691046d58418ac138c4d603916506cb345353ec2" aria-label="extrinsic 106424-1 in the node console">106424-1</a></td></tr>
         <tr><td class="sta"><span class="s">6</span></td><td class="c"><span class="s"><small>Utility</small>batch_all</span></td><td class="v">PROVEN<span class="tick" aria-hidden="true"></span></td><td class="r"><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0x06a069139c6457bdcd841dd7cb274d986b621538befea8ecb0471988764319ab" aria-label="extrinsic 106426-1 in the node console">106426-1</a></td></tr>
         </tbody>
@@ -356,10 +360,10 @@ summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-U
       <table class="src">
         <thead><tr><th></th><th>What the sources said</th><th>What V3 reports</th></tr></thead>
         <tbody>
-          <tr><td class="k">Endpoint</td><td class="was"><s>testnetv3-node.feso-apps.xyz</s><small>V3 testnet guide §1.1 · no DNS on 2026-10-14</small></td><td class="is">test-node-v3.portaldot.dev</td></tr>
-          <tr><td class="k">Spec</td><td class="was"><s>portaldotV3 / 3000</s><small>a third-party README, not re-verified</small></td><td class="is">portaldot-v3 / 3002</td></tr>
-          <tr><td class="k">Symbol</td><td class="was"><s>tPOTv3</s><small>V3 testnet guide §1.1, §3.1</small></td><td class="is">tPOT</td></tr>
-          <tr><td class="k">Pallets</td><td class="was"><s>70</s><small>the same README, not re-verified</small></td><td class="is">69</td></tr>
+          <tr><td class="key">Endpoint</td><td class="was"><s>testnetv3-node.feso-apps.xyz</s><small>V3 testnet guide §1.1 · no DNS on 2026-10-14</small></td><td class="is">test-node-v3.portaldot.dev</td></tr>
+          <tr><td class="key">Spec</td><td class="was"><s>portaldotV3 / 3000</s><small>a third-party README, not re-verified</small></td><td class="is">portaldot-v3 / 3002</td></tr>
+          <tr><td class="key">Symbol</td><td class="was"><s>tPOTv3</s><small>V3 testnet guide §1.1, §3.1</small></td><td class="is">tPOT</td></tr>
+          <tr><td class="key">Pallets</td><td class="was"><s>70</s><small>the same README, not re-verified</small></td><td class="is">69</td></tr>
         </tbody>
       </table>
     </div>
@@ -373,9 +377,9 @@ summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-U
   <div class="body">
     <h2 class="rise">Call, verdict, proof</h2>
     <div class="run3 rise d1">
-      <div class="stn"><div class="no">01</div><h3>Documented call</h3><p>22 mainnet docs pages give 196 calls. The V3 testnet guide at <code>d671a32</code> gives 46 <code>compose_call</code> sites and 12 FAQ modules, read by AST and never executed.</p><span class="cmd">plumbline docs · guide</span><span class="arw" aria-hidden="true">→</span></div>
-      <div class="stn"><div class="no">02</div><h3>Verdict</h3><p>Each entry is joined to one runtime’s metadata and gets exactly one verdict, stamped with profile, spec version and metadata hash. Same inputs, byte-identical ledger.</p><span class="cmd">plumbline plumb</span><span class="arw" aria-hidden="true">→</span></div>
-      <div class="stn"><div class="no">03</div><h3>Proof</h3><p>A canary extrinsic is signed and sent, its receipt kept, then re-read from its block by hash in a new process. PROVEN needs that receipt.</p><span class="cmd">plumbline canary · readback</span></div>
+      <div class="stn"><div class="no"><small>Sta.</small>01</div><h3>Documented call</h3><p>22 mainnet docs pages give 196 calls. The V3 testnet guide at <code>d671a32</code> gives 46 <code>compose_call</code> sites and 12 FAQ modules, read by AST and text, never executed.</p><span class="cmd">plumbline docs · guide</span><span class="arw" aria-hidden="true">→</span></div>
+      <div class="stn"><div class="no"><small>Sta.</small>02</div><h3>Verdict</h3><p>Each entry is joined to one runtime’s metadata and gets exactly one verdict, stamped with profile, spec version and metadata hash. Same inputs, byte-identical ledger.</p><span class="cmd">plumbline plumb</span><span class="arw" aria-hidden="true">→</span></div>
+      <div class="stn"><div class="no"><small>Sta.</small>03</div><h3>Proof</h3><p>A canary extrinsic is signed and sent, its receipt kept, then re-read from its block by hash in a new process. PROVEN needs that receipt.</p><span class="cmd">plumbline canary · readback</span></div>
     </div>
     <div class="vocab rise d2"><span class="p">PROVEN</span><span>UNPROVEN</span><span>ARGS-UNCHECKED</span><span class="t">ARG_DRIFT</span><span class="t">DRIFTED</span><span class="t">ABSENT</span><em>verdicts from plumbline/verdicts.py</em></div>
     <p class="side rise d3">Beside the flow: <code>plumbline diff A B</code> lists what moved between two runtimes; <code>plumbline check &lt;dApp&gt; --target v3</code> classifies a dApp’s call sites against one runtime and exits 0 / 1 / 2.</p>
@@ -386,7 +390,7 @@ summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-U
 <!-- 4 · the frozen slide: the open spread -->
 <section class="slide s4" data-title="V3 findings">
   <div class="body">
-    <div class="top rise"><h2>Same 196 calls.<br>Two runtimes.</h2><p>Every call in Portaldot’s mainnet docs, booked by docs page. Left: hung against mainnet spec 1002. Right: the same calls against the V3 testnet, spec 3002, on 2026-10-19.</p></div>
+    <div class="top rise"><h2>Same 196 calls. Two runtimes.</h2><p>Every call in Portaldot’s mainnet docs, booked by docs page. Left: hung against mainnet spec 1002. Right: the same calls against the V3 testnet, spec 3002, on 2026-10-19.</p></div>
     <div class="spread rise d1">
       <div class="ph l">Mainnet · spec 1002<b>79 flagged</b></div><div class="ph c">Docs page</div><div class="ph r">V3 testnet · spec 3002<b>2 flagged</b></div>
       <div class="row"><div class="cl"><i class="k" data-i="0"></i><i class="k f" data-i="1" style="--d:0"></i><i class="k" data-i="2"></i><i class="k" data-i="3"></i><i class="k" data-i="4"></i><i class="k" data-i="5"></i><i class="k f" data-i="6" style="--d:1"></i><i class="k f" data-i="7" style="--d:2"></i><i class="k f" data-i="8" style="--d:3"></i><i class="k" data-i="9"></i><i class="k" data-i="10"></i><i class="k" data-i="11"></i><i class="k" data-i="12"></i><i class="k" data-i="13"></i><i class="k" data-i="14"></i><i class="k" data-i="15"></i><i class="k" data-i="16"></i><i class="k" data-i="17"></i><i class="k f" data-i="18" style="--d:4"></i><i class="k f" data-i="19" style="--d:5"></i><i class="k" data-i="20"></i><i class="k f" data-i="21" style="--d:6"></i><i class="k" data-i="22"></i><i class="k f" data-i="23" style="--d:7"></i><i class="k" data-i="24"></i><i class="k" data-i="25"></i><i class="k f" data-i="26" style="--d:8"></i><i class="k f" data-i="27" style="--d:9"></i><i class="k" data-i="28"></i><i class="k f" data-i="29" style="--d:10"></i><i class="k" data-i="30"></i><i class="k" data-i="31"></i><i class="k" data-i="32"></i></div><div class="cc"><span>Assets</span> <small>33</small></div><div class="cr"><i class="k" data-i="0"></i><i class="k" data-i="1"></i><i class="k" data-i="2"></i><i class="k" data-i="3"></i><i class="k" data-i="4"></i><i class="k" data-i="5"></i><i class="k" data-i="6"></i><i class="k" data-i="7"></i><i class="k" data-i="8"></i><i class="k" data-i="9"></i><i class="k" data-i="10"></i><i class="k" data-i="11"></i><i class="k" data-i="12"></i><i class="k" data-i="13"></i><i class="k" data-i="14"></i><i class="k" data-i="15"></i><i class="k" data-i="16"></i><i class="k" data-i="17"></i><i class="k" data-i="18"></i><i class="k" data-i="19"></i><i class="k" data-i="20"></i><i class="k" data-i="21"></i><i class="k" data-i="22"></i><i class="k" data-i="23"></i><i class="k" data-i="24"></i><i class="k" data-i="25"></i><i class="k" data-i="26"></i><i class="k" data-i="27"></i><i class="k" data-i="28"></i><i class="k" data-i="29"></i><i class="k" data-i="30"></i><i class="k" data-i="31"></i><i class="k" data-i="32"></i></div></div>
@@ -439,7 +443,7 @@ summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-U
 <!-- 6 · architecture -->
 <section class="slide s6" data-title="Architecture">
   <div class="body">
-    <figure class="rise"><img src="../docs/architecture.png" alt="Plumbline architecture: inputs (dApp directory, mainnet docs, V3 testnet guide) feed docs.py and guide.py, plumb.py writes the drift ledger, metadata.py reads the chains, canary.py sends and reads back receipts into docs/PROOF.md"></figure>
+    <figure class="rise"><img src="assets/architecture-core.png" alt="Detail of the Plumbline architecture drawing, core flow: docs.py and guide.py feed plumb.py, which joins each entry to the stored V3 metadata from metadata.py and writes ledger_v3.json; canary.py signs, submits and reads back receipts into docs/PROOF.md"><figcaption>Detail of docs/architecture.png (earlier sheet style): the core flow. The full drawing adds the inputs, check.py, diff.py and the chains.</figcaption></figure>
     <div>
       <h2 class="rise d1">Sources, engine, evidence</h2>
       <ol class="rise d2">
@@ -447,7 +451,7 @@ summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-U
         <li><b class="n">2</b><div><strong>Verdict</strong><span><code>plumb.py</code> joins each entry to one runtime: 549 rows in <code>evidence/ledger_v3.json</code>.</span></div></li>
         <li><b class="n">3</b><div><strong>Proof</strong><span><code>canary.py</code> signs, submits, keeps the receipt and reads it back: 3 / 3 in <code>docs/PROOF.md</code>.</span></div></li>
       </ol>
-      <p class="cap rise d3">Sources are untrusted data: the guide is cloned outside the repo and only parsed. Dashed boxes are planned, not built. Drawn from the code: docs/architecture.png.</p>
+      <p class="cap rise d3">The guide is untrusted data: cloned outside the repo, parsed, never run.</p>
     </div>
   </div>
   <aside class="speaker-notes">Sources on the left are untrusted data: the guide is cloned outside the repo and only parsed. Every engine module writes a committed artifact, so each figure in this deck has a file behind it. The one planned piece, a Ledger contract on V3, is drawn dashed.</aside>
@@ -520,7 +524,7 @@ summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-U
       <div class="st rise d1">
         <div><b>549</b><span>verdict rows on V3, spec 3002, byte-identical on re-run</span></div>
         <div><b>3 / 3</b><span>V3 transactions read back from their blocks</span></div>
-        <div><b>263</b><span>tests pass (evidence/pytest_checkin.txt) · 116 commits from 2026-10-14 to build 2460a0d</span></div>
+        <div><b>263</b><span>offline tests passed in the stored run (evidence/pytest_checkin.txt, at c484fcb) · 116 commits from 2026-10-14 to build 2460a0d</span></div>
       </div>
       <ul class="next rise d2">
         <li><em>planned</em>a canary per documented call (3 of 196 PROVEN today)</li>
