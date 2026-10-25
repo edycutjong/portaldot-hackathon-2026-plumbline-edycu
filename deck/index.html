@@ -61,6 +61,7 @@ body.overview .slide{display:block;transform-origin:0 0;cursor:pointer;pointer-e
 .hdr{position:absolute;left:190px;right:110px;top:50px;display:flex;justify-content:space-between;align-items:baseline;font:600 18px var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--ink);padding-bottom:12px}
 .hdr b{font:900 28px/1 var(--font-display);letter-spacing:.06em;color:var(--ink)}
 .ftr{position:absolute;left:190px;right:110px;bottom:38px;display:flex;justify-content:space-between;font:400 16px var(--font-data);color:var(--muted);letter-spacing:.04em}
+.ftr .ver{color:inherit;text-decoration:underline;text-underline-offset:3px}
 .ftr .pg{font:900 26px/1 var(--font-display);color:var(--ink);letter-spacing:.04em}
 .datum{position:absolute;left:74px;top:0;width:24px;height:calc(var(--drop,760px) + 48px);transform-origin:50% 0}
 .datum::before{content:"";position:absolute;left:11.4px;top:0;bottom:46px;border-left:1.6px solid var(--ink)}
@@ -573,7 +574,7 @@ summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-U
     s.prepend(h);
     const d = document.createElement('div'); d.className = 'datum'; d.innerHTML = bob; s.prepend(d);
     const f = document.createElement('footer'); f.className = 'ftr';
-    f.innerHTML = '<span>Portaldot Hacker House 2026 · Modular Cloud &amp; Middleware</span><span>v0.0.1 · facts at build 2460a0d</span><span class="pg">' + pad(i + 1) + ' / ' + pad(N) + '</span>';
+    f.innerHTML = '<span>Portaldot Hacker House 2026 · Modular Cloud &amp; Middleware</span><span><a class="ver" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/releases/latest">v0.0.1</a> · facts at build 2460a0d</span><span class="pg">' + pad(i + 1) + ' / ' + pad(N) + '</span>';
     s.appendChild(f);
   });
   let cur = 0, overview = false;
@@ -620,6 +621,9 @@ summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-U
   let idle; const wake = () => { document.body.classList.remove('idle'); clearTimeout(idle); idle = setTimeout(() => document.body.classList.add('idle'), 2500); };
   addEventListener('mousemove', wake); wake();
   fit(); show(fromHash());
+  fetch('https://api.github.com/repos/edycutjong/portaldot-hackathon-2026-plumbline-edycu/releases/latest').then(r => r.ok ? r.json() : null).then(j => {
+    if (j && j.tag_name) document.querySelectorAll('.ftr .ver').forEach(a => { a.textContent = j.tag_name; });
+  }).catch(() => {});
 })();
 </script>
 </body>
