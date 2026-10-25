@@ -12,11 +12,13 @@
   [![Pitch Deck](https://img.shields.io/badge/📊_Pitch-Deck-D9A13B?style=for-the-badge)](https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/pitch-deck.pdf)
   [![Demo Video](https://img.shields.io/badge/🎬_Demo-Video-ef4444?style=for-the-badge)](https://youtu.be/edvFuOdUZNk)
   [![DoraHacks BUIDL](https://img.shields.io/badge/DoraHacks-BUIDL_50127-3A3240?style=for-the-badge)](https://dorahacks.io/build/50127)
+  [![Portaldot Hacker House 2026](https://img.shields.io/badge/🏆_Portaldot-Hacker_House_2026-8b5cf6?style=for-the-badge)](https://dorahacks.io/hackathon/portaldot-hacker-house-2026/detail)
 
   <br/>
 
   [![CI](https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/actions/workflows/ci.yml)
   ![status](https://img.shields.io/badge/status-prototype-orange?style=flat)
+  [![Release](https://img.shields.io/github/v/release/edycutjong/portaldot-hackathon-2026-plumbline-edycu?sort=semver)](https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/releases/latest)
   ![tests](https://img.shields.io/badge/tests-263%20passing-brightgreen?style=flat)
   ![license](https://img.shields.io/badge/license-MIT-blue?style=flat)
   ![python](https://img.shields.io/badge/python-3.10%2B-blue?style=flat)
