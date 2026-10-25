@@ -55,7 +55,7 @@ html{background:var(--bg);color:var(--ink);font:400 18px/1.55 var(--font-body);-
 body{background-image:repeating-linear-gradient(to bottom,transparent 0 31px,rgba(169,191,203,.42) 31px 32px);overflow-x:clip}
 ::selection{background:var(--flag);color:var(--tape-ink)}
 a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
-a:hover{text-decoration-color:var(--flag);text-decoration-thickness:3px}
+a:hover{text-decoration-thickness:2px}
 :focus-visible{outline:3px solid var(--ink);outline-offset:3px;border-radius:2px}
 code,.mono{font-family:var(--font-data);font-size:.86em;letter-spacing:-.01em}
 img{max-width:100%;display:block}
@@ -65,15 +65,15 @@ img{max-width:100%;display:block}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .skip{position:absolute;left:12px;top:-60px;background:var(--ink);color:var(--page);padding:10px 14px;z-index:9;font-weight:700}
 .skip:focus{top:12px}
-.tape{color:var(--tape-ink);background:var(--tape) center/100% 100% no-repeat;padding:0 .14em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.tape{color:var(--tape-ink);background:var(--tape) 0 70%/100% 88% no-repeat;padding:0 .14em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 
 /* nav */
 nav{display:flex;align-items:center;gap:22px;max-width:1280px;margin:0 auto;padding:18px 36px}
 .mark{display:flex;align-items:center;gap:10px;font:900 32px/1 var(--font-display);text-transform:uppercase;letter-spacing:.02em;text-decoration:none}
 .mark svg{width:16px;height:30px}
 nav .links{margin-left:auto;display:flex;gap:20px;align-items:center;font:700 14px var(--font-body);text-transform:uppercase;letter-spacing:.07em}
-nav .links a{text-decoration:none;padding:6px 0;background:linear-gradient(var(--flag),var(--flag)) 0 100%/0 3px no-repeat;transition:background-size .2s var(--ease-out)}
-nav .links a:hover,nav .links a:focus-visible{background-size:100% 3px}
+nav .links a{text-decoration:none;padding:6px 0;background:linear-gradient(var(--ink),var(--ink)) 0 100%/0 2px no-repeat;transition:background-size .2s var(--ease-out)}
+nav .links a:hover,nav .links a:focus-visible{background-size:100% 2px}
 nav .links a.gh{padding:8px 14px;border:2px solid var(--ink);background:none;transition:transform .15s,box-shadow .15s}
 nav .links a.gh:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink)}
 
@@ -82,13 +82,13 @@ nav .links a.gh:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--
 .btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink);text-decoration:none}
 .btn:active{transform:translate(0,0);box-shadow:0 0 0 var(--ink)}
 .btn.p{background:var(--ink);color:var(--page)}
-.btn.p:hover{box-shadow:4px 4px 0 var(--flag)}
+.btn.p:hover{box-shadow:4px 4px 0 var(--bob)}
 .btn svg{width:14px;height:14px;flex:none}
 
 /* hero */
 .hero{max-width:1280px;margin:0 auto;padding:22px 36px 84px;display:grid;grid-template-columns:minmax(0,1.1fr) 40px minmax(0,1fr);grid-template-rows:auto auto auto auto 1fr;grid-template-areas:"lab gut book" "h1 gut book" "sub gut book" "cta gut book" "strip gut book";column-gap:24px;align-items:start}
 .hero>.lab{grid-area:lab;padding-top:14px}
-h1{grid-area:h1;font:900 clamp(60px,6.9vw,106px)/.86 var(--font-display);text-transform:uppercase;letter-spacing:-.004em;margin:16px 0 30px;text-wrap:balance}
+h1{grid-area:h1;font:900 clamp(60px,6.9vw,106px)/.95 var(--font-display);text-transform:uppercase;letter-spacing:-.004em;margin:16px 0 30px;text-wrap:balance}
 h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.03em;vertical-align:.2em;padding:.1em .18em .06em;border:2px solid var(--ink);background:var(--page);white-space:nowrap}
 .sub{grid-area:sub;max-width:33em;color:#33352F;font-size:19px}
 .sub b{font-weight:700;color:var(--ink)}
@@ -114,12 +114,12 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
 .book .hd{position:relative;display:flex;justify-content:space-between;align-items:end;gap:12px;padding:18px 20px 12px;border-bottom:2px solid var(--ink)}
 .book .hd b{font:900 28px/1 var(--font-display);text-transform:uppercase;letter-spacing:.01em}
 .book table{position:relative;width:100%;border-collapse:collapse;font-size:15px}
-.book th{font:600 11.5px var(--font-data);letter-spacing:.1em;color:var(--muted);text-align:left;padding:10px 12px 8px;border-bottom:1px solid var(--blue);text-transform:uppercase}
+.book th{font:600 12px var(--font-data);letter-spacing:.1em;color:var(--muted);text-align:left;padding:10px 12px 8px;border-bottom:1px solid var(--blue);text-transform:uppercase}
 .book td{padding:11px 12px;border-bottom:1px solid var(--blue);vertical-align:top;color:var(--pencil)}
 .book th+th,.book td+td{border-left:1px solid var(--rose)}
 .book td.sta{font:800 18px/1.2 var(--font-display);color:var(--muted);width:44px}
 .book td.c{font:400 14px/1.35 var(--font-data);color:var(--ink)}
-.book td.c small{display:block;font:600 11px var(--font-body);color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+.book td.c small{display:block;font:600 12px var(--font-body);color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
 .book td.c s{text-decoration:line-through 1.5px var(--ink)}
 .book .note{display:block;font:800 italic 17px/1.15 var(--font-display);color:var(--ink);margin-top:5px;letter-spacing:.01em}
 .book .note code{font:inherit;font-style:italic;text-transform:none}
@@ -178,7 +178,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
 .spread .cl,.spread .cr{display:flex;flex-wrap:wrap;gap:3px;align-content:center;padding:5px 16px;border-bottom:1px solid rgba(169,191,203,.55);min-height:30px}
 .spread .cl{flex-direction:row-reverse}
 .spread .cc{font:600 12.5px/1.15 var(--font-body);text-align:center;letter-spacing:.02em;padding:6px 8px;border-bottom:1px solid rgba(169,191,203,.55);border-left:1px solid var(--rose);border-right:1px solid var(--rose);display:flex;align-items:center;justify-content:center;gap:6px;color:var(--ink);position:relative;z-index:1}
-.spread .cc small{font:400 11px var(--font-data);color:var(--muted)}
+.spread .cc small{font:400 12px var(--font-data);color:var(--muted)}
 .spread .cc span{background:var(--page);padding:0 3px}
 .k{display:block;width:11px;height:16px;border:1px solid #8F948A;background:transparent;flex:none;transition:transform .12s}
 .k.p{background:var(--ink);border-color:var(--ink);position:relative}
@@ -208,16 +208,16 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
 .proofband .top{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;align-items:end;margin-bottom:34px}
 .proofband .top p{max-width:34em;color:#33352F}
 .term{background:var(--ink);color:#E6EBDC;border-radius:4px;box-shadow:0 30px 50px -34px rgba(20,21,17,.9);overflow:hidden}
-.term .bar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid #3A3D36;font:600 11.5px var(--font-data);letter-spacing:.08em;text-transform:uppercase;color:#B9BFAE}
+.term .bar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid #3A3D36;font:600 12px var(--font-data);letter-spacing:.08em;text-transform:uppercase;color:#B9BFAE}
 .term .bar i{font-style:normal;color:#E6EBDC}
 .term pre{margin:0;padding:18px 18px 20px;font:400 13.5px/1.75 var(--font-data);overflow-x:auto;color:#D9DECF;scrollbar-color:#6E7366 var(--ink)}
-.term .pr{color:var(--flag)}
+.term .pr{color:#C9A45B}
 .term .cm{color:#9EA493}
 .term .ok{color:var(--page);font-weight:600}
-.term .hit{background:var(--flag);color:var(--tape-ink);padding:0 4px;font-weight:600}
+.term .hit{background:#E6EBDC;color:var(--ink);padding:0 4px;font-weight:600}
 .term .ln{display:block;min-height:1.75em}
 .term.armed .ln{visibility:hidden}
-.term .caret{display:inline-block;width:.6em;height:1.1em;background:var(--flag);vertical-align:-.18em;margin-left:2px;animation:blink 1s steps(1) infinite}
+.term .caret{display:inline-block;width:.6em;height:1.1em;background:#E6EBDC;vertical-align:-.18em;margin-left:2px;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 .pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;margin-top:26px}
 .shot{background:var(--page);border:1px solid #C3CAB6;padding:12px 12px 14px;box-shadow:0 22px 40px -30px rgba(43,58,34,.55)}
@@ -227,7 +227,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
 .video{position:relative;display:block;aspect-ratio:16/9;background:#1B1D19;overflow:hidden;color:var(--page);text-decoration:none;border:0;padding:0;width:100%;cursor:pointer}
 .video img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease-out),filter .3s}
 .video:hover img{transform:scale(1.02);filter:brightness(.9)}
-.video .play{position:absolute;left:50%;top:50%;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;background:var(--flag);display:grid;place-items:center;box-shadow:0 10px 30px -8px rgba(0,0,0,.6);transition:transform .2s var(--ease-out)}
+.video .play{position:absolute;left:50%;top:50%;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;background:var(--page);border:3px solid var(--ink);display:grid;place-items:center;box-shadow:0 10px 30px -8px rgba(0,0,0,.6);transition:transform .2s var(--ease-out)}
 .video:hover .play{transform:scale(1.08)}
 .video .play svg{width:30px;height:30px;margin-left:6px}
 .video .dur{position:absolute;right:10px;bottom:10px;background:rgba(20,21,17,.86);color:var(--page);font:600 12px var(--font-data);padding:4px 8px;letter-spacing:.05em}
@@ -251,12 +251,15 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
 .cell h3{font:900 34px/.95 var(--font-display);text-transform:uppercase;margin:8px 0 10px;letter-spacing:.005em}
 .cell p{color:#33352F;font-size:16.5px;line-height:1.5}
 .chip{display:inline-block;margin-top:14px;font:600 12px var(--font-data);background:var(--bg);border:1px solid #B9C0AC;padding:4px 8px;color:var(--ink)}
-.c-plumb{grid-column:span 7;grid-row:span 2;display:flex;flex-direction:column}
-.c-plumb figure{margin-top:18px;border:1px solid #C3CAB6;background:#F1EEE4;overflow:hidden}
+.c-plumb{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);grid-template-rows:auto auto auto 1fr;gap:0 34px;align-items:start}
+.c-plumb>:not(figure){grid-column:1}
+.c-plumb .chip{justify-self:start}
+.c-plumb>figure{grid-column:2;grid-row:1/span 4;margin-top:0}
+.c-plumb figure{border:1px solid #C3CAB6;background:#F1EEE4;overflow:hidden}
 .c-plumb figure img{width:100%;height:auto}
 .c-plumb figcaption{font:400 12px var(--font-data);color:var(--muted);padding:8px 12px;border-top:1px solid #D9D3C3;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--page)}
 .c-plumb figcaption a{color:var(--ink);font-weight:600}
-.c-docs,.c-guide{grid-column:span 5}
+.c-docs,.c-guide{grid-column:span 6}
 .c-prove{grid-column:span 5}
 .c-diff{grid-column:span 7}
 .c-prove .rcpt-mini{margin-top:14px;font:400 13px/1.7 var(--font-data);border-top:1px solid var(--blue)}
@@ -316,11 +319,11 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
 .cover .grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.3fr);gap:44px;align-items:start}
 .cover p{color:#C8CFBC;max-width:30em;margin-top:18px}
 .cover pre{background:#1E271F;border:1px solid #42513F;padding:18px 18px;font:400 13px/1.8 var(--font-data);color:#DDE3D2;overflow-x:auto;white-space:pre;scrollbar-color:#6E7366 #1E271F}
-.cover pre .pr{color:var(--flag)}
+.cover pre .pr{color:#C9A45B}
 .cover pre .cm{color:#93A08E}
 .cover .cta{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px}
 .cover .btn{color:var(--cover-ink);border-color:var(--cover-ink)}
-.cover .btn:hover{box-shadow:4px 4px 0 var(--flag)}
+.cover .btn:hover{box-shadow:4px 4px 0 #C9A45B}
 .cover .btn.p{background:var(--cover-ink);color:var(--cover)}
 .cover footer{margin-top:80px;padding-top:20px;border-top:1px solid #4A5947;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font:400 12.5px/1.6 var(--font-data);color:#B3BBA7}
 .cover footer a{color:var(--cover-ink)}
@@ -342,10 +345,11 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
   .sphead,.proofband .top,.honest .wrap,.faq .wrap,.cover .grid{grid-template-columns:minmax(0,1fr);gap:22px}
   .pair{grid-template-columns:minmax(0,1fr)}
   .c-plumb,.c-docs,.c-guide,.c-prove,.c-diff{grid-column:1/-1;grid-row:auto}
+  .c-plumb{display:block}.c-plumb>figure{margin-top:18px}
   .spread{grid-template-columns:minmax(0,1fr)}
   .spread .ph.c,.spread .ph.r{display:none}
   .spread .ph.l{text-align:left;padding-left:4px}
-  .spread .ph.l::after{content:"  ·  top line: spec 1002 · bottom line: V3 spec 3002"}
+  .spread .ph.l::after{content:" · top: 1002 · bottom: V3"}
   .spread .ph.l b::after{content:" → 2"}
   .spread .row{display:flex;flex-direction:column}
   .spread .cc{order:-1;justify-content:flex-start;border:0;padding:12px 0 4px;text-align:left}
@@ -362,7 +366,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
   .mark{font-size:28px}
   .book .hd{padding:12px 12px 10px;flex-direction:column;align-items:flex-start;gap:4px}.book .hd b{font-size:24px}
   .book th:first-child,.book td.sta{display:none}
-  .book th{padding:8px 8px 6px;font-size:10.5px}
+  .book th{padding:8px 8px 6px;font-size:11px}
   .book td{padding:8px 8px}
   .book td.c{font-size:12px}
   .book td.v{font-size:14px;letter-spacing:.04em}
@@ -420,7 +424,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
 <main id="main">
 <header class="hero" id="top">
   <p class="lab">Portaldot Hacker House 2026 · Modular Cloud &amp; Middleware</p>
-  <h1>The docs say <span class="call">transfer</span>. V3 has <span class="tape">never heard of&nbsp;it.</span></h1>
+  <h1>The docs say<br> <span class="call">transfer</span>. V3<br> has <span class="tape">never heard of&nbsp;it.</span></h1>
   <div class="gutter" aria-hidden="true"><div class="plumb"><span class="str"></span><svg viewBox="0 0 24 48"><defs><linearGradient id="brass" x1="0" x2="1"><stop offset="0" stop-color="#C9A45B"/><stop offset=".45" stop-color="#9C7630"/><stop offset="1" stop-color="#6E5220"/></linearGradient></defs><rect x="8" y="0" width="8" height="5" rx="1" fill="#6E5220"/><path d="M5 6h14v4c0 9-3.8 19-7 37.5C8.8 29 5 19 5 10z" fill="url(#brass)"/><path d="M8.5 9v3c0 6 1.4 13 3 22" stroke="#E2C78A" stroke-width="1" fill="none" opacity=".7"/></svg></div></div>
   <section class="book" id="book" aria-labelledby="book-title">
     <div class="hd"><b id="book-title">Docs → V3 · spec 3002</b><span class="lab">booked 2026-10-19 UTC</span></div>
@@ -431,14 +435,14 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
         <tr class="flag"><td class="sta"><span class="s">1</span></td><td class="c"><span class="flagband" aria-hidden="true"></span><span class="s"><small>Balances</small><s>transfer</s><em class="note">V3 has <code>transfer_allow_death</code>, <code>transfer_keep_alive</code> ↓</em></span></td><td class="v">ABSENT</td><td class="r">no such call</td></tr>
         <tr><td class="sta"><span class="s">2</span></td><td class="c"><span class="s"><small>Balances</small>transfer_all</span></td><td class="v">UNPROVEN</td><td class="r">present · no tx</td></tr>
         <tr><td class="sta"><span class="s">3</span></td><td class="c"><span class="s"><small>Balances</small>transfer_keep_alive</span></td><td class="v">PROVEN<span class="tick" aria-hidden="true"></span></td><td class="r"><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xf71728583059750fbdb8095730835eae53955148675b11cae98c90d3374b4c1d" aria-label="extrinsic 106425-1 in the node console">106425-1</a></td></tr>
-        <tr class="flag"><td class="sta"><span class="s">4</span></td><td class="c"><span class="flagband f2" aria-hidden="true"></span><span class="s"><small>ElectionProviderMultiPhase</small><s>governance_fallback</s><em class="note">docs: 2 args · V3: none</em></span></td><td class="v">ARG_DRIFT</td><td class="r">2 args → 0</td></tr>
+        <tr class="flag"><td class="sta"><span class="s">4</span></td><td class="c"><span class="flagband f2" aria-hidden="true"></span><span class="s"><small>ElectionProviderMultiPhase</small><s>governance_fallback</s><em class="note">docs: 2 args · V3: none</em></span></td><td class="v">ARG_DRIFT</td><td class="r">2&nbsp;args&nbsp;→&nbsp;0</td></tr>
         <tr><td class="sta"><span class="s">5</span></td><td class="c"><span class="s"><small>System</small>remark_with_event</span></td><td class="v">PROVEN<span class="tick" aria-hidden="true"></span></td><td class="r"><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0xac1f0030783d7470925fb39b691046d58418ac138c4d603916506cb345353ec2" aria-label="extrinsic 106424-1 in the node console">106424-1</a></td></tr>
         <tr><td class="sta"><span class="s">6</span></td><td class="c"><span class="s"><small>Utility</small>batch_all</span></td><td class="v">PROVEN<span class="tick" aria-hidden="true"></span></td><td class="r"><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0x06a069139c6457bdcd841dd7cb274d986b621538befea8ecb0471988764319ab" aria-label="extrinsic 106426-1 in the node console">106426-1</a></td></tr>
       </tbody>
     </table>
     <p class="foot"><span>6 of 196 documented calls · flagged: the only 2 that disagree on V3</span><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/ledger_v3.json">evidence/ledger_v3.json</a></p>
   </section>
-  <p class="sub">You copy <code>Balances.transfer</code> from the Portaldot docs into a V3 dApp, and the V3 runtime has no such call. Plumbline hangs all <b>196 documented calls</b> against the runtime’s own metadata. <b>79</b> disagreed with mainnet spec 1002. On V3 spec 3002, <b>2</b> still do, and <b>3</b> are proven the only way that counts: a real transaction, read back from its block.</p>
+  <p class="sub">You copy <code>Balances.transfer</code> from the Portaldot docs into a V3 dApp; the V3 runtime has no such call. Plumbline hangs all <b>196 documented calls</b> against the runtime’s own metadata: <b>2</b> disagree on V3, and <b>3</b> are proven by real transactions read back from their blocks.</p>
   <div class="cta">
     <a class="btn p" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 4 1 8l4 4M11 4l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none"/></svg>Source on GitHub</a>
     <a class="btn" href="https://youtu.be/edvFuOdUZNk"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>Watch the demo</a>
@@ -454,7 +458,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
       <div class="stake"><div class="tag"><div class="n"><span class="num" data-to="196">196</span></div><p class="l">documented calls, from 22 of 22 mainnet docs pages</p><p class="f"><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/docs_1002.json">evidence/docs_1002.json</a></p></div><svg class="post" viewBox="0 0 46 78" aria-hidden="true"><path d="M19 0h8v62l-4 12-4-12z" fill="#B48A4C" stroke="#262823" stroke-width="1.5"/><path d="M19 12h8v7h-8z" fill="#FF2E7E"/><path d="M27 13c6 0 11 3 16 1-3 5-9 7-16 5z" fill="#FF2E7E"/><path d="M27 17c5 3 8 9 13 10-6 1-10-2-13-6z" fill="#E8226E"/></svg></div>
       <div class="stake"><div class="tag"><div class="n"><span class="num" data-to="79">79</span><span class="ar">→</span><span class="tape">2</span></div><p class="l">calls that disagree with the runtime: mainnet spec 1002, then V3 spec 3002</p><p class="f"><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/BASELINE-V3.md">docs/BASELINE-V3.md</a></p></div><svg class="post" viewBox="0 0 46 78" aria-hidden="true"><path d="M19 0h8v62l-4 12-4-12z" fill="#B48A4C" stroke="#262823" stroke-width="1.5"/><path d="M19 12h8v7h-8z" fill="#FF2E7E"/><path d="M27 13c6 0 11 3 16 1-3 5-9 7-16 5z" fill="#FF2E7E"/><path d="M27 17c5 3 8 9 13 10-6 1-10-2-13-6z" fill="#E8226E"/></svg></div>
       <div class="stake"><div class="tag"><div class="n"><span class="num" data-to="3">3</span>/3</div><p class="l">V3 transactions read back from blocks 106424–106426</p><p class="f"><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/readback_v3.txt">evidence/readback_v3.txt</a></p></div><svg class="post" viewBox="0 0 46 78" aria-hidden="true"><path d="M19 0h8v62l-4 12-4-12z" fill="#B48A4C" stroke="#262823" stroke-width="1.5"/><path d="M19 12h8v7h-8z" fill="#FF2E7E"/><path d="M27 13c6 0 11 3 16 1-3 5-9 7-16 5z" fill="#FF2E7E"/><path d="M27 17c5 3 8 9 13 10-6 1-10-2-13-6z" fill="#E8226E"/></svg></div>
-      <div class="stake"><div class="tag"><div class="n"><span class="num" data-to="263">263</span></div><p class="l">offline tests passing, no chain or key needed</p><p class="f"><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/pytest_checkin.txt">evidence/pytest_checkin.txt</a></p></div><svg class="post" viewBox="0 0 46 78" aria-hidden="true"><path d="M19 0h8v62l-4 12-4-12z" fill="#B48A4C" stroke="#262823" stroke-width="1.5"/><path d="M19 12h8v7h-8z" fill="#FF2E7E"/><path d="M27 13c6 0 11 3 16 1-3 5-9 7-16 5z" fill="#FF2E7E"/><path d="M27 17c5 3 8 9 13 10-6 1-10-2-13-6z" fill="#E8226E"/></svg></div>
+      <div class="stake"><div class="tag"><div class="n"><span class="num" data-to="263">263</span></div><p class="l">offline tests passed in the stored run; no chain or key needed</p><p class="f"><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/pytest_checkin.txt">evidence/pytest_checkin.txt</a></p></div><svg class="post" viewBox="0 0 46 78" aria-hidden="true"><path d="M19 0h8v62l-4 12-4-12z" fill="#B48A4C" stroke="#262823" stroke-width="1.5"/><path d="M19 12h8v7h-8z" fill="#FF2E7E"/><path d="M27 13c6 0 11 3 16 1-3 5-9 7-16 5z" fill="#FF2E7E"/><path d="M27 17c5 3 8 9 13 10-6 1-10-2-13-6z" fill="#E8226E"/></svg></div>
       <div class="ground" aria-hidden="true"></div>
     </div>
   </div>
@@ -493,7 +497,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
       <div class="row"><div class="cl"><i class="k f" data-i="190" style="--d:77"></i><i class="k" data-i="191"></i><i class="k f" data-i="192" style="--d:78"></i><i class="k" data-i="193"></i><i class="k" data-i="194"></i><i class="k" data-i="195"></i></div><div class="cc"><span>Vesting</span> <small>6</small></div><div class="cr"><i class="k" data-i="190"></i><i class="k" data-i="191"></i><i class="k" data-i="192"></i><i class="k" data-i="193"></i><i class="k" data-i="194"></i><i class="k" data-i="195"></i></div></div>
       <div class="bind" aria-hidden="true"><svg viewBox="0 0 24 48"><rect x="8" y="0" width="8" height="5" rx="1" fill="#6E5220"/><path d="M5 6h14v4c0 9-3.8 19-7 37.5C8.8 29 5 19 5 10z" fill="url(#brass)"/></svg></div>
     </div>
-    <p class="readout" aria-hidden="true"><span class="lab">reading</span><span id="readout">point at a mark to read its entry</span></p>
+    <p class="readout" aria-hidden="true"><span class="lab">reading</span><span id="readout">point at or tap a mark to read its entry</span></p>
     <p class="spfoot">Source rows: <a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/ledger_1002.json">evidence/ledger_1002.json</a> and <a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/ledger_v3.json">evidence/ledger_v3.json</a>, source <code>mainnet-docs</code>, 196 rows each. On 1002: 62 absent, 2 renamed, 15 with other arguments. No transaction is ever sent to mainnet.</p>
   </div>
 </section>
@@ -502,7 +506,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
   <div class="wrap">
     <div class="top">
       <h2 id="proof-title">Proven means a receipt.</h2>
-      <p>Three canary transactions went to the V3 testnet. A new process then re-read each one from its block by hash and decoded it back to the same call. The terminal replays the committed evidence; the video shows the live runs.</p>
+      <p>Three canary transactions went to the V3 testnet. A new process then re-read each one from its block by hash and decoded it back to the same call. The terminal replays the committed evidence; the video shows live read-only runs against V3.</p>
     </div>
     <div class="term" data-play>
       <div class="bar"><span>replay · <i>evidence/readback_v3.txt</i>, <i>evidence/check_v3.txt</i> (verbatim)</span><span>profile v3 · portaldot-v3 / 3002</span></div>
@@ -515,7 +519,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
           <img src="assets/demo-poster.jpg" width="1280" height="720" alt="Frame from the demo video: the V3 verdicts query, Balances.transfer ABSENT and governance_fallback ARG_DRIFT struck through" loading="lazy" decoding="async">
           <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3v18l15-9z" fill="#141511"/></svg></span>
         </a>
-        <figcaption>Live <code>runtime</code>, <code>check</code> and <code>readback</code> against V3, then the ledger, the diff and the architecture. Waits are cut and labelled as such on screen.</figcaption>
+        <figcaption>Live <code>runtime</code>, <code>check</code> and <code>readback</code> against V3, then the ledger, the diff and the architecture. Long RPC waits are sped up and labelled on screen.</figcaption>
       </figure>
       <figure class="shot console">
         <p class="lab"><span>Screenshot · node-console.portaldot.dev</span><span>V3 RPC</span></p>
@@ -535,13 +539,6 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
   <div class="wrap">
     <div class="top"><h2 id="how-title">Five stations, one ledger</h2><p>A Python CLI on <code>substrate-interface</code>. Every station writes a committed file, so every figure here has a file behind it.</p></div>
     <div class="bento" data-play>
-      <article class="cell c-plumb">
-        <p class="st">Sta. 03 · the core</p>
-        <h3>Plumb</h3>
-        <p>Joins every documented call to one runtime’s metadata and writes exactly one verdict, stamped with profile, spec and metadata hash. Same inputs, byte-identical ledger: 549 rows on V3.</p>
-        <span class="chip">plumbline plumb · substrate-interface 1.8.1</span>
-        <figure><img src="assets/architecture-core.png" width="1400" height="907" alt="Architecture drawing, core flow: docs.py and guide.py feed plumb.py, which joins each entry to metadata.py's stored V3 metadata and writes ledger_v3.json; canary.py signs, submits and reads back receipts into docs/PROOF.md" loading="lazy" decoding="async"><figcaption><span>Detail of the architecture drawing (earlier sheet style)</span><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/architecture.png">Open the full drawing ↗</a></figcaption></figure>
-      </article>
       <article class="cell c-docs">
         <p class="st">Sta. 01</p>
         <h3>Read the drawing</h3>
@@ -551,8 +548,15 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
       <article class="cell c-guide">
         <p class="st">Sta. 02</p>
         <h3>Read the guide, never run it</h3>
-        <p>Reads the V3 testnet guide at <code>d671a32</code> by AST only: 46 <code>compose_call</code> sites and 12 FAQ modules. Its code is never executed.</p>
+        <p>Reads the V3 testnet guide at <code>d671a32</code> by AST and text only: 46 <code>compose_call</code> sites (AST) and 12 FAQ modules (text). Its code is never executed.</p>
         <span class="chip">plumbline guide · ast</span>
+      </article>
+      <article class="cell c-plumb">
+        <p class="st">Sta. 03 · the core</p>
+        <h3>Plumb</h3>
+        <p>Joins every documented call to one runtime’s metadata and writes exactly one verdict, stamped with profile, spec and metadata hash. Same inputs, byte-identical ledger: 549 rows on V3.</p>
+        <span class="chip">plumbline plumb · substrate-interface 1.8.1</span>
+        <figure><img src="assets/architecture-core.png" width="1400" height="907" alt="Architecture drawing, core flow: docs.py and guide.py feed plumb.py, which joins each entry to metadata.py's stored V3 metadata and writes ledger_v3.json; canary.py signs, submits and reads back receipts into docs/PROOF.md" loading="lazy" decoding="async"><figcaption><span>Detail of the architecture drawing (earlier sheet style)</span><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/architecture.png">Open the full drawing ↗</a></figcaption></figure>
       </article>
       <article class="cell c-prove">
         <p class="st">Sta. 04</p>
@@ -588,7 +592,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
     <div class="side"><h2 id="faq-title">Questions a judge asks</h2><p>Short answers; the README and <a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/PROOF.md">docs/PROOF.md</a> carry the long ones.</p></div>
     <div>
       <details><summary>Is this V3, or a stand-in?<span class="pm" aria-hidden="true"></span></summary><div><p>Profile <code>v3</code> is the live Portaldot V3 testnet, spec 3002, measured 2026-10-19. A local upstream dev chain (<code>interim-sdk</code>) is kept as test input and labelled <b>not V3</b> everywhere it appears.</p></div></details>
-      <details><summary>Does it send transactions?<span class="pm" aria-hidden="true"></span></summary><div><p>Only <code>plumbline canary</code>, and only with a funded seed file: 3 on V3 (blocks 106424–106426), read back 3/3. Everything else is read-only RPC. The canary refuses the mainnet profile.</p></div></details>
+      <details><summary>Does it send transactions?<span class="pm" aria-hidden="true"></span></summary><div><p>Only <code>plumbline canary</code> sends transactions: 3 on V3 with a funded seed file (blocks 106424–106426), read back 3/3, plus a local stand-in run with dev keys that is labelled not V3. Everything else is read-only RPC. The canary refuses the mainnet profile.</p></div></details>
       <details><summary>What does PROVEN mean?<span class="pm" aria-hidden="true"></span></summary><div><p>A canary for that call succeeded on that runtime and was re-read from its block by hash. 3 of the 196 mainnet-docs calls are PROVEN on V3.</p></div></details>
       <details><summary>Why are 191 calls UNPROVEN, not “OK”?<span class="pm" aria-hidden="true"></span></summary><div><p>They exist on V3 by name and arguments, but no transaction was sent for them. The ledger says what it could not establish instead of rounding it up.</p></div></details>
       <details><summary>Can I run it on my dApp?<span class="pm" aria-hidden="true"></span></summary><div><p><code>plumbline check &lt;dir&gt; --target v3</code> gives one verdict per call site and exits 0, 1 or 2 (1 = blocking findings). The repo’s example dApp: 9 findings, blocking 0 on V3, blocking 5 on mainnet spec 1002.</p></div></details>
@@ -614,7 +618,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
 <pre><span class="pr">$</span> git clone https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu
 <span class="pr">$</span> cd portaldot-hackathon-2026-plumbline-edycu
 <span class="pr">$</span> pip install -e '.[dev]' &amp;&amp; pytest -q
-<span class="cm"># 263 passed, 3 deselected</span>
+<span class="cm"># offline tests: no chain, no key</span>
 <span class="pr">$</span> plumbline check examples/mainnet-dapp --target v3
 <span class="cm"># … · blocking 0 · exit 0</span></pre>
     </div>
