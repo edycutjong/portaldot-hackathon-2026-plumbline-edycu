@@ -79,7 +79,8 @@ h2{font:900 104px/.88 var(--font-display);text-transform:uppercase;letter-spacin
 
 /* level-book table (cover, problem) */
 .book .hd{position:relative;display:flex;justify-content:space-between;align-items:end;padding:22px 26px 14px;border-bottom:3px solid var(--ink)}
-.book .hd b{font:900 40px/1 var(--font-display);text-transform:uppercase}
+.book .hd{flex-wrap:wrap;gap:6px 18px}
+.book .hd b{font:900 40px/1 var(--font-display);text-transform:uppercase;white-space:nowrap}
 .book table{position:relative;width:100%;border-collapse:collapse}
 .book th{font:600 16px var(--font-data);letter-spacing:.1em;color:var(--muted);text-align:left;padding:12px 16px 10px;border-bottom:1px solid var(--blue);text-transform:uppercase}
 .book td{padding:13px 16px;border-bottom:1px solid var(--blue);vertical-align:top;color:var(--pencil)}
@@ -195,7 +196,7 @@ h2{font:900 104px/.88 var(--font-display);text-transform:uppercase;letter-spacin
 .spread .ann{font:800 italic 22px/1 var(--font-display);color:var(--ink);margin-left:12px;align-self:center;white-space:nowrap;background:var(--tape) 0 70%/100% 88% no-repeat;color:var(--tape-ink);padding:2px 8px}
 .spread .ph.c span{background:var(--bg);padding:0 4px;position:relative;z-index:1}
 @keyframes flag{from{transform:scaleX(0) rotate(-6deg)}}
-.s4 .tally{position:absolute;left:190px;right:110px;bottom:88px;display:flex;justify-content:space-between;gap:40px;align-items:baseline;font-size:23px;color:#33352F}
+.s4 .tally{position:absolute;left:190px;right:110px;bottom:74px;display:flex;justify-content:space-between;gap:40px;align-items:baseline;font-size:23px;color:#33352F}
 .s4 .tally .legend{background:var(--bg);position:relative;z-index:2;padding-right:14px}
 .s4 .tally b{font:900 36px/1 var(--font-display);color:var(--ink);margin-right:6px}
 
@@ -346,7 +347,7 @@ body.idle .hint{opacity:0}
       <p class="sub rise d2"><b>Plumbline</b> checks each call Portaldot documents against the runtime’s own metadata, and proves calls with real transactions read back from their blocks.</p>
     </div>
     <div class="paper book rise d2">
-      <div class="hd"><b>Docs → V3 · spec 3002</b><span class="lab">booked 2026-10-19 UTC</span></div>
+      <div class="hd"><b>Docs → V3 · spec 3002</b><span class="lab">portaldot-v3 · booked 2026-10-19 UTC</span></div>
       <table>
         <thead><tr><th>Sta.</th><th>Call, as documented</th><th>On V3</th><th>Receipt</th></tr></thead>
         <tbody>
@@ -535,7 +536,7 @@ summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-U
     <div>
       <h2 class="rise">Re-run every number here</h2>
       <div class="st rise d1">
-        <div><b>549</b><span>verdict rows on V3, spec 3002, byte-identical on re-run</span></div>
+        <div><b>549</b><span>verdict rows on V3, spec 3002: 297 documented entries + 252 runtime calls no source names; byte-identical on re-run</span></div>
         <div><b>3 / 3</b><span>V3 transactions read back from their blocks</span></div>
         <div><b>263</b><span>offline tests passed in the stored run (evidence/pytest_checkin.txt, at c484fcb) · 116 commits from 2026-10-14 to build 2460a0d</span></div>
       </div>
