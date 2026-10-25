@@ -99,7 +99,7 @@ h2{font:900 104px/.88 var(--font-display);text-transform:uppercase;letter-spacin
 .book tr.flag td.c{position:static}
 .book tr.flag small{color:var(--tape-ink)}
 .book .s{position:relative;z-index:1;display:block}
-.flagband{position:absolute;left:-14px;right:-60px;top:8px;bottom:8px;background:linear-gradient(176deg,#FF5594,var(--flag) 55%,#E8226E);transform-origin:left center;transform:rotate(-.7deg);clip-path:polygon(0 0,100% 5%,95% 50%,100% 95%,0 100%,1.2% 50%);box-shadow:0 3px 0 rgba(176,26,85,.55);z-index:0}
+.flagband{position:absolute;left:-14px;right:-28px;top:8px;bottom:8px;background:linear-gradient(176deg,#FF5594,var(--flag) 55%,#E8226E);transform-origin:left center;transform:rotate(-.7deg);clip-path:polygon(0 0,100% 5%,95% 50%,100% 95%,0 100%,1.2% 50%);box-shadow:0 3px 0 rgba(176,26,85,.55);z-index:0}
 .f2{transform:rotate(.6deg)}
 .active .flagband{animation:tie .5s var(--ease-out) .7s both}.active .f2{animation-delay:.95s}
 @keyframes tie{from{clip-path:polygon(0 0,0 0,0 50%,0 100%,0 100%,0 50%)}}
@@ -196,6 +196,7 @@ h2{font:900 104px/.88 var(--font-display);text-transform:uppercase;letter-spacin
 .spread .ph.c span{background:var(--bg);padding:0 4px;position:relative;z-index:1}
 @keyframes flag{from{transform:scaleX(0) rotate(-6deg)}}
 .s4 .tally{position:absolute;left:190px;right:110px;bottom:88px;display:flex;justify-content:space-between;gap:40px;align-items:baseline;font-size:23px;color:#33352F}
+.s4 .tally .legend{background:var(--bg);position:relative;z-index:2;padding-right:14px}
 .s4 .tally b{font:900 36px/1 var(--font-display);color:var(--ink);margin-right:6px}
 
 /* 5 receipts */
@@ -316,7 +317,7 @@ h2{font:900 104px/.88 var(--font-display);text-transform:uppercase;letter-spacin
 body.presenter .slide.active .speaker-notes{display:block;position:absolute;left:0;right:0;bottom:0;height:230px;background:rgba(38,40,35,.97);color:var(--page);border-top:4px solid var(--flag);padding:26px 120px;font:400 26px/1.45 var(--font-body);z-index:6}
 body.debug-contrast .slide :is(h1,h2,h3,p,td,th,li,pre,span,code){outline:1px dashed rgba(255,46,126,.8);outline-offset:2px}
 .phone{display:none}
-@media (orientation:portrait) and (max-width:700px){.phone{display:block;position:fixed;left:12px;right:12px;bottom:16px;background:var(--page);color:var(--ink);border:2px solid var(--ink);padding:12px 14px;font:600 14px/1.4 var(--font-body);text-align:center;text-decoration:none;z-index:9}}
+@media (orientation:portrait) and (max-width:700px){.phone{display:block;position:fixed;left:12px;right:12px;bottom:16px;background:var(--page);color:var(--ink);border:2px solid var(--ink);padding:12px 14px;font:600 14px/1.4 var(--font-body);text-align:center;text-decoration:underline;text-underline-offset:3px;z-index:9}}
 @media (hover:none){.hint{display:none}}
 .hint{position:fixed;right:18px;bottom:14px;font:600 12px var(--font-data);letter-spacing:.08em;color:#9EA493;text-transform:uppercase;transition:opacity .4s}
 body.idle .hint{opacity:0}
@@ -370,7 +371,7 @@ summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-U
     <div>
       <h2 class="rise">Docs and chain disagree</h2>
       <p class="lede rise d1">A builder copies <code>Balances.transfer</code> from the Portaldot docs. On the V3 testnet that call does not exist, and the page does not say which runtime it describes.</p>
-      <p class="lede rise d2">Today one way to find out is to submit a transaction and read the error. The next runtime upgrade moves the line again.</p>
+      <p class="lede rise d2">Without a ledger, one way to find out is to submit a transaction and read the error. The next runtime upgrade moves the line again.</p>
     </div>
     <div class="paper flat rise d2">
       <table class="src">
@@ -466,7 +467,7 @@ summary: 9 findings in 9 files scanned · ARGS-UNCHECKED 2, UNPROVEN 5, COMPAT-U
       <div><b>The full drawing</b><span>docs/architecture.png adds the inputs, check.py, diff.py and the chains; its dashed box is the planned Ledger contract.</span></div>
     </div>
   </div>
-  <aside class="speaker-notes">The guide is untrusted data: it is cloned outside the repo and only parsed. Every engine module writes a committed artifact, so each figure in this deck has a file behind it. In the full drawing, docs/architecture.png, the one planned piece, a Ledger contract on V3, is drawn dashed.</aside>
+  <aside class="speaker-notes">The guide is untrusted data: it is cloned outside the repo and only parsed. Every station writes a committed artifact, so each figure in this deck has a file behind it. In the full drawing, docs/architecture.png, the one planned piece, a Ledger contract on V3, is drawn dashed.</aside>
 </section>
 
 <!-- 7 · why it's new -->

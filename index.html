@@ -12,12 +12,12 @@
 <meta property="og:title" content="Plumbline: the docs say transfer, V3 has never heard of it">
 <meta property="og:description" content="196 documented Portaldot calls checked against the runtime: 79 disagreed with mainnet spec 1002, 2 disagree on V3, 3 proven by real transactions.">
 <meta property="og:url" content="https://plumbline.edycu.dev/">
-<meta property="og:image" content="https://plumbline.edycu.dev/assets/og.png?v=10221c94">
+<meta property="og:image" content="https://plumbline.edycu.dev/assets/og.png?v=111b8969">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Plumbline field book: Balances.transfer flagged ABSENT on Portaldot V3 spec 3002">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://plumbline.edycu.dev/assets/og.png?v=10221c94">
+<meta name="twitter:image" content="https://plumbline.edycu.dev/assets/og.png?v=111b8969">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23E3E8DA'/%3E%3Cpath d='M16 2v8' stroke='%23262823' stroke-width='2'/%3E%3Cpath d='M11 10h10v3c0 6-3 12-5 17-2-5-5-11-5-17z' fill='%239C7630'/%3E%3C/svg%3E">
 <link rel="preload" href="assets/fonts/SofiaSansExtraCondensed-wght.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/SofiaSans-wght.woff2" as="font" type="font/woff2" crossorigin>
@@ -132,13 +132,13 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
 .book tr.flag td.c{position:static}
 .book .s{position:relative;z-index:1;display:block}
 .book tr.flag small{color:var(--tape-ink)}
-.flagband{position:absolute;left:-10px;right:-44px;top:7px;bottom:7px;background:linear-gradient(176deg,#FF5594,var(--flag) 55%,#E8226E);transform-origin:left center;transform:rotate(-.7deg);clip-path:polygon(0 0,100% 5%,95% 50%,100% 95%,0 100%,1.2% 50%);box-shadow:0 2px 0 rgba(176,26,85,.55);z-index:0}
+.flagband{position:absolute;left:-10px;right:-20px;top:7px;bottom:7px;background:linear-gradient(176deg,#FF5594,var(--flag) 55%,#E8226E);transform-origin:left center;transform:rotate(-.7deg);clip-path:polygon(0 0,100% 5%,95% 50%,100% 95%,0 100%,1.2% 50%);box-shadow:0 2px 0 rgba(176,26,85,.55);z-index:0}
 .f2{transform:rotate(.6deg)}
 .js .flagband{animation:tie .5s var(--ease-out) 1.45s both}.js .f2{animation-delay:1.75s}
 @keyframes tie{from{clip-path:polygon(0 0,0 0,0 50%,0 100%,0 100%,0 50%)}}
 .js .note{animation:write .9s steps(18,end) 2.25s both}
 @keyframes write{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
-.book .foot{position:relative;padding:12px 20px 14px;font:400 12px var(--font-data);color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.book .foot{position:relative;padding:12px 20px 14px;font:400 12.5px var(--font-data);color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .js .hero>.lab,.js h1,.js .sub,.js .cta,.js .strip{animation:rise .7s var(--ease-out) both}
 .js h1{animation-delay:.08s}.js .sub{animation-delay:.2s}.js .cta{animation-delay:.3s}.js .strip{animation-delay:.38s}
 .js .book{animation:lay .8s var(--ease-out) .25s both}
@@ -234,7 +234,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
 .video .play svg{width:30px;height:30px;margin-left:6px}
 .video .dur{position:absolute;right:10px;bottom:10px;background:rgba(20,21,17,.86);color:var(--page);font:600 12px var(--font-data);padding:4px 8px;letter-spacing:.05em}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.console img{aspect-ratio:1600/690;width:100%;height:auto;border:1px solid #C3CAB6}
+.console img{aspect-ratio:1600/690;width:100%;height:auto;border:1px solid #C3CAB6;background:#F4F4F2}
 .rcpts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:26px;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
 .rcpt{padding:14px 16px;border-left:1px solid var(--rose)}
 .rcpt:first-child{border-left:0}
@@ -395,7 +395,8 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
   .book td.r{font-size:11.5px;white-space:normal}
   .book .note{font-size:15px}
   .book .foot{padding:10px 12px 12px;font-size:11px}
-  .flagband{left:-6px;right:-8px}
+  .flagband{left:-4px;right:-3px}
+  .book td.r{padding-right:10px}
   .sub{font-size:17.5px}
   .strip .cmd{max-width:100%}
   .strip .cmd code{white-space:normal;overflow-wrap:anywhere;font-size:12px}
@@ -462,7 +463,7 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
         <tr><td class="sta"><span class="s">6</span></td><td class="c"><span class="s"><small>Utility</small>batch_all</span></td><td class="v">PROVEN<span class="tick" aria-hidden="true"></span></td><td class="r"><a href="https://node-console.portaldot.dev/?rpc=wss%3A%2F%2Ftest-node-v3.portaldot.dev#/explorer/query/0x06a069139c6457bdcd841dd7cb274d986b621538befea8ecb0471988764319ab" aria-label="extrinsic 106426-1 in the node console">106426-1</a></td></tr>
       </tbody>
     </table>
-    <p class="foot"><span>6 of 196 documented calls · flagged: the only 2 that disagree on V3</span><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/ledger_v3.json">evidence/ledger_v3.json</a></p>
+    <p class="foot"><span>Flagged: the only 2 of 196 that disagree on V3</span><a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/evidence/ledger_v3.json">evidence/ledger_v3.json</a></p>
   </section>
   <p class="sub">You copy <code>Balances.transfer</code> from the Portaldot docs into a V3 dApp; the V3 runtime has no such call. Plumbline hangs all <b>196 documented calls</b> against the runtime’s own metadata: <b>2</b> disagree on V3, and <b>3</b> are proven by real transactions read back from their blocks.</p>
   <div class="cta">
@@ -630,11 +631,10 @@ h1 .call{font:600 .44em/1 var(--font-data);text-transform:none;letter-spacing:-.
     <div class="grid">
       <div>
         <h2 id="rerun-title">Re-run every number here.</h2>
-        <p>Clone it, run the offline tests, then point <code>check</code> at the example dApp or your own. MIT licensed.</p>
+        <p>Clone it, run the offline tests, then point <code>check</code> at the example dApp or your own. MIT licensed. The deck is also a <a href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/pitch-deck.pdf">PDF</a>.</p>
         <div class="cta">
           <a class="btn p" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu">Source on GitHub</a>
           <a class="btn" href="https://plumbline.edycu.dev/deck/">Pitch deck</a>
-          <a class="btn" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/pitch-deck.pdf">Deck PDF</a>
           <a class="btn" href="https://github.com/edycutjong/portaldot-hackathon-2026-plumbline-edycu/blob/main/docs/PROOF.md">PROOF.md</a>
         </div>
       </div>
